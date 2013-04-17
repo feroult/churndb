@@ -1,4 +1,3 @@
 #ChurnDB
-
-## Source code activity visualization
+Source code activity visualization
  
