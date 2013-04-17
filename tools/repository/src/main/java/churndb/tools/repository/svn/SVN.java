@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class SVN {
+
+	private static final String SAFE_REVISIONS_PATTERN = "[0-9A-Za-z.:\\-{}]+";
 
 	private String base_url;
 
@@ -17,6 +20,8 @@ public class SVN {
 	}
 
 	public Map<String, List<String>> revisionsByFile(String revisions) {
+		guardSafeRevisionsPattern(revisions);
+
 		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
 		List<LogEntry> logs = LogEntry.parse(exec("svn log -v -r" + revisions + " " + base_url + " --xml"));
@@ -30,6 +35,12 @@ public class SVN {
 		return map;
 	}
 
+	private void guardSafeRevisionsPattern(String revisions) {
+		if (!Pattern.matches(SAFE_REVISIONS_PATTERN, revisions)) {
+			throw new RuntimeException("String \"" + revisions + "\" does not respect the safe revision pattern " + SAFE_REVISIONS_PATTERN);
+		}
+	}
+
 	private void addRevision(HashMap<String, List<String>> map, String path, String revision) {
 		if (!map.containsKey(path)) {
 			map.put(path, new ArrayList<String>());
@@ -40,9 +51,10 @@ public class SVN {
 	}
 
 	protected String exec(String command) {
+
 		try {
 			Process proc = Runtime.getRuntime().exec(command);
-			
+
 			StringBuilder sb = new StringBuilder();
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
@@ -50,17 +62,17 @@ public class SVN {
 			while ((line = stdin.readLine()) != null) {
 				sb.append(line);
 			}
-			
+
 			return sb.toString();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	// just-for-test
+	// just-for-integrated-test
 	public static void main(String[] args) {
 		SVN svn = new SVN("https://dextranet.dextra.com.br/svn/confidence_operacao/branches/sacs/3.0");
-		Map<String, List<String>> revisionsByFile = svn.revisionsByFile("{2013-04-16}:HEAD");
+		Map<String, List<String>> revisionsByFile = svn.revisionsByFile("{2013-04-10}:HEAD");
 		System.out.println(revisionsByFile);
 	}
 }
