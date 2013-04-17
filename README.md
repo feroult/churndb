@@ -1,3 +1,3 @@
 #ChurnDB
-Source code activity visualization
+Source code churn visualization
  
