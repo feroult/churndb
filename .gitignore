@@ -1,0 +1,15 @@
+tmp
+
+*.class
+.project
+.classpath
+.settings
+target
+bin
+test-output
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
