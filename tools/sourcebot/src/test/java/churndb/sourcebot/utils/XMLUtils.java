@@ -1,4 +1,4 @@
-package churndb.tools.repository.utils;
+package churndb.sourcebot.utils;
 
 import java.io.IOException;
 

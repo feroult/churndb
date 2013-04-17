@@ -1,4 +1,4 @@
-package churndb.tools.repository.svn;
+package churndb.sourcebot.importer.svn;
 
 import java.util.List;
 import java.util.Map;
@@ -6,7 +6,8 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import churndb.tools.repository.utils.XMLUtils;
+import churndb.sourcebot.importer.svn.SVN;
+import churndb.sourcebot.utils.XMLUtils;
 
 public class RevisionsTest {
 

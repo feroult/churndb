@@ -1,4 +1,4 @@
-package churndb.tools.repository.svn;
+package churndb.sourcebot.importer.svn;
 
 import java.io.BufferedReader;
 import java.io.IOException;
