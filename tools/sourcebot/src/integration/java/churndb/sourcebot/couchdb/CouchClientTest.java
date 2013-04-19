@@ -14,13 +14,13 @@ public class CouchClientTest {
 	private CouchClient couch = new CouchClient(COUCHDB_HOST);;
 
 	@Test
-	public void testWelcome() {
+	public void testWelcome() throws CouchResponseException {
 		JsonObject welcome = couch.get();
 		Assert.assertEquals("Welcome", welcome.get("couchdb").getAsString());
 	}
 
 	@Test
-	public void testCreateDrop() {
+	public void testCreateDrop() throws CouchResponseException {
 		deleteDatabaseIfExists(SCOOBYDOO);
 		
 		couch.put(SCOOBYDOO);
@@ -37,7 +37,7 @@ public class CouchClientTest {
 		}
 	}
 
-	private void deleteDatabaseIfExists(String database) {
+	private void deleteDatabaseIfExists(String database) throws CouchResponseException {
 		try {
 			
 			couch.get(database);			

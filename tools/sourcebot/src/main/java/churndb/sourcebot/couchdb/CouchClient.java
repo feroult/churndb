@@ -22,19 +22,19 @@ public class CouchClient {
 		this.couchdbHost = couchdbHost;	
 	}
 	
-	public JsonObject get(String ... params) {
+	public JsonObject get(String ... params) throws CouchResponseException {
 		return executeRequest(new HttpGet(requestUrl(params)));
 	}
 	
-	public JsonObject put(String ... params) {
+	public JsonObject put(String ... params) throws CouchResponseException {
 		return executeRequest(new HttpPut(requestUrl(params)));
 	}	
 
-	public JsonObject delete(String ... params) {
+	public JsonObject delete(String ... params) throws CouchResponseException {
 		return executeRequest(new HttpDelete(requestUrl(params)));		
 	}
 	
-	private JsonObject executeRequest(HttpUriRequest request) {
+	private JsonObject executeRequest(HttpUriRequest request) throws CouchResponseException {
 		HttpClient httpclient = new DefaultHttpClient();
 		
 		try {			
@@ -42,7 +42,6 @@ public class CouchClient {
 			return (JsonObject) new JsonParser().parse(responseBody);
 
 		} catch(HttpResponseException e) {
-			// change CouchResponseException to checked?
 			throw new CouchResponseException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
