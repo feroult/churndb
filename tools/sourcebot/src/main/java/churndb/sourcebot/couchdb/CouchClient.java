@@ -38,11 +38,11 @@ public class CouchClient {
 		HttpClient httpclient = new DefaultHttpClient();
 		
 		try {			
-			// TODO: use a differen response handler to save to response body for failed status codes
 			String responseBody = httpclient.execute(request, new BasicResponseHandler());
 			return (JsonObject) new JsonParser().parse(responseBody);
 
 		} catch(HttpResponseException e) {
+			// change CouchResponseException to checked?
 			throw new CouchResponseException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

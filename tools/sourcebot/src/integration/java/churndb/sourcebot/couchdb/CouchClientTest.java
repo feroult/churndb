@@ -1,6 +1,5 @@
 package churndb.sourcebot.couchdb;
 
-import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,8 +43,8 @@ public class CouchClientTest {
 			couch.get(database);			
 			
 		} catch(CouchResponseException e) {
-			if(e.getStatus() != HttpStatus.SC_NOT_FOUND) {
-				throw new RuntimeException(e);
+			if(!e.objectNotFound()) {
+				throw e;
 			}
 			
 			return;
