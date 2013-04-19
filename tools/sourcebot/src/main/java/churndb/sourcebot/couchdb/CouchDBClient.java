@@ -38,6 +38,7 @@ public class CouchDBClient {
 		HttpClient httpclient = new DefaultHttpClient();
 		
 		try {			
+			// TODO: use a differen response handler to save to response body for failed status codes
 			String responseBody = httpclient.execute(request, new BasicResponseHandler());
 			return (JsonObject) new JsonParser().parse(responseBody);
 
