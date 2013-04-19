@@ -22,34 +22,34 @@ public class CouchClientTest {
 	@Test
 	public void testCreateDrop() throws CouchResponseException {
 		deleteDatabaseIfExists(SCOOBYDOO);
-		
+
 		couch.put(SCOOBYDOO);
-		
+
 		JsonObject info = couch.get(SCOOBYDOO);
 		Assert.assertEquals("scoobydoo", info.get("db_name").getAsString());
-		
+
 		couch.delete(SCOOBYDOO);
-		
+
 		try {
-			couch.get(SCOOBYDOO); 
-		} catch(CouchResponseException e) {
+			couch.get(SCOOBYDOO);
+		} catch (CouchResponseException e) {
 			Assert.assertTrue(e.objectNotFound());
 		}
 	}
 
 	private void deleteDatabaseIfExists(String database) throws CouchResponseException {
 		try {
-			
-			couch.get(database);			
-			
-		} catch(CouchResponseException e) {
-			if(!e.objectNotFound()) {
+
+			couch.get(database);
+
+		} catch (CouchResponseException e) {
+			if (!e.objectNotFound()) {
 				throw e;
 			}
-			
+
 			return;
 		}
-		
+
 		couch.delete(database);
 	}
 }
