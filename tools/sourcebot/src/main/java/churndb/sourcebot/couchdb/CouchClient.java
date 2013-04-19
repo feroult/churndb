@@ -14,11 +14,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class CouchDBClient {
+public class CouchClient {
 
 	private String couchdbHost;
 
-	public CouchDBClient(String couchdbHost) {
+	public CouchClient(String couchdbHost) {
 		this.couchdbHost = couchdbHost;	
 	}
 	

@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import com.google.gson.JsonObject;
 
-public class CouchDBClientTest {
+public class CouchClientTest {
 
 	private static final String SCOOBYDOO = "/scoobydoo";
 
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
-	private CouchDBClient couch = new CouchDBClient(COUCHDB_HOST);;
+	private CouchClient couch = new CouchClient(COUCHDB_HOST);;
 
 	@Test
 	public void testVersion() {
@@ -25,6 +25,7 @@ public class CouchDBClientTest {
 		deleteDatabaseIfExists(SCOOBYDOO);
 		
 		couch.put(SCOOBYDOO);
+		
 		JsonObject info = couch.get(SCOOBYDOO);
 		Assert.assertEquals("scoobydoo", info.get("db_name").getAsString());
 		
@@ -33,7 +34,7 @@ public class CouchDBClientTest {
 		try {
 			couch.get(SCOOBYDOO); 
 		} catch(CouchResponseException e) {
-			Assert.assertEquals(HttpStatus.SC_NOT_FOUND, e.getStatus());
+			Assert.assertTrue(e.objectNotFound());
 		}
 	}
 
