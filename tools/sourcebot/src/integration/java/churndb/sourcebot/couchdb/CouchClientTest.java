@@ -15,7 +15,7 @@ public class CouchClientTest {
 	private CouchClient couch = new CouchClient(COUCHDB_HOST);;
 
 	@Test
-	public void testVersion() {
+	public void testWelcome() {
 		JsonObject welcome = couch.get();
 		Assert.assertEquals("Welcome", welcome.get("couchdb").getAsString());
 	}
