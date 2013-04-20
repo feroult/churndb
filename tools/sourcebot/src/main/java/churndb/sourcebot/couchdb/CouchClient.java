@@ -2,17 +2,15 @@ package churndb.sourcebot.couchdb;
 
 import java.io.IOException;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class CouchClient {
 
@@ -22,27 +20,26 @@ public class CouchClient {
 		this.couchdbHost = couchdbHost;
 	}
 
-	public JsonObject get(String... params) throws CouchResponseException {
+	public CouchResponse get(String... params) {
 		return executeRequest(new HttpGet(requestUrl(params)));
 	}
 
-	public JsonObject put(String... params) throws CouchResponseException {
-		return executeRequest(new HttpPut(requestUrl(params)));
+	public JsonObject put(String... params) {
+		return executeRequest(new HttpPut(requestUrl(params))).json();
 	}
 
-	public JsonObject delete(String... params) throws CouchResponseException {
-		return executeRequest(new HttpDelete(requestUrl(params)));
+	public JsonObject delete(String... params)  {
+		return executeRequest(new HttpDelete(requestUrl(params))).json();
 	}
 
-	private JsonObject executeRequest(HttpUriRequest request) throws CouchResponseException {
+	private CouchResponse executeRequest(HttpUriRequest request) {
 		HttpClient httpclient = new DefaultHttpClient();
 
 		try {
-			String responseBody = httpclient.execute(request, new BasicResponseHandler());
-			return (JsonObject) new JsonParser().parse(responseBody);
+			return httpclient.execute(request, new CouchResponseHandler());
 
-		} catch (HttpResponseException e) {
-			throw new CouchResponseException(e);
+		} catch (ClientProtocolException e) {
+			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {

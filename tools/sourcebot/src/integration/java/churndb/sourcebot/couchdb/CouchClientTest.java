@@ -14,42 +14,30 @@ public class CouchClientTest {
 	private CouchClient couch = new CouchClient(COUCHDB_HOST);;
 
 	@Test
-	public void testWelcome() throws CouchResponseException {
-		JsonObject welcome = couch.get();
+	public void testWelcome() {
+		JsonObject welcome = couch.get().json();
 		Assert.assertEquals("Welcome", welcome.get("couchdb").getAsString());
 	}
 
 	@Test
-	public void testCreateDrop() throws CouchResponseException {
+	public void testCreateDrop() {
 		deleteDatabaseIfExists(SCOOBYDOO);
 
 		couch.put(SCOOBYDOO);
 
-		JsonObject info = couch.get(SCOOBYDOO);
+		JsonObject info = couch.get(SCOOBYDOO).json();
 		Assert.assertEquals("scoobydoo", info.get("db_name").getAsString());
 
 		couch.delete(SCOOBYDOO);
-
-		try {
-			couch.get(SCOOBYDOO);
-		} catch (CouchResponseException e) {
-			Assert.assertTrue(e.objectNotFound());
-		}
+		
+		CouchResponse response = couch.get(SCOOBYDOO);
+		Assert.assertTrue(response.objectNotFound());
 	}
 
-	private void deleteDatabaseIfExists(String database) throws CouchResponseException {
-		try {
-
-			couch.get(database);
-
-		} catch (CouchResponseException e) {
-			if (!e.objectNotFound()) {
-				throw e;
-			}
-
-			return;
+	private void deleteDatabaseIfExists(String database) {
+		CouchResponse response = couch.get(database);
+		if (!response.objectNotFound()) {
+			couch.delete(database);
 		}
-
-		couch.delete(database);
 	}
 }
