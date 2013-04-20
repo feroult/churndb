@@ -29,7 +29,7 @@ public class CouchClientTest {
 
 	@Test
 	public void testCreateDropDatabase() {
-		deleteDatabaseIfExists();
+		dropDatabaseIfExists();
 
 		couch.create();
 
@@ -42,7 +42,7 @@ public class CouchClientTest {
 		Assert.assertTrue(response.objectNotFound());
 	}
 
-	private void deleteDatabaseIfExists() {
+	private void dropDatabaseIfExists() {
 		CouchResponse response = couch.get();
 		if (!response.objectNotFound()) {
 			couch.drop();
@@ -51,7 +51,7 @@ public class CouchClientTest {
 	
 	@Test
 	public void testCreateDeleteDocument() {
-		deleteDatabaseIfExists();
+		dropDatabaseIfExists();
 		
 		couch.create();		
 		
