@@ -8,57 +8,59 @@ import com.google.gson.JsonObject;
 
 public class CouchClientTest {
 
+	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
+
 	private static final String CHURNDB = "churndbtest";
 
-	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
+	private static final String DOC = "doc";
 
 	private CouchClient couch;
 
 	@Before
 	public void before() {
-		couch = new CouchClient(COUCHDB_HOST);
+		couch = new CouchClient(COUCHDB_HOST, CHURNDB);
 	}
 	
 	@Test
 	public void testWelcome() {
-		JsonObject welcome = couch.get().json();
+		JsonObject welcome = couch.welcome().json();
 		Assert.assertEquals("Welcome", welcome.get("couchdb").getAsString());
 	}
 
 	@Test
 	public void testCreateDropDatabase() {
-		deleteDatabaseIfExists(CHURNDB);
+		deleteDatabaseIfExists();
 
-		couch.put(CHURNDB);
+		couch.create();
 
-		JsonObject info = couch.get(CHURNDB).json();
-		Assert.assertEquals("churndbtest", info.get("db_name").getAsString());
+		JsonObject info = couch.get().json();
+		Assert.assertEquals(CHURNDB, info.get("db_name").getAsString());
 
-		couch.delete(CHURNDB);
+		couch.drop();
 		
 		CouchResponse response = couch.get(CHURNDB);
 		Assert.assertTrue(response.objectNotFound());
 	}
 
-	private void deleteDatabaseIfExists(String database) {
-		CouchResponse response = couch.get(database);
+	private void deleteDatabaseIfExists() {
+		CouchResponse response = couch.welcome();
 		if (!response.objectNotFound()) {
-			couch.delete(database);
+			couch.drop();
 		}
 	}
 	
 	@Test
 	public void testCreateDeleteDocument() {
-		deleteDatabaseIfExists(CHURNDB);
+		deleteDatabaseIfExists();
 		
 		couch.setDatabase(CHURNDB);		
-		couch.put();		
+		couch.create();		
 		
-		couch.put("doc", "{\"field\": \"blah\"}");
+		couch.put(DOC, "{\"field\": \"blah\"}");
 		
-		JsonObject doc = couch.get("doc").json();		
+		JsonObject doc = couch.get(DOC).json();		
 		Assert.assertEquals("blah", doc.get("field").getAsString());
 		
-		couch.delete();
+		couch.drop();
 	}
 }

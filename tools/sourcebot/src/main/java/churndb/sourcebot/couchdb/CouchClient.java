@@ -12,19 +12,23 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-
 public class CouchClient {
 
 	private String couchdbHost;
 	private String database;
 
-	public CouchClient(String couchdbHost) {
+	public CouchClient(String couchdbHost, String database) {
 		this.couchdbHost = normalizePath(couchdbHost);
+		this.database = normalizePath(database);
 	}
 
 	public void setDatabase(String database) {
-		this.database = normalizePath(database);		
-	}	
+		this.database = normalizePath(database);
+	}
+
+	public CouchResponse welcome() {
+		return executeRequest(new HttpGet(couchdbHost));
+	}
 	
 	public CouchResponse get() {
 		return get("");
@@ -34,10 +38,10 @@ public class CouchClient {
 		return executeRequest(new HttpGet(requestUrl(url)));
 	}
 
-	public void put() {
+	public void create() {
 		put("");
-	}	
-	
+	}
+
 	public CouchResponse put(String url) {
 		return executeRequest(new HttpPut(requestUrl(url)));
 	}
@@ -54,10 +58,10 @@ public class CouchClient {
 		return executeRequest(request);
 	}
 
-	public void delete() {
+	public void drop() {
 		delete("");
 	}
-		
+
 	public CouchResponse delete(String url) {
 		return executeRequest(new HttpDelete(requestUrl(url)));
 	}
@@ -80,21 +84,19 @@ public class CouchClient {
 	private String requestUrl(String url) {
 		StringBuilder sb = new StringBuilder(couchdbHost);
 
-		if(database != null) {
+		if (database != null) {
 			sb.append(database);
 		}
-		
+
 		if (url != null) {
 			sb.append(url);
 		}
-			
-		
 
 		return sb.toString();
 	}
 
 	private String normalizePath(String host) {
-		if(host.charAt(host.length()-1) != '/') {
+		if (host.charAt(host.length() - 1) != '/') {
 			return host + "/";
 		}
 		return host;
