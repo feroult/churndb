@@ -1,6 +1,7 @@
 package churndb.sourcebot.couchdb;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -8,28 +9,57 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.gson.JsonObject;
 
 public class CouchClient {
 
 	private String couchdbHost;
+	private String database;
 
 	public CouchClient(String couchdbHost) {
-		this.couchdbHost = couchdbHost;
+		this.couchdbHost = normalizePath(couchdbHost);
 	}
 
-	public CouchResponse get(String... params) {
-		return executeRequest(new HttpGet(requestUrl(params)));
+	public void setDatabase(String database) {
+		this.database = normalizePath(database);		
+	}	
+	
+	public CouchResponse get() {
+		return get("");
 	}
 
-	public JsonObject put(String... params) {
-		return executeRequest(new HttpPut(requestUrl(params))).json();
+	public CouchResponse get(String url) {
+		return executeRequest(new HttpGet(requestUrl(url)));
 	}
 
-	public JsonObject delete(String... params)  {
-		return executeRequest(new HttpDelete(requestUrl(params))).json();
+	public void put() {
+		put("");
+	}	
+	
+	public CouchResponse put(String url) {
+		return executeRequest(new HttpPut(requestUrl(url)));
+	}
+
+	public CouchResponse put(String url, String body) {
+		HttpPut request = new HttpPut(requestUrl(url));
+
+		try {
+			request.setEntity(new StringEntity(body));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+
+		return executeRequest(request);
+	}
+
+	public void delete() {
+		delete("");
+	}
+		
+	public CouchResponse delete(String url) {
+		return executeRequest(new HttpDelete(requestUrl(url)));
 	}
 
 	private CouchResponse executeRequest(HttpUriRequest request) {
@@ -47,24 +77,26 @@ public class CouchClient {
 		}
 	}
 
-	private String requestUrl(String[] params) {
+	private String requestUrl(String url) {
 		StringBuilder sb = new StringBuilder(couchdbHost);
 
-		if (params == null || params.length == 0) {
-			return sb.toString();
+		if(database != null) {
+			sb.append(database);
 		}
-
-		sb.append(params[0]);
-
-		if (params.length > 1) {
-			sb.append("?");
+		
+		if (url != null) {
+			sb.append(url);
 		}
-
-		for (int i = 1; i < params.length; i++) {
-			sb.append(params[i]);
-		}
+			
+		
 
 		return sb.toString();
 	}
 
+	private String normalizePath(String host) {
+		if(host.charAt(host.length()-1) != '/') {
+			return host + "/";
+		}
+		return host;
+	}
 }
