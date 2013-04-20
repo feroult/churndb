@@ -22,13 +22,17 @@ public class CouchClient {
 		this.database = normalizePath(database);
 	}
 
-	public void setDatabase(String database) {
-		this.database = normalizePath(database);
-	}
-
 	public CouchResponse welcome() {
 		return executeRequest(new HttpGet(couchdbHost));
 	}
+	
+	public void create() {
+		put("");
+	}
+
+	public void drop() {
+		delete("");
+	}	
 	
 	public CouchResponse get() {
 		return get("");
@@ -36,10 +40,6 @@ public class CouchClient {
 
 	public CouchResponse get(String url) {
 		return executeRequest(new HttpGet(requestUrl(url)));
-	}
-
-	public void create() {
-		put("");
 	}
 
 	public CouchResponse put(String url) {
@@ -57,11 +57,7 @@ public class CouchClient {
 
 		return executeRequest(request);
 	}
-
-	public void drop() {
-		delete("");
-	}
-
+	
 	public CouchResponse delete(String url) {
 		return executeRequest(new HttpDelete(requestUrl(url)));
 	}

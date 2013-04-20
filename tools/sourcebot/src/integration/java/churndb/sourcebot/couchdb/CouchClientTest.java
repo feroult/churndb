@@ -43,7 +43,7 @@ public class CouchClientTest {
 	}
 
 	private void deleteDatabaseIfExists() {
-		CouchResponse response = couch.welcome();
+		CouchResponse response = couch.get();
 		if (!response.objectNotFound()) {
 			couch.drop();
 		}
@@ -53,7 +53,6 @@ public class CouchClientTest {
 	public void testCreateDeleteDocument() {
 		deleteDatabaseIfExists();
 		
-		couch.setDatabase(CHURNDB);		
 		couch.create();		
 		
 		couch.put(DOC, "{\"field\": \"blah\"}");
