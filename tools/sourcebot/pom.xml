@@ -42,6 +42,10 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.javancss</groupId>
+			<artifactId>javancss</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -94,21 +98,10 @@
 						</configuration>
 					</execution>
 
-					<!-- execution>
-						<id>add-test-resource</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>add-test-resource</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>src/integration/resources</directory>
-									<targetPath>resources</targetPath>
-								</resource>
-							</resources>
-						</configuration>
-					</execution-->
+					<!-- execution> <id>add-test-resource</id> <phase>generate-resources</phase> 
+						<goals> <goal>add-test-resource</goal> </goals> <configuration> <resources> 
+						<resource> <directory>src/integration/resources</directory> <targetPath>resources</targetPath> 
+						</resource> </resources> </configuration> </execution -->
 
 				</executions>
 			</plugin>
@@ -153,6 +146,11 @@
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>4.2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.javancss</groupId>
+				<artifactId>javancss</artifactId>
+				<version>32.53</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

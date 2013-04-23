@@ -8,7 +8,8 @@ public class JavaSourceTest {
 
 	@Test
 	public void loadTest() {
-		JavaSource source = new JavaSource("/Address.java");		
+		JavaSource source = new JavaSource("/Address.java");
+		
 		Assert.assertNotNull(source.getId());
 		Assert.assertEquals("/Address.java", source.getPath());
 	}
