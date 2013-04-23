@@ -16,7 +16,7 @@ public class RevisionsTest {
 	private SVN svn = new SVN(BASE_REPO_URL) {
 		@Override
 		protected String exec(String command) {
-			return XMLUtils.xmlFromResource("/churndb/tools/repository/svn/simple_log.xml");
+			return XMLUtils.xmlFromResource("/churndb/sourcebot/importer/svn/simple_log.xml");
 		}
 	};
 

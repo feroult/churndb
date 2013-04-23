@@ -12,7 +12,7 @@ public class LogEntryTest {
 
 	@Test
 	public void testParse() {
-		List<LogEntry> logs = LogEntry.parse(XMLUtils.xmlFromResource("/churndb/tools/repository/svn/simple_log.xml"));
+		List<LogEntry> logs = LogEntry.parse(XMLUtils.xmlFromResource("/churndb/sourcebot/importer/svn/simple_log.xml"));
 		
 		LogEntry firstLog = logs.get(0);
 		Assert.assertEquals("1", firstLog.getRevision());
