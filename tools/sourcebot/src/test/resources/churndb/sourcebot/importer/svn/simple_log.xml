@@ -4,8 +4,8 @@
 		<author>eder</author>
 		<date>2013-04-15T19:33:30.599299Z</date>
 		<paths>
-			<path kind="" action="M">/Customer.java</path>
-			<path action="M" kind="">/Address.java</path>
+			<path kind="" action="M">/Customer.java_</path>
+			<path action="M" kind="">/Address.java_</path>
 		</paths>
 		<msg>first revision</msg>
 	</logentry>
@@ -13,8 +13,8 @@
 		<author>marco</author>
 		<date>2013-04-16T12:56:15.950322Z</date>
 		<paths>
-			<path kind="" action="M">/Customer.java</path>
-			<path kind="" action="M">/Product.java</path>
+			<path kind="" action="M">/Customer.java_</path>
+			<path kind="" action="M">/Product.java_</path>
 		</paths>
 		<msg>second revision</msg>
 	</logentry>
@@ -22,7 +22,7 @@
 		<author>eder</author>
 		<date>2013-04-16T13:42:35.441570Z</date>
 		<paths>
-			<path kind="" action="M">/Product.java</path>
+			<path kind="" action="M">/Product.java_</path>
 		</paths>
 		<msg>third revision</msg>
 	</logentry>

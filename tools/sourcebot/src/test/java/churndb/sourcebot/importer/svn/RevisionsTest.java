@@ -6,8 +6,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import churndb.sourcebot.importer.svn.SVN;
-import churndb.sourcebot.utils.XMLUtils;
+import churndb.sourcebot.utils.ResourceUtils;
 
 public class RevisionsTest {
 
@@ -16,7 +15,7 @@ public class RevisionsTest {
 	private SVN svn = new SVN(BASE_REPO_URL) {
 		@Override
 		protected String exec(String command) {
-			return XMLUtils.xmlFromResource("/churndb/sourcebot/importer/svn/simple_log.xml");
+			return ResourceUtils.asString("/churndb/sourcebot/importer/svn/simple_log.xml");
 		}
 	};
 
@@ -24,7 +23,7 @@ public class RevisionsTest {
 	public void testRevisionsByFile() {
 		Map<String, List<String>> revisions = svn.revisionsByFile("{2013-04-01}:HEAD");	
 		
-		Assert.assertArrayEquals(new String[] {"1", "2"}, revisions.get("/Customer.java").toArray(new String[] {}));		
-		Assert.assertArrayEquals(new String[] {"2", "3"}, revisions.get("/Product.java").toArray(new String[] {}));
+		Assert.assertArrayEquals(new String[] {"1", "2"}, revisions.get("/Customer.java_").toArray(new String[] {}));		
+		Assert.assertArrayEquals(new String[] {"2", "3"}, revisions.get("/Product.java_").toArray(new String[] {}));
 	}
 }
