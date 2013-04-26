@@ -11,19 +11,19 @@ public class JavaSourceMetrics {
 	
 	public static final String CCN = "ccn";
 
-	public void apply(JavaSource source) {
+	public void apply(Source source) {
 		Javancss javancss = new Javancss(source.getFile());
 		
 		applyCCN(source, javancss);
 		applyLOC(source, javancss);
 	}
 
-	private void applyLOC(JavaSource source, Javancss javancss) {
+	private void applyLOC(Source source, Javancss javancss) {
 		source.setMetric(LOC, javancss.getLOC());
 	}
 
 	@SuppressWarnings("unchecked")
-	private void applyCCN(JavaSource source, Javancss javancss) {
+	private void applyCCN(Source source, Javancss javancss) {
 		List<FunctionMetric> functionMetrics = (List<FunctionMetric>)javancss.getFunctionMetrics();
 		
 		if(functionMetrics == null) {

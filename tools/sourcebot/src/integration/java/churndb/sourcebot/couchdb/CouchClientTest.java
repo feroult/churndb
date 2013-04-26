@@ -29,8 +29,7 @@ public class CouchClientTest {
 
 	@Test
 	public void testCreateDropDatabase() {
-		dropDatabaseIfExists();
-
+		couch.dropIfExists();
 		couch.create();
 
 		JsonObject info = couch.get().json();
@@ -41,18 +40,10 @@ public class CouchClientTest {
 		CouchResponse response = couch.get(CHURNDB);
 		Assert.assertTrue(response.objectNotFound());
 	}
-
-	private void dropDatabaseIfExists() {
-		CouchResponse response = couch.get();
-		if (!response.objectNotFound()) {
-			couch.drop();
-		}
-	}
 	
 	@Test
 	public void testCreateDeleteDocument() {
-		dropDatabaseIfExists();
-		
+		couch.dropIfExists();		
 		couch.create();		
 		
 		couch.put(DOC, "{\"field\": \"blah\"}");

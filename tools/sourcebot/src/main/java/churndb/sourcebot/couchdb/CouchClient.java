@@ -97,4 +97,11 @@ public class CouchClient {
 		}
 		return host;
 	}
+
+	public void dropIfExists() {
+		CouchResponse response = get();
+		if (!response.objectNotFound()) {
+			drop();
+		}
+	}
 }

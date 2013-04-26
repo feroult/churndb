@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import churndb.sourcebot.model.JavaSource;
+import churndb.sourcebot.model.Source;
 import churndb.sourcebot.model.JavaSourceMetrics;
 
 public class JavaSourceFolderScanner {
@@ -18,15 +18,15 @@ public class JavaSourceFolderScanner {
 		this.path = path;
 	}
 
-	public List<JavaSource> apply(JavaSourceMetrics metrics) {
+	public List<Source> apply(JavaSourceMetrics metrics) {
 
-		List<JavaSource> sources = new ArrayList<JavaSource>();
+		List<Source> sources = new ArrayList<Source>();
 		
 		Iterator<File> files = FileUtils.iterateFiles(new File(path), new String [] {"java", "java_"}, true);
 				
 		while(files.hasNext()) {
 			File file = files.next();
-			JavaSource source = new JavaSource(path, file);
+			Source source = new Source(path, file);
 			metrics.apply(source);
 			sources.add(source);
 		}
