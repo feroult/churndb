@@ -39,7 +39,7 @@ public class FolderJobTest  {
 		FolderJob job = new FolderJob("51", "Confidence", ResourceUtils.realPath("/churndb/sourcebot/importer/project/"));
 				
 		job.run(couch);
-		
+				
 		for(Source source : getMockSources()) {
 			JsonObject json = couch.get(source.getPath()).json();			
 			Assert.assertEquals(source.getPath(), json.get("path").getAsString());

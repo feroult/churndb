@@ -1,25 +1,13 @@
 package churndb.sourcebot.couchdb;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
 
-public class CouchClientTest {
-
-	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
-
-	private static final String CHURNDB = "churndbtest";
+public class CouchClientTest extends CreateDropCouchTest {
 
 	private static final String DOC = "doc";
-
-	private CouchClient couch;
-
-	@Before
-	public void before() {
-		couch = new CouchClient(COUCHDB_HOST, CHURNDB);
-	}
 	
 	@Test
 	public void testWelcome() {
@@ -52,5 +40,5 @@ public class CouchClientTest {
 		Assert.assertEquals("blah", doc.get("field").getAsString());
 		
 		couch.drop();
-	}
+	}	
 }

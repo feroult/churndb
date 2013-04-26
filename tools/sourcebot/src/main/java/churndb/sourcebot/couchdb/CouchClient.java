@@ -104,4 +104,13 @@ public class CouchClient {
 			drop();
 		}
 	}
+
+	public CouchResponse view(String view, String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void put(DesignDocument designDocument) {
+		put(designDocument.getId(), designDocument.json());
+	}
 }
