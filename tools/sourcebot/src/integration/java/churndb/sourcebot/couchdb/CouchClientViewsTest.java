@@ -58,17 +58,13 @@ public class CouchClientViewsTest extends CouchTestBase {
 	
 	@Test
 	public void testGetFromView() {						
-		Document doc = new Document();
-		
+		Document doc = new Document();		
 		doc.setName("/Product.java_");
-		doc.setType("source");		
-		
+		doc.setType("source");				
 		couch.put("123", doc.json());
+		
 		JsonObject jsonView = couch.view("core/sources", "/Product.java_").rows(0);
-		
-		
-		
-		JsonObject json = couch.get(jsonView.get("id").getAsString()).json();
+		JsonObject json = couch.get(jsonView.get("id")).json();
 		
 		Assert.assertEquals("/Product.java_", json.get("name").getAsString());
 		Assert.assertEquals("source", json.get("type").getAsString());		

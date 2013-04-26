@@ -12,6 +12,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.google.gson.JsonElement;
+
 public class CouchClient {
 
 	private String couchdbHost;
@@ -115,5 +117,9 @@ public class CouchClient {
 
 	public void put(DesignDocument designDocument) {
 		put(designDocument.getId(), designDocument.json());
+	}
+
+	public CouchResponse get(JsonElement jsonElement) {
+		return get(jsonElement.getAsString());
 	}
 }
