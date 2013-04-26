@@ -24,7 +24,14 @@ public class Source {
 	}
 
 	private String extractRoot(String root, String path) {
-		return path.replaceFirst(root, "");
+		return path.replaceFirst(normalizePath(root), "/");
+	}
+
+	private String normalizePath(String root) {
+		if(!root.endsWith("/")) {
+			root += "/";
+		}
+		return root;
 	}
 
 	public String getId() {

@@ -6,16 +6,17 @@ import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.importer.folder.JavaSourceFolderScanner;
 import churndb.sourcebot.model.JavaSourceMetrics;
 import churndb.sourcebot.model.Source;
-import churndb.sourcebot.utils.ResourceUtils;
 
 public class FolderJob {
 
+	private String path;
+
 	public FolderJob(String code, String name, String path) {
-		// TODO Auto-generated constructor stub
+		this.path = path;
 	}
 
 	public List<Source> loadSources() {
-		JavaSourceFolderScanner scanner = new JavaSourceFolderScanner(ResourceUtils.realPath("/churndb/sourcebot/importer/project/"));				
+		JavaSourceFolderScanner scanner = new JavaSourceFolderScanner(path);				
 		List<Source> sources = scanner.apply(new JavaSourceMetrics());
 		return sources;
 	}

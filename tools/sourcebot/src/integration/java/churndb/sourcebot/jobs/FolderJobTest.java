@@ -51,7 +51,7 @@ public class FolderJobTest  {
 	private List<Source> getMockSources() {
 		List<Source> sources = new ArrayList<Source>();
 		
-		Source product = new Source("Product.java_");
+		Source product = new Source("/Product.java_");
 		product.setMetric(JavaSourceMetrics.CCN, 25);
 		product.setMetric(JavaSourceMetrics.LOC, 10);
 		
