@@ -9,7 +9,7 @@ import churndb.sourcebot.utils.ResourceUtils;
 
 import com.google.gson.JsonObject;
 
-public class CouchClientDesignDocumentTest extends CreateDropCouchTest {
+public class CouchClientDesignDocumentTest extends CouchTestBase {
 
 	@Before
 	public void before() {

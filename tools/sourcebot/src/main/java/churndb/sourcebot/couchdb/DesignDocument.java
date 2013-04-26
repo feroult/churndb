@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 
 public class DesignDocument {
 
-	private String id;
+	private transient String id;
 
 	private Map<String, View> views;
 	

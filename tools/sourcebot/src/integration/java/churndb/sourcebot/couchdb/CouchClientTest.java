@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.google.gson.JsonObject;
 
-public class CouchClientTest extends CreateDropCouchTest {
+public class CouchClientTest extends CouchTestBase {
 
 	private static final String DOC = "doc";
 	

@@ -105,9 +105,12 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponse view(String view, String key) {
-		// TODO Auto-generated method stub
-		return null;
+	public CouchResponse view(String uri, String key) {
+		String[] split = uri.split("/");
+		String module = split[0];
+		String view = split[1];
+		
+		return get("_design/" + module + "/_view/" + view + "?KEY=" + key);
 	}
 
 	public void put(DesignDocument designDocument) {

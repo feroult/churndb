@@ -23,4 +23,8 @@ public class CouchResponse {
 	public boolean objectNotFound() {
 		return statusLine.getStatusCode() == HttpStatus.SC_NOT_FOUND;
 	}
+
+	public JsonObject rows(int i) {
+		return json.get("rows").getAsJsonArray().get(i).getAsJsonObject();
+	}
 }

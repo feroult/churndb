@@ -3,13 +3,14 @@ package churndb.sourcebot.couchdb;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import churndb.sourcebot.utils.ResourceUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class CouchClientViewsTest extends CreateDropCouchTest {
+public class CouchClientViewsTest extends CouchTestBase {
 
 	public class Document {
 		private String name;
@@ -41,6 +42,13 @@ public class CouchClientViewsTest extends CreateDropCouchTest {
 	public void before() {
 		couch.dropIfExists();		
 		couch.create();		
+		createSimpleView();				
+	}
+
+	private void createSimpleView() {
+		DesignDocument core = new DesignDocument("core");		
+		core.addViewMap("sources", ResourceUtils.asString("/couch/views/simple/map.js"));		
+		couch.put(core);
 	}
 	
 	@After
@@ -49,7 +57,6 @@ public class CouchClientViewsTest extends CreateDropCouchTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testGetFromView() {						
 		Document doc = new Document();
 		
@@ -57,7 +64,11 @@ public class CouchClientViewsTest extends CreateDropCouchTest {
 		doc.setType("source");		
 		
 		couch.put("123", doc.json());
-		JsonObject json = couch.view("sources", "/Product.java_").json();
+		JsonObject jsonView = couch.view("core/sources", "/Product.java_").rows(0);
+		
+		
+		
+		JsonObject json = couch.get(jsonView.get("id").getAsString()).json();
 		
 		Assert.assertEquals("/Product.java_", json.get("name").getAsString());
 		Assert.assertEquals("source", json.get("type").getAsString());		
