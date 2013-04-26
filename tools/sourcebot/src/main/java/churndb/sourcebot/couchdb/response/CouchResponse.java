@@ -1,4 +1,4 @@
-package churndb.sourcebot.couchdb;
+package churndb.sourcebot.couchdb.response;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -8,8 +8,8 @@ import com.google.gson.JsonParser;
 
 public class CouchResponse {
 
-	private JsonObject json;
-	private StatusLine statusLine;
+	protected JsonObject json;
+	protected StatusLine statusLine;
 
 	public CouchResponse(String responseBody, StatusLine statusLine) {
 		this.statusLine = statusLine;
@@ -24,7 +24,4 @@ public class CouchResponse {
 		return statusLine.getStatusCode() == HttpStatus.SC_NOT_FOUND;
 	}
 
-	public JsonObject rows(int i) {
-		return json.get("rows").getAsJsonArray().get(i).getAsJsonObject();
-	}
 }

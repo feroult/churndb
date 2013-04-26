@@ -3,6 +3,8 @@ package churndb.sourcebot.couchdb;
 import org.junit.Assert;
 import org.junit.Test;
 
+import churndb.sourcebot.couchdb.response.CouchResponse;
+
 import com.google.gson.JsonObject;
 
 public class CouchClientTest extends CouchTestBase {

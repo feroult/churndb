@@ -12,6 +12,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import churndb.sourcebot.couchdb.response.CouchResponse;
+import churndb.sourcebot.couchdb.response.CouchResponseHandler;
+import churndb.sourcebot.couchdb.response.CouchResponseView;
+
 import com.google.gson.JsonElement;
 
 public class CouchClient {
@@ -63,12 +67,16 @@ public class CouchClient {
 	public CouchResponse delete(String url) {
 		return executeRequest(new HttpDelete(requestUrl(url)));
 	}
-
+	
 	private CouchResponse executeRequest(HttpUriRequest request) {
+		return executeRequest(request, new CouchResponseHandler());
+	}
+
+	private CouchResponse executeRequest(HttpUriRequest request, CouchResponseHandler handler) {
 		HttpClient httpclient = new DefaultHttpClient();
 
 		try {
-			return httpclient.execute(request, new CouchResponseHandler());
+			return httpclient.execute(request, handler);
 
 		} catch (ClientProtocolException e) {
 			throw new RuntimeException(e);
@@ -107,12 +115,13 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponse view(String uri, String key) {
+	public CouchResponseView view(String uri, String key) {
 		String[] split = uri.split("/");
 		String module = split[0];
 		String view = split[1];
 		
-		return get("_design/" + module + "/_view/" + view + "?KEY=" + key);
+		HttpGet request = new HttpGet(requestUrl("_design/" + module + "/_view/" + view + "?KEY=" + key));		
+		return (CouchResponseView)executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
 	}
 
 	public void put(DesignDocument designDocument) {
