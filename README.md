@@ -1,3 +1,3 @@
 #ChurnDB
-Source code churn visualization
+Source code database for churn/other metrics visualization
  
