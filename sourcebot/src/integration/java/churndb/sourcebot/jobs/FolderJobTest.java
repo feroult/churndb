@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import churndb.sourcebot.couchdb.CouchClient;
+import churndb.sourcebot.importer.svn.SVN;
 import churndb.sourcebot.model.Source;
 import churndb.sourcebot.model.JavaSourceMetrics;
 import churndb.sourcebot.utils.ResourceUtils;
@@ -47,6 +48,28 @@ public class FolderJobTest  {
 					json.get("metrics").getAsJsonObject().get(JavaSourceMetrics.CCN).getAsString());
 		}					
 	}
+	
+	/*
+	@Test
+	public void testLoadProjectFirstTime() {				
+		
+		
+		SourceBot bot = new SourceBot(fakeProject());
+		
+		SVN svn = new SVN();
+		
+		bot.loadFromTo(svn, couch);
+		
+		
+	}
+
+	private Project fakeProject() {
+		Project project = new Project();
+	
+		project.setName("Fake Project");
+		project.setRoot(ResourceUtils.realPath("/churndb/sourcebot/importer/project/"));
+		return project;
+	}*/
 
 	private List<Source> getMockSources() {
 		List<Source> sources = new ArrayList<Source>();
