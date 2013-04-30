@@ -42,5 +42,19 @@ public class CouchClientTest extends CouchTestBase {
 		Assert.assertEquals("blah", doc.get("field").getAsString());
 		
 		couch.drop();
-	}	
+	}
+	
+	@Test
+	public void testCreateWithGeneratedId() {
+		couch.dropIfExists();
+		couch.create();
+		
+		String id = couch.id();
+		couch.put(id, "{\"teste\": \"x\"}");
+		
+		JsonObject doc = couch.get(id).json();		
+		Assert.assertEquals("x", doc.get("teste").getAsString());		
+
+		couch.drop();
+	}
 }

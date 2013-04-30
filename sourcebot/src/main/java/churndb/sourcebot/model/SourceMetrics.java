@@ -5,7 +5,7 @@ import java.util.List;
 import javancss.FunctionMetric;
 import javancss.Javancss;
 
-public class JavaSourceMetrics {
+public class SourceMetrics {
 
 	public static final String LOC = "LOC";
 	

@@ -22,5 +22,9 @@ public class ResourceUtils {
 	public static String realPath(String uri) {
 		return ResourceUtils.class.getResource(uri).getPath();
 	}
+
+	public static String tempPath(String path) {
+		return realPath("/churndb") + "/../../../../tmp" + path;
+	}
 	
 }

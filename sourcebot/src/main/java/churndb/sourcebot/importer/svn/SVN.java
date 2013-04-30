@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class SVN {
 
-	private static final String SAFE_REVISIONS_PATTERN = "[0-9A-Za-z.:\\-{}]+";
+	private static final String SAFE_PATTERN = "[0-9A-Za-z.:\\-{} /_]+";
 
 	private String base_url;
 
@@ -20,8 +20,6 @@ public class SVN {
 	}
 
 	public Map<String, List<String>> revisionsByFile(String revisions) {
-		guardSafeRevisionsPattern(revisions);
-
 		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
 		List<LogEntry> logs = LogEntry.parse(exec("svn log -v -r" + revisions + " " + base_url + " --xml"));
@@ -35,12 +33,6 @@ public class SVN {
 		return map;
 	}
 
-	private void guardSafeRevisionsPattern(String revisions) {
-		if (!Pattern.matches(SAFE_REVISIONS_PATTERN, revisions)) {
-			throw new RuntimeException("String \"" + revisions + "\" does not respect the safe revision pattern " + SAFE_REVISIONS_PATTERN);
-		}
-	}
-
 	private void addRevision(HashMap<String, List<String>> map, String path, String revision) {
 		if (!map.containsKey(path)) {
 			map.put(path, new ArrayList<String>());
@@ -50,8 +42,19 @@ public class SVN {
 		revisions.add(revision);
 	}
 
+	public void checkout(String to) {
+		exec("svn co " + base_url + " " + to);
+	}
+	
+	private void guardSafeCommand(String cmd) {
+		if (!Pattern.matches(SAFE_PATTERN, cmd)) {
+			throw new RuntimeException("String \"" + cmd + "\" does not respect the safe revision pattern " + SAFE_PATTERN);
+		}
+	}
+	
 	protected String exec(String command) {
-
+		guardSafeCommand(command);		
+		
 		try {
 			Process proc = Runtime.getRuntime().exec(command);
 
@@ -68,7 +71,7 @@ public class SVN {
 			throw new RuntimeException(e);
 		}
 	}
-
+		
 	// just-for-integrated-test
 	public static void main(String[] args) {
 		SVN svn = new SVN("https://dextranet.dextra.com.br/svn/confidence_operacao/branches/sacs/3.0");

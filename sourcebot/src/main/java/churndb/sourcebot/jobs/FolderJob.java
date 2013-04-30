@@ -3,8 +3,8 @@ package churndb.sourcebot.jobs;
 import java.util.List;
 
 import churndb.sourcebot.couchdb.CouchClient;
-import churndb.sourcebot.importer.folder.JavaSourceFolderScanner;
-import churndb.sourcebot.model.JavaSourceMetrics;
+import churndb.sourcebot.importer.folder.SourceScanner;
+import churndb.sourcebot.model.SourceMetrics;
 import churndb.sourcebot.model.Source;
 
 public class FolderJob {
@@ -16,8 +16,8 @@ public class FolderJob {
 	}
 
 	public List<Source> loadSources() {
-		JavaSourceFolderScanner scanner = new JavaSourceFolderScanner(path);				
-		List<Source> sources = scanner.apply(new JavaSourceMetrics());
+		SourceScanner scanner = new SourceScanner(path);				
+		List<Source> sources = scanner.apply(new SourceMetrics());
 		return sources;
 	}
 

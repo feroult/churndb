@@ -8,17 +8,17 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import churndb.sourcebot.model.Source;
-import churndb.sourcebot.model.JavaSourceMetrics;
+import churndb.sourcebot.model.SourceMetrics;
 
-public class JavaSourceFolderScanner {
+public class SourceScanner {
 
 	private String path;
 
-	public JavaSourceFolderScanner(String path) {
+	public SourceScanner(String path) {
 		this.path = path;
 	}
 
-	public List<Source> apply(JavaSourceMetrics metrics) {
+	public List<Source> apply(SourceMetrics metrics) {
 
 		List<Source> sources = new ArrayList<Source>();
 		

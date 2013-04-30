@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import churndb.sourcebot.couchdb.response.CouchResponse;
 import churndb.sourcebot.couchdb.response.CouchResponseHandler;
 import churndb.sourcebot.couchdb.response.CouchResponseView;
+import churndb.sourcebot.utils.JsonUtils;
 
 import com.google.gson.JsonElement;
 
@@ -31,15 +32,15 @@ public class CouchClient {
 	public CouchResponse welcome() {
 		return executeRequest(new HttpGet(couchdbHost));
 	}
-	
+
 	public void create() {
 		put("");
 	}
 
 	public void drop() {
 		delete("");
-	}	
-	
+	}
+
 	public CouchResponse get() {
 		return get("");
 	}
@@ -63,11 +64,11 @@ public class CouchClient {
 
 		return executeRequest(request);
 	}
-	
+
 	public CouchResponse delete(String url) {
 		return executeRequest(new HttpDelete(requestUrl(url)));
 	}
-	
+
 	private CouchResponse executeRequest(HttpUriRequest request) {
 		return executeRequest(request, new CouchResponseHandler());
 	}
@@ -115,13 +116,14 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponseView view(String uri, String key) {
+	public CouchResponseView view(String uri, String... keys) {
 		String[] split = uri.split("/");
 		String module = split[0];
 		String view = split[1];
-		
-		HttpGet request = new HttpGet(requestUrl("_design/" + module + "/_view/" + view + "?KEY=" + key));		
-		return (CouchResponseView)executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
+
+		HttpGet request = new HttpGet(
+				requestUrl("_design/" + module + "/_view/" + view + "?key=" + JsonUtils.key(keys)));
+		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
 	}
 
 	public void put(DesignDocument designDocument) {
@@ -130,5 +132,10 @@ public class CouchClient {
 
 	public CouchResponse get(JsonElement jsonElement) {
 		return get(jsonElement.getAsString());
+	}
+
+	public String id() {
+		CouchResponse request = executeRequest(new HttpGet(couchdbHost + "_uuids"));
+		return request.json().get("uuids").getAsJsonArray().get(0).getAsString();
 	}
 }

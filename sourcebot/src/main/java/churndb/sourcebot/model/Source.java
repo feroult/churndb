@@ -10,9 +10,13 @@ public class Source {
 
 	private String path;
 	
+	private String type = "source";
+	
 	private transient File file;
 	
 	private Map<String, String> metrics = new HashMap<String, String>();
+
+	private String project;
 	
 	public Source(String root, File file) {
 		this.path = extractRoot(root, file.getPath());
@@ -32,10 +36,6 @@ public class Source {
 			root += "/";
 		}
 		return root;
-	}
-
-	public String getId() {
-		return "";
 	}
 
 	public String getPath() {
@@ -61,4 +61,17 @@ public class Source {
 	public String json() {
 		return new Gson().toJson(this);
 	}
+
+	public void setProject(String project) {
+		this.project = project;		
+	}
+
+	public String getProject() {
+		return project;
+	}
+
+	public String getType() {
+		return type;
+	}
+
 }

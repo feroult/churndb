@@ -10,7 +10,7 @@ import churndb.sourcebot.utils.ResourceUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class CouchClientViewsTest extends CouchTestBase {
+public class ViewTest extends CouchTestBase {
 
 	public class Document {
 		private String name;
@@ -47,7 +47,7 @@ public class CouchClientViewsTest extends CouchTestBase {
 
 	private void createSimpleView() {
 		DesignDocument core = new DesignDocument("core");		
-		core.addViewMap("sources", ResourceUtils.asString("/couch/views/simple/map.js"));		
+		core.addViewMap("simple", ResourceUtils.asString("/couch/views/simple/map.js"));		
 		couch.put(core);
 	}
 	
@@ -63,7 +63,7 @@ public class CouchClientViewsTest extends CouchTestBase {
 		doc.setType("source");				
 		couch.put("123", doc.json());
 		
-		JsonObject jsonView = couch.view("core/sources", "/Product.java_").first();
+		JsonObject jsonView = couch.view("core/simple", "/Product.java_").first();
 		JsonObject json = couch.get(jsonView.get("id")).json();
 		
 		Assert.assertEquals("/Product.java_", json.get("name").getAsString());
