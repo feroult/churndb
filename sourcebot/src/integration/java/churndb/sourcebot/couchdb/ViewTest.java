@@ -58,10 +58,7 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testGetFirstFromView() {						
-		Document doc = new Document();		
-		doc.setName("/Product.java_");
-		doc.setType("source");				
-		couch.put("123", doc.json());
+		putDocument("123", "/Product.java_", "source");
 		
 		JsonObject jsonView = couch.view("core/simple", "/Product.java_").first();
 		JsonObject json = couch.get(jsonView.get("id")).json();
@@ -69,4 +66,22 @@ public class ViewTest extends CouchTestBase {
 		Assert.assertEquals("/Product.java_", json.get("name").getAsString());
 		Assert.assertEquals("source", json.get("type").getAsString());		
 	}
+	
+	@Test
+	public void testViewGet() {
+		putDocument("123", "/Product.java_", "source");
+		
+		Document doc = couch.viewGet("core/simple", "/Product.java_").bean(Document.class);
+		
+		Assert.assertEquals("/Product.java_", doc.getName());
+		Assert.assertEquals("source", doc.getType());
+	}
+	
+	private void putDocument(String id, String name, String type) {
+		Document doc = new Document();		
+		doc.setName(name);
+		doc.setType(type);				
+		couch.put(id, doc.json());
+	}	
 }
+

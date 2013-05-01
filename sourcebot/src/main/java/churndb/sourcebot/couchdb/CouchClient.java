@@ -117,8 +117,8 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponseView view(String uri, String... keys) {
-		String[] split = uri.split("/");
+	public CouchResponseView view(String viewUri, String... keys) {
+		String[] split = viewUri.split("/");
 		String module = split[0];
 		String view = split[1];
 
@@ -146,5 +146,10 @@ public class CouchClient {
 	public String id() {
 		CouchResponse request = executeRequest(new HttpGet(couchdbHost + "_uuids"));
 		return request.json().get("uuids").getAsJsonArray().get(0).getAsString();
+	}
+
+	public CouchResponse viewGet(String viewUri, String... keys) {
+		CouchResponseView viewResponse = view(viewUri, keys);		
+		return get(viewResponse.first().get("id"));
 	}
 }
