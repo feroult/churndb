@@ -89,12 +89,10 @@ public class SourceBotTest  {
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Customer.java_").exists());
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Address.java_").exists());
 		
-		JsonObject projectJsonView = couch.view("core/projects", project.getName()).first();		
-		Project projectFromCouch = couch.get(projectJsonView.get("id")).bean(Project.class);		
+		Project projectFromCouch = couch.viewGet("core/projects", project.getName()).bean(Project.class);		
 		Assert.assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
 		
-		JsonObject sourceJsonView = couch.view("core/sources", project.getName(), "/Product.java_").first();
-		Source source = couch.get(sourceJsonView.get("id")).bean(Source.class);
+		Source source = couch.viewGet("core/sources", project.getName(), "/Product.java_").bean(Source.class);
 		Assert.assertEquals("/Product.java_", source.getPath());
 	}
 
