@@ -9,11 +9,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.sourcebot.SourceBot;
 import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.couchdb.DesignDocument;
 import churndb.sourcebot.importer.svn.SVN;
 import churndb.sourcebot.model.Project;
+import churndb.sourcebot.model.Source;
 import churndb.sourcebot.utils.ResourceUtils;
 
 import com.google.gson.JsonObject;
@@ -89,13 +89,13 @@ public class SourceBotTest  {
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Customer.java_").exists());
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Address.java_").exists());
 		
-		JsonObject projectJsonView = couch.view("core/projects", project.getName()).first();
-		JsonObject projectJson = couch.get(projectJsonView.get("id")).json();
-		Assert.assertEquals(project.getRepoUrl(), projectJson.get("repoUrl").getAsString());
+		JsonObject projectJsonView = couch.view("core/projects", project.getName()).first();		
+		Project projectFromCouch = couch.get(projectJsonView.get("id")).bean(Project.class);		
+		Assert.assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
 		
-		JsonObject productJsonView = couch.view("core/sources", project.getName(), "/Product.java_").first();
-		JsonObject productJson = couch.get(productJsonView.get("id")).json();
-		Assert.assertEquals("/Product.java_", productJson.get("path").getAsString());
+		JsonObject sourceJsonView = couch.view("core/sources", project.getName(), "/Product.java_").first();
+		Source source = couch.get(sourceJsonView.get("id")).bean(Source.class);
+		Assert.assertEquals("/Product.java_", source.getPath());
 	}
 
 	private Project createProjectForTest() {
