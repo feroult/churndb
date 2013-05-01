@@ -16,8 +16,6 @@ import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
 import churndb.sourcebot.utils.ResourceUtils;
 
-import com.google.gson.JsonObject;
-
 public class SourceBotTest  {
 
 	public class SVNMock extends SVN {
