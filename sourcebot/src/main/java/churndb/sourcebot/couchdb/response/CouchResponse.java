@@ -3,6 +3,7 @@ package churndb.sourcebot.couchdb.response;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -22,6 +23,10 @@ public class CouchResponse {
 
 	public boolean objectNotFound() {
 		return statusLine.getStatusCode() == HttpStatus.SC_NOT_FOUND;
+	}
+
+	public <T> T bean(Class<T> clazz) {
+		return new Gson().fromJson(json, clazz);
 	}
 
 }

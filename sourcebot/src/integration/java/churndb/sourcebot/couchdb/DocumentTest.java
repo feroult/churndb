@@ -6,9 +6,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class DocumentTest extends CouchTestBase {
+
+	public class Person {
+		private String name;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public String json() {
+			return new Gson().toJson(this);
+		}
+	}
 
 	private static final String DOC = "doc";
 	
@@ -39,4 +56,17 @@ public class DocumentTest extends CouchTestBase {
 		JsonObject doc = couch.get(id).json();		
 		Assert.assertEquals("x", doc.get("teste").getAsString());		
 	}
+	
+	@Test
+	public void testGetBean() {
+		Person person = new Person();		
+		person.setName("James");
+		
+		couch.put(DOC, person.json());
+		person = couch.get(DOC).bean(Person.class);
+		
+		Assert.assertEquals("James", person.getName());
+	}
+	
+	
 }
