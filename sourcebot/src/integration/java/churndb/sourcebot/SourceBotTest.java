@@ -1,9 +1,7 @@
-package churndb.sourcebot.jobs;
+package churndb.sourcebot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -16,13 +14,11 @@ import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.couchdb.DesignDocument;
 import churndb.sourcebot.importer.svn.SVN;
 import churndb.sourcebot.model.Project;
-import churndb.sourcebot.model.Source;
-import churndb.sourcebot.model.SourceMetrics;
 import churndb.sourcebot.utils.ResourceUtils;
 
 import com.google.gson.JsonObject;
 
-public class FolderJobTest  {
+public class SourceBotTest  {
 
 	public class SVNMock extends SVN {
 		public SVNMock(String base_url) {
@@ -78,20 +74,6 @@ public class FolderJobTest  {
 	public void after() {
 		couch.drop();
 	}
-	
-	@Test
-	public void testImportFolderToCouch() {		
-		FolderJob job = new FolderJob("51", "Confidence", PROJECT_PATH);
-				
-		job.run(couch);
-				
-		for(Source source : getMockSources()) {
-			JsonObject json = couch.get(source.getPath()).json();			
-			Assert.assertEquals(source.getPath(), json.get("path").getAsString());
-			Assert.assertEquals(source.getMetric(SourceMetrics.CCN),
-					json.get("metrics").getAsJsonObject().get(SourceMetrics.CCN).getAsString());
-		}					
-	}
 		
 	@Test
 	public void testLoadProjectFirstTime() {							
@@ -125,18 +107,5 @@ public class FolderJobTest  {
 		project.setRepoUrl("http://xpto.com/svn");
 		project.setRoot(TMP_PROJECT_PATH);
 		return project;
-	}
-
-	
-	private List<Source> getMockSources() {
-		List<Source> sources = new ArrayList<Source>();
-		
-		Source product = new Source("/Product.java_");
-		product.setMetric(SourceMetrics.CCN, 25);
-		product.setMetric(SourceMetrics.LOC, 10);
-		
-		sources.add(product);
-		
-		return sources;
 	}
 }
