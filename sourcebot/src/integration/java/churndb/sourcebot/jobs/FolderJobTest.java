@@ -95,7 +95,6 @@ public class FolderJobTest  {
 	}
 		
 	@Test
-	@Ignore
 	public void testLoadProjectFirstTime() {							
 		Project project = createProjectForTest();
 		
@@ -109,12 +108,11 @@ public class FolderJobTest  {
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Customer.java_").exists());
 		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Address.java_").exists());
 		
-		// TODO from here
 		JsonObject projectJsonView = couch.view("core/projects", project.getName()).first();
 		JsonObject projectJson = couch.get(projectJsonView.get("id")).json();
-		Assert.assertEquals(project.getRepoUrl(), projectJson.get("url_repo").getAsString());
+		Assert.assertEquals(project.getRepoUrl(), projectJson.get("repoUrl").getAsString());
 		
-		JsonObject productJsonView = couch.view("core/sources", project.getName(), "/Product.java").first();
+		JsonObject productJsonView = couch.view("core/sources", project.getName(), "/Product.java_").first();
 		JsonObject productJson = couch.get(productJsonView.get("id")).json();
 		Assert.assertEquals("/Product.java_", productJson.get("path").getAsString());
 	}
