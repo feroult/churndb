@@ -1,4 +1,4 @@
-package churndb.sourcebot.importer.svn;
+package churndb.sourcebot.repository.svn;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;

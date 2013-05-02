@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.couchdb.DesignDocument;
-import churndb.sourcebot.importer.svn.SVN;
 import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
+import churndb.sourcebot.repository.svn.SVN;
 import churndb.sourcebot.utils.ResourceUtils;
 
 public class SourceBotTest  {

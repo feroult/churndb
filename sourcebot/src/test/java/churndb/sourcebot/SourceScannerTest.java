@@ -1,4 +1,4 @@
-package churndb.sourcebot.importer.folder;
+package churndb.sourcebot;
 
 import java.util.List;
 

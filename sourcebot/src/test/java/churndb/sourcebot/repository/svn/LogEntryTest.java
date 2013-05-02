@@ -1,11 +1,11 @@
-package churndb.sourcebot.importer.svn;
+package churndb.sourcebot.repository.svn;
 
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import churndb.sourcebot.importer.svn.LogEntry;
+import churndb.sourcebot.repository.svn.LogEntry;
 import churndb.sourcebot.utils.ResourceUtils;
 
 public class LogEntryTest {
