@@ -1,15 +1,9 @@
 package churndb.sourcebot.repository.git;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.errors.CorruptObjectException;
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,8 +14,7 @@ public class GitBasicTest extends Assert {
 	private static final String GIT_DIR = ResourceUtils.realPath("/churndb/sourcebot/importer/project/");
 
 	@Test
-	public void testInit() throws NoHeadException, GitAPIException, MissingObjectException,
-			IncorrectObjectTypeException, CorruptObjectException, IOException {
+	public void testInit() {
 
 		FileUtils.deleteQuietly(new File(GIT_DIR + ".git"));
 
