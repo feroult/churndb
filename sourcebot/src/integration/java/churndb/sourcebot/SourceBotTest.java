@@ -10,14 +10,14 @@ import org.junit.Test;
 
 import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.couchdb.DesignDocument;
+import churndb.sourcebot.git.GIT;
 import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
-import churndb.sourcebot.repository.git.GIT;
 import churndb.sourcebot.utils.ResourceUtils;
 
 public class SourceBotTest extends Assert {
 
-	private static final String PROJECT_PATH = ResourceUtils.realPath("/churndb/sourcebot/importer/project/");
+	private static final String PROJECT_PATH = ResourceUtils.getSimpleProjectPath();
 	
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 

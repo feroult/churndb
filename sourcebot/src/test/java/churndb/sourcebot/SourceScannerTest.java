@@ -13,7 +13,7 @@ public class SourceScannerTest {
 
 	@Test
 	public void testImportJavaFolder() {		
-		SourceScanner scanner = new SourceScanner(ResourceUtils.realPath("/churndb/sourcebot/importer/project/"));				
+		SourceScanner scanner = new SourceScanner(ResourceUtils.getSimpleProjectPath());				
 		List<Source> sources = scanner.apply(new SourceMetrics());		
 		Assert.assertEquals(3, sources.size());
 	}

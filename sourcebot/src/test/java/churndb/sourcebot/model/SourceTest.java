@@ -25,7 +25,7 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = ResourceUtils.asFile("/churndb/sourcebot/importer/project/Product.java_");
+		File file = ResourceUtils.asFile(ResourceUtils.getSimpleProjectPath("/Product.java_"));
 			
 		Source source = new Source("/Product.java_", file);		
 		new SourceMetrics().apply(source);
