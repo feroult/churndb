@@ -6,7 +6,7 @@ import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
 import churndb.sourcebot.model.SourceMetrics;
-import churndb.sourcebot.repository.svn.SVN;
+import churndb.sourcebot.repository.git.GIT;
 
 public class SourceBot {
 
@@ -16,8 +16,7 @@ public class SourceBot {
 		this.project = project;		
 	}
 
-	public void fromTo(SVN svn, CouchClient couch) {
-		svn.checkout(project.getRoot());		
+	public void fromTo(GIT git, CouchClient couch) {
 		couch.put(couch.id(), project.json());
 		
 		SourceScanner scanner = new SourceScanner(project.getRoot());

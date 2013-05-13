@@ -1,7 +1,6 @@
 package churndb.sourcebot;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -13,40 +12,13 @@ import churndb.sourcebot.couchdb.CouchClient;
 import churndb.sourcebot.couchdb.DesignDocument;
 import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
-import churndb.sourcebot.repository.svn.SVN;
+import churndb.sourcebot.repository.git.GIT;
 import churndb.sourcebot.utils.ResourceUtils;
 
-public class SourceBotTest  {
-
-	public class SVNMock extends SVN {
-		public SVNMock(String base_url) {
-			super(base_url);
-		}
-
-		@Override
-		protected String exec(String command) {
-			if(command.contains(" co ")) {
-				try {
-					FileUtils.copyDirectory(new File(PROJECT_PATH), new File(TMP_PROJECT_PATH));
-				} catch (IOException e) {					
-					throw new RuntimeException(e);
-				}
-				
-				return "";
-			}
-			
-			if(command.contains("log")) {
-				return ResourceUtils.asString("/churndb/sourcebot/importer/svn/simple_log.xml");	
-			}			
-			
-			return "";
-		}
-	}
+public class SourceBotTest extends Assert {
 
 	private static final String PROJECT_PATH = ResourceUtils.realPath("/churndb/sourcebot/importer/project/");
 	
-	private static final String TMP_PROJECT_PATH = ResourceUtils.tempPath("/test_project/");
-
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
 	private static final String CHURNDB = "churndbtest";	
@@ -74,34 +46,46 @@ public class SourceBotTest  {
 	}
 		
 	@Test
-	public void testLoadProjectFirstTime() {							
-		Project project = createProjectForTest();
+	public void testLoadProjectFirstTime() {			
+		
+		Project project = fakeProject();		
 		
 		SourceBot bot = new SourceBot(project);
+				
+		GIT git = fakeGIT();
 		
-		SVN svn = new SVNMock(project.getRepoUrl());	
-		
-		bot.fromTo(svn, couch);			
+		bot.fromTo(git, couch);			
 
-		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Product.java_").exists());
-		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Customer.java_").exists());
-		Assert.assertTrue(new File(TMP_PROJECT_PATH + "Address.java_").exists());
-		
 		Project projectFromCouch = couch.viewGet("core/projects", project.getName()).bean(Project.class);		
-		Assert.assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
+		assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
 		
 		Source source = couch.viewGet("core/sources", project.getName(), "/Product.java_").bean(Source.class);
-		Assert.assertEquals("/Product.java_", source.getPath());
+		assertEquals("/Product.java_", source.getPath());
 	}
 
-	private Project createProjectForTest() {
-		FileUtils.deleteQuietly(new File(TMP_PROJECT_PATH));
+	private GIT fakeGIT() {
 		
+		FileUtils.deleteQuietly(new File(PROJECT_PATH + ".git"));
+
+		GIT git = new GIT(PROJECT_PATH);
+		
+		git.init();
+
+		git.add("Product.java_");
+		git.add("Customer.java_");
+		git.add("Address.java_");
+		
+		git.commit("xpto");
+				
+		return git;
+	}
+
+	private Project fakeProject() {
 		Project project = new Project();
 		
 		project.setName("fake_project");
-		project.setRepoUrl("http://xpto.com/svn");
-		project.setRoot(TMP_PROJECT_PATH);
+		project.setRepoUrl("https://github.com/feroult/churndb.git");
+		project.setRoot(PROJECT_PATH);
 		return project;
 	}
 }
