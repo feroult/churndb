@@ -14,10 +14,11 @@ import churndb.sourcebot.git.GIT;
 import churndb.sourcebot.model.Project;
 import churndb.sourcebot.model.Source;
 import churndb.sourcebot.utils.ResourceUtils;
+import churndb.sourcebot.utils.TestConstants;
 
 public class SourceBotTest extends Assert {
 
-	private static final String PROJECT_PATH = ResourceUtils.getSimpleProjectPath();
+	private static final String PROJECT_PATH = ResourceUtils.realPath(TestConstants.SIMPLE_PROJECT_PATH);
 	
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 

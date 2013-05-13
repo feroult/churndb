@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import churndb.sourcebot.utils.ResourceUtils;
+import churndb.sourcebot.utils.TestConstants;
 
 public class SourceTest {
 
@@ -25,7 +26,7 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = ResourceUtils.asFile(ResourceUtils.getSimpleProjectPath("/Product.java_"));
+		File file = ResourceUtils.asFile(TestConstants.SIMPLE_PROJECT_PATH + "/Product.java_");
 			
 		Source source = new Source("/Product.java_", file);		
 		new SourceMetrics().apply(source);

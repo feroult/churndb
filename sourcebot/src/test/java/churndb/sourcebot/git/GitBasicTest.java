@@ -12,10 +12,11 @@ import churndb.sourcebot.git.Commit;
 import churndb.sourcebot.git.GIT;
 import churndb.sourcebot.git.Type;
 import churndb.sourcebot.utils.ResourceUtils;
+import churndb.sourcebot.utils.TestConstants;
 
 public class GitBasicTest extends Assert {
 
-	private static final String GIT_DIR = ResourceUtils.getSimpleProjectPath();
+	private static final String GIT_DIR = ResourceUtils.realPath(TestConstants.SIMPLE_PROJECT_PATH);
 
 	@Test
 	public void testInit() {
