@@ -77,7 +77,7 @@ public class GIT {
 			Iterable<RevCommit> call = git.log().call();
 						
 			for(RevCommit commit : call) {
-				commits.add(parseCommit(git.getRepository(), commit));
+				commits.add(parseCommit(commit));
 			}
 		
 			return commits;
@@ -87,45 +87,48 @@ public class GIT {
 		}			
 	}
 
-	public static Commit parseCommit(Repository repository, RevCommit revCommit) {
+	public Commit parseCommit(RevCommit revCommit) {
 		Commit commit = new Commit();
-		if (!hasCommits(repository)) {
+		if (!hasCommits()) {
 			return commit;
 		}
 		
-		RevWalk rw = new RevWalk(repository);
 		try {
 			if (revCommit.getParentCount() == 0) {
-				parseFirstCommit(repository, revCommit, commit);
+				parseFirstCommit(revCommit, commit);
 			} else {
-				parseOtherCommits(repository, revCommit, commit);
+				parseOtherCommits(revCommit, commit);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			rw.dispose();
 		}
 		
 		return commit;
 	}
 
-	private static void parseOtherCommits(Repository repository, RevCommit revCommit, Commit commit)
+	private void parseOtherCommits(RevCommit revCommit, Commit commit)
 			throws MissingObjectException, IncorrectObjectTypeException, IOException {
-		RevWalk rw = new RevWalk(repository);
-		RevCommit parent = rw.parseCommit(revCommit.getParent(0).getId());
-		DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
-		df.setRepository(repository);
-		df.setDiffComparator(RawTextComparator.DEFAULT);
-		df.setDetectRenames(true);
-		List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
-		for (DiffEntry diff : diffs) {					
-			commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());					
+		
+		RevWalk rw = new RevWalk(git.getRepository());
+		
+		try {			
+			RevCommit parent = rw.parseCommit(revCommit.getParent(0).getId());
+			DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
+			df.setRepository(git.getRepository());
+			df.setDiffComparator(RawTextComparator.DEFAULT);
+			df.setDetectRenames(true);
+			List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
+			for (DiffEntry diff : diffs) {					
+				commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());					
+			}
+		} finally {
+			rw.dispose();
 		}
 	}
 
-	private static void parseFirstCommit(Repository repository, RevCommit revCommit, Commit commit)
+	private void parseFirstCommit(RevCommit revCommit, Commit commit)
 			throws MissingObjectException, IncorrectObjectTypeException, CorruptObjectException, IOException {
-		TreeWalk tw = new TreeWalk(repository);
+		TreeWalk tw = new TreeWalk(git.getRepository());
 		tw.reset();
 		tw.setRecursive(true);
 		tw.addTree(revCommit.getTree());
@@ -135,10 +138,10 @@ public class GIT {
 		tw.release();
 	}
 
-	private static boolean hasCommits(Repository repository) {
-		if (repository != null && repository.getDirectory().exists()) {
-			return (new File(repository.getDirectory(), "objects").list().length > 2)
-					|| (new File(repository.getDirectory(), "objects/pack").list().length > 0);
+	private boolean hasCommits() {
+		if (git.getRepository() != null && git.getRepository().getDirectory().exists()) {
+			return (new File(git.getRepository().getDirectory(), "objects").list().length > 2)
+					|| (new File(git.getRepository().getDirectory(), "objects/pack").list().length > 0);
 		}
 		return false;
 	}
