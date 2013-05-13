@@ -7,18 +7,13 @@ import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.LogCommand;
-import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoFilepatternException;
-import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.api.errors.NoMessageException;
-import org.eclipse.jgit.api.errors.UnmergedPathsException;
-import org.eclipse.jgit.api.errors.WrongRepositoryStateException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
-import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+import org.eclipse.jgit.errors.CorruptObjectException;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -76,86 +71,71 @@ public class GIT {
 		}
 	}
 
-	public List<String> log() {
+	public List<Commit> log() {
 		try {
-			List<String> changes = new ArrayList<String>();			
+			List<Commit> commits = new ArrayList<Commit>();			
 			Iterable<RevCommit> call = git.log().call();
 						
 			for(RevCommit commit : call) {
-				changes.add("---");				
-				changes.addAll(getFilesInCommit(git.getRepository(), commit));
+				commits.add(parseCommit(git.getRepository(), commit));
 			}
 		
-			return changes;
+			return commits;
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}			
 	}
 
-	public static List<String> getFilesInCommit(Repository repository, RevCommit commit) {
-		List<String> list = new ArrayList<String>();
+	public static Commit parseCommit(Repository repository, RevCommit revCommit) {
+		Commit commit = new Commit();
 		if (!hasCommits(repository)) {
-			return list;
+			return commit;
 		}
+		
 		RevWalk rw = new RevWalk(repository);
 		try {
-			if (commit.getParentCount() == 0) {
-				TreeWalk tw = new TreeWalk(repository);
-				tw.reset();
-				tw.setRecursive(true);
-				tw.addTree(commit.getTree());
-				while (tw.next()) {
-					// list.add(new String(tw.getPathString(),
-					// tw.getPathString(), 0, tw
-					// .getRawMode(0), tw.getObjectId(0).getName(),
-					// commit.getId().getName(),
-					// ChangeType.ADD));
-					list.add("x: " + tw.getPathString());
-				}
-				tw.release();
+			if (revCommit.getParentCount() == 0) {
+				parseFirstCommit(repository, revCommit, commit);
 			} else {
-				RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
-				DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
-				df.setRepository(repository);
-				df.setDiffComparator(RawTextComparator.DEFAULT);
-				df.setDetectRenames(true);
-				List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
-				for (DiffEntry diff : diffs) {
-					String objectId = diff.getNewId().name();
-					if (diff.getChangeType().equals(ChangeType.DELETE)) {
-						// list.add(new String(diff.getOldPath(),
-						// diff.getOldPath(), 0, diff
-						// .getNewMode().getBits(), objectId,
-						// commit.getId().getName(), diff
-						// .getChangeType()));
-						list.add("y: " + diff.getOldPath());
-					} else if (diff.getChangeType().equals(ChangeType.RENAME)) {
-						// list.add(new String(diff.getOldPath(),
-						// diff.getNewPath(), 0, diff
-						// .getNewMode().getBits(), objectId,
-						// commit.getId().getName(), diff
-						// .getChangeType()));
-						list.add("z: " + diff.getNewPath());
-					} else {
-						// list.add(new String(diff.getNewPath(),
-						// diff.getNewPath(), 0, diff
-						// .getNewMode().getBits(), objectId,
-						// commit.getId().getName(), diff
-						// .getChangeType()));
-						list.add("w: " + diff.getNewPath());
-					}
-				}
+				parseOtherCommits(repository, revCommit, commit);
 			}
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		} finally {
 			rw.dispose();
 		}
-		return list;
+		
+		return commit;
 	}
 
-	public static boolean hasCommits(Repository repository) {
+	private static void parseOtherCommits(Repository repository, RevCommit revCommit, Commit commit)
+			throws MissingObjectException, IncorrectObjectTypeException, IOException {
+		RevWalk rw = new RevWalk(repository);
+		RevCommit parent = rw.parseCommit(revCommit.getParent(0).getId());
+		DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
+		df.setRepository(repository);
+		df.setDiffComparator(RawTextComparator.DEFAULT);
+		df.setDetectRenames(true);
+		List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
+		for (DiffEntry diff : diffs) {					
+			commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());					
+		}
+	}
+
+	private static void parseFirstCommit(Repository repository, RevCommit revCommit, Commit commit)
+			throws MissingObjectException, IncorrectObjectTypeException, CorruptObjectException, IOException {
+		TreeWalk tw = new TreeWalk(repository);
+		tw.reset();
+		tw.setRecursive(true);
+		tw.addTree(revCommit.getTree());
+		while (tw.next()) {
+			commit.add(Type.ADD, null, tw.getPathString());
+		}
+		tw.release();
+	}
+
+	private static boolean hasCommits(Repository repository) {
 		if (repository != null && repository.getDirectory().exists()) {
 			return (new File(repository.getDirectory(), "objects").list().length > 2)
 					|| (new File(repository.getDirectory(), "objects/pack").list().length > 0);

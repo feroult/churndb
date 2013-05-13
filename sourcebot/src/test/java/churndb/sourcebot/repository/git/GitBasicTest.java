@@ -10,17 +10,16 @@ import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 
 import churndb.sourcebot.utils.ResourceUtils;
 
-public class GitBasicTest {
+public class GitBasicTest extends Assert {
 
 	private static final String GIT_DIR = ResourceUtils.realPath("/churndb/sourcebot/importer/project/");
 
 	@Test
-	@Ignore
 	public void testInit() throws NoHeadException, GitAPIException, MissingObjectException,
 			IncorrectObjectTypeException, CorruptObjectException, IOException {
 
@@ -36,11 +35,16 @@ public class GitBasicTest {
 		git.add("Customer.java_");
 		git.commit("xpto");		
 		
-		List<String> changes = git.log();
+		List<Commit> commits = git.log(); 
+				
+		assertCommit(commits.get(0), Type.ADD, "Customer.java_");
+		assertCommit(commits.get(1), Type.ADD, "Product.java_");
+	}
 
-		for (String s : changes) {
-			System.out.println(s);
-		}
+	private void assertCommit(Commit commit, Type type, String path) {
+		Change change = commit.getChanges().get(0);
+		assertEquals(change.getType(), type);
+		assertEquals(change.getPath(), path);		
 	}
 
 }
