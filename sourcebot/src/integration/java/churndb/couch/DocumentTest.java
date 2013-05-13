@@ -1,4 +1,4 @@
-package churndb.sourcebot.couchdb;
+package churndb.couch;
 
 import org.junit.After;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package churndb.sourcebot;
+package churndb.bot;
 
 import java.io.File;
 
