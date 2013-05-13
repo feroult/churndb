@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import churndb.sourcebot.utils.ResourceUtils;
+import churndb.sourcebot.utils.TestConstants;
 
 import com.google.gson.JsonObject;
 
@@ -25,7 +26,7 @@ public class DesignDocumentTest extends CouchTestBase {
 	@Test
 	public void testCreateDesignDocumentWithView() {		
 		DesignDocument core = new DesignDocument("core");		
-		core.addViewMap("sources", ResourceUtils.asString("/couch/views/simple/map.js"));
+		core.addViewMap("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));
 		
 		couch.put(core);		
 		JsonObject json = couch.get("_design/core").json();

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import churndb.sourcebot.utils.ResourceUtils;
+import churndb.sourcebot.utils.TestConstants;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -47,7 +48,7 @@ public class ViewTest extends CouchTestBase {
 
 	private void createSimpleView() {
 		DesignDocument core = new DesignDocument("core");		
-		core.addViewMap("simple", ResourceUtils.asString("/couch/views/simple/map.js"));		
+		core.addViewMap("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));		
 		couch.put(core);
 	}
 	
