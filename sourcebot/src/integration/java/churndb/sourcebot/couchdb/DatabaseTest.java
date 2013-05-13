@@ -3,7 +3,7 @@ package churndb.sourcebot.couchdb;
 import org.junit.Assert;
 import org.junit.Test;
 
-import churndb.couchdb.response.CouchResponse;
+import churndb.couch.response.CouchResponse;
 
 import com.google.gson.JsonObject;
 

@@ -1,4 +1,4 @@
-package churndb.couchdb;
+package churndb.couch;
 
 import java.util.HashMap;
 import java.util.Map;

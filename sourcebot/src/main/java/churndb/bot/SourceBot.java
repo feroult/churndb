@@ -2,7 +2,7 @@ package churndb.bot;
 
 import java.util.List;
 
-import churndb.couchdb.CouchClient;
+import churndb.couch.CouchClient;
 import churndb.git.GIT;
 import churndb.model.Project;
 import churndb.model.Source;

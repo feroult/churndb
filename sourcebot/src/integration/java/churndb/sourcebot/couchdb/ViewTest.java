@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.couchdb.DesignDocument;
+import churndb.couch.DesignDocument;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 

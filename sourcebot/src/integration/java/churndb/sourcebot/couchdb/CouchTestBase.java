@@ -1,6 +1,6 @@
 package churndb.sourcebot.couchdb;
 
-import churndb.couchdb.CouchClient;
+import churndb.couch.CouchClient;
 
 public class CouchTestBase {
 

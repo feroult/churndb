@@ -1,4 +1,4 @@
-package churndb.couchdb;
+package churndb.couch;
 
 public class View {
 

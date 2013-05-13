@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import churndb.bot.SourceBot;
-import churndb.couchdb.CouchClient;
-import churndb.couchdb.DesignDocument;
+import churndb.couch.CouchClient;
+import churndb.couch.DesignDocument;
 import churndb.git.GIT;
 import churndb.model.Project;
 import churndb.model.Source;

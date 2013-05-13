@@ -1,4 +1,4 @@
-package churndb.couchdb.response;
+package churndb.couch.response;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

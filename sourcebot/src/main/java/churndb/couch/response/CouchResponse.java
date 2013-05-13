@@ -1,4 +1,4 @@
-package churndb.couchdb.response;
+package churndb.couch.response;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;

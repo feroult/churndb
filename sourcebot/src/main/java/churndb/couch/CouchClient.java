@@ -1,4 +1,4 @@
-package churndb.couchdb;
+package churndb.couch;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,9 +13,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import churndb.couchdb.response.CouchResponse;
-import churndb.couchdb.response.CouchResponseHandler;
-import churndb.couchdb.response.CouchResponseView;
+import churndb.couch.response.CouchResponse;
+import churndb.couch.response.CouchResponseHandler;
+import churndb.couch.response.CouchResponseView;
 import churndb.utils.JsonUtils;
 
 import com.google.gson.JsonElement;
