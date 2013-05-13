@@ -5,8 +5,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.sourcebot.utils.ResourceUtils;
-import churndb.sourcebot.utils.TestConstants;
+import churndb.couchdb.DesignDocument;
+import churndb.utils.ResourceUtils;
+import churndb.utils.TestConstants;
 
 import com.google.gson.JsonObject;
 

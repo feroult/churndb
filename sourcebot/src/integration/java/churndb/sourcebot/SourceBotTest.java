@@ -8,13 +8,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.sourcebot.couchdb.CouchClient;
-import churndb.sourcebot.couchdb.DesignDocument;
-import churndb.sourcebot.git.GIT;
-import churndb.sourcebot.model.Project;
-import churndb.sourcebot.model.Source;
-import churndb.sourcebot.utils.ResourceUtils;
-import churndb.sourcebot.utils.TestConstants;
+import churndb.bot.SourceBot;
+import churndb.couchdb.CouchClient;
+import churndb.couchdb.DesignDocument;
+import churndb.git.GIT;
+import churndb.model.Project;
+import churndb.model.Source;
+import churndb.utils.ResourceUtils;
+import churndb.utils.TestConstants;
 
 public class SourceBotTest extends Assert {
 

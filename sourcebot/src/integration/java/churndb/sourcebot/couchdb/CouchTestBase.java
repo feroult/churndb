@@ -1,5 +1,7 @@
 package churndb.sourcebot.couchdb;
 
+import churndb.couchdb.CouchClient;
+
 public class CouchTestBase {
 
 	protected static final String COUCHDB_HOST = "http://127.0.0.1:5984";
