@@ -14,7 +14,7 @@ public class SourceTest {
 
 	@Before
 	public void before() {	
-		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);				
+		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
 	}
 	
 	@Test
@@ -33,7 +33,7 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = new File(ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH + "/Product.java"));
+		File file = new File(ResourceUtils.tempPath(TestConstants.PROJECT_PATH + "/Product.java"));
 			
 		Source source = new Source("/Product.java", file);		
 		new SourceMetrics().apply(source);

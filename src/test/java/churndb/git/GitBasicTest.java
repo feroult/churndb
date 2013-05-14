@@ -3,46 +3,40 @@ package churndb.git;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import churndb.utils.ResourceUtils;
-import churndb.utils.TestConstants;
+import churndb.utils.FakeProjectGIT;
 
 public class GitBasicTest {
-
-	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH);
-
-	@Before
-	public void before() {
-		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);		
-	}	
 	
 	@Test
-	public void testInit() {
+	public void testCommits() {
 
-		GIT git = new GIT(PROJECT_PATH);
+		FakeProjectGIT git = new FakeProjectGIT();
 		
 		git.init();
-
-		git.add("Product.java");
-		git.commit("xpto");
-
-		git.add("Customer.java");
-		git.commit("xpto");		
+		git.commit0();				
+		git.commit1();
 		
 		List<Commit> commits = git.log(); 
-				
-		assertCommit(commits.get(0), Type.ADD, "Customer.java");
-		assertCommit(commits.get(1), Type.ADD, "Product.java");
+			
+		assertCommit(commits.get(0), mockChange(Type.MODIFY, "Address.java"));
+		assertCommit(commits.get(1), mockChange(Type.ADD, "Address.java"), mockChange(Type.ADD, "Customer.java"), mockChange(Type.ADD, "Product.java"));	
 	}
 
+	private Change mockChange(Type type, String path) {
+		return new Change(type, null, path);
+	}
 
-	private void assertCommit(Commit commit, Type type, String path) {
-		Change change = commit.getChanges().get(0);
-		assertEquals(change.getType(), type);
-		assertEquals(change.getPath(), path);		
+	private void assertCommit(Commit commit, Change ... expectedChanges) {
+		Map<String, Change> changes = commit.getChangesAsMap();
+		
+		for(Change expectedChange : expectedChanges) {
+			Change change = changes.get(expectedChange.getPath());
+			assertEquals(expectedChange.getType(), change.getType());
+		}		
 	}
 
 }

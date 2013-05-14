@@ -14,11 +14,11 @@ import churndb.utils.TestConstants;
 
 public class SourceScannerTest {
 
-	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH);
+	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 	
 	@Before
 	public void before() {
-		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);
+		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);
 	}
 	
 	@Test

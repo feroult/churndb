@@ -14,7 +14,7 @@ public class ResourceUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static File asFile(String uri) {
 		return FileUtils.toFile(ResourceUtils.class.getResource(uri));
 	}
@@ -26,18 +26,23 @@ public class ResourceUtils {
 	public static String tempPath(String path) {
 		return realPath("/churndb") + "/../../../tmp" + path;
 	}
-	
+
 	public static String resourcesPath(String path) {
 		return realPath("/churndb") + "/../../../src/test/resources" + path;
 	}
-	
-	public static void copyToTemp(String uri) {
+
+	public static void copyToTemp(String srcUri, String destUri) {
 		try {
-			File destDir = new File(tempPath(uri));
-			FileUtils.deleteQuietly(destDir);			
-			FileUtils.copyDirectory(new File(resourcesPath(uri)), destDir);
+			FileUtils.copyDirectory(new File(resourcesPath(srcUri)), new File(tempPath(destUri)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}		
+		}
+	}
+
+	public static void copyToTemp(String srcUri, String destUri, boolean deleteBeforeCopy) {
+		if (deleteBeforeCopy) {
+			FileUtils.deleteQuietly(new File(tempPath(destUri)));
+		}
+		copyToTemp(srcUri, destUri);
 	}
 }

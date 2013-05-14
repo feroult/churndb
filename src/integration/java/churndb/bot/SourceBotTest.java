@@ -2,9 +2,6 @@ package churndb.bot;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +16,7 @@ import churndb.utils.TestConstants;
 
 public class SourceBotTest {
 
-	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH);
+	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 	
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
@@ -33,7 +30,7 @@ public class SourceBotTest {
 		couch.create();	
 		deployViews();
 		
-		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);				
+		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
 	}
 
 	private void deployViews() {
@@ -68,9 +65,6 @@ public class SourceBotTest {
 	}
 
 	private GIT fakeGIT() {
-		
-		FileUtils.deleteQuietly(new File(PROJECT_PATH + ".git"));
-
 		GIT git = new GIT(PROJECT_PATH);
 		
 		git.init();

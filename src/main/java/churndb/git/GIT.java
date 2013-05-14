@@ -145,5 +145,9 @@ public class GIT {
 		}
 		return false;
 	}
+
+	public File getPath() {
+		return path;
+	}		
 	
 }
