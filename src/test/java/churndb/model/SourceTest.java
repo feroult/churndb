@@ -1,36 +1,41 @@
 package churndb.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import churndb.model.Source;
-import churndb.model.SourceMetrics;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
 public class SourceTest {
 
+	@Before
+	public void before() {	
+		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);				
+	}
+	
 	@Test
 	public void testNewSource() {
-		Source source = new Source("/Address.java_");
+		Source source = new Source("/Address.java");
 		
-		Assert.assertEquals("/Address.java_", source.getPath());
+		assertEquals("/Address.java", source.getPath());
 	}
 	
 	@Test
 	public void testCCN() {
 		Source source = loadJavaSourceAndMetrics();
 		
-		Assert.assertEquals("25", source.getMetric(SourceMetrics.CCN));
-		Assert.assertEquals("61", source.getMetric(SourceMetrics.LOC));		
+		assertEquals("25", source.getMetric(SourceMetrics.CCN));
+		assertEquals("61", source.getMetric(SourceMetrics.LOC));		
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = ResourceUtils.asFile(TestConstants.SIMPLE_PROJECT_PATH + "/Product.java_");
+		File file = new File(ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH + "/Product.java"));
 			
-		Source source = new Source("/Product.java_", file);		
+		Source source = new Source("/Product.java", file);		
 		new SourceMetrics().apply(source);
 		return source;
 	}	

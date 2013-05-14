@@ -1,14 +1,14 @@
 package churndb.bot;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.bot.SourceBot;
 import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
 import churndb.git.GIT;
@@ -17,9 +17,9 @@ import churndb.model.Source;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
-public class SourceBotTest extends Assert {
+public class SourceBotTest {
 
-	private static final String PROJECT_PATH = ResourceUtils.realPath(TestConstants.SIMPLE_PROJECT_PATH);
+	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.SIMPLE_PROJECT_PATH);
 	
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
@@ -32,6 +32,8 @@ public class SourceBotTest extends Assert {
 		couch.dropIfExists();		
 		couch.create();	
 		deployViews();
+		
+		ResourceUtils.copyToTemp(TestConstants.SIMPLE_PROJECT_PATH);				
 	}
 
 	private void deployViews() {
@@ -61,8 +63,8 @@ public class SourceBotTest extends Assert {
 		Project projectFromCouch = couch.viewGet("core/projects", project.getName()).bean(Project.class);		
 		assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
 		
-		Source source = couch.viewGet("core/sources", project.getName(), "/Product.java_").bean(Source.class);
-		assertEquals("/Product.java_", source.getPath());
+		Source source = couch.viewGet("core/sources", project.getName(), "/Product.java").bean(Source.class);
+		assertEquals("/Product.java", source.getPath());
 	}
 
 	private GIT fakeGIT() {
@@ -73,9 +75,9 @@ public class SourceBotTest extends Assert {
 		
 		git.init();
 
-		git.add("Product.java_");
-		git.add("Customer.java_");
-		git.add("Address.java_");
+		git.add("Product.java");
+		git.add("Customer.java");
+		git.add("Address.java");
 		
 		git.commit("xpto");
 				

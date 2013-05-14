@@ -22,7 +22,7 @@ public class SourceScanner {
 
 		List<Source> sources = new ArrayList<Source>();
 		
-		Iterator<File> files = FileUtils.iterateFiles(new File(path), new String [] {"java", "java_"}, true);
+		Iterator<File> files = FileUtils.iterateFiles(new File(path), new String [] {"java"}, true);
 				
 		while(files.hasNext()) {
 			File file = files.next();
