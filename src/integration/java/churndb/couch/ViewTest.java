@@ -62,19 +62,19 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testGetFirstFromView() {						
-		putDocument("123", "/Product.java", "source");
+		putDocument("123", "Product.java", "source");
 		
-		JsonObject jsonView = couch.view("core/simple", "/Product.java").first();
+		JsonObject jsonView = couch.view("core/simple", "Product.java").first();
 		Document doc = couch.get(jsonView.get("id")).bean(Document.class);
 		
-		assertEquals("/Product.java", doc.getCode());
+		assertEquals("Product.java", doc.getCode());
 		assertEquals("source", doc.getType());		
 	}
 	
 	@Test
 	public void testViewTotalRows() {
-		putDocument("1", "/Product.java", "source");
-		putDocument("2", "/Address.java", "source");
+		putDocument("1", "Product.java", "source");
+		putDocument("2", "Address.java", "source");
 		
 		CouchResponseView response = couch.view("core/simple");
 		
@@ -83,28 +83,28 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewResponseSize() {
-		putDocument("1", "/Product.java", "source");
-		putDocument("2", "/Address.java", "source");
+		putDocument("1", "Product.java", "source");
+		putDocument("2", "Address.java", "source");
 		
-		CouchResponseView response = couch.view("core/simple", "/Product.java");
+		CouchResponseView response = couch.view("core/simple", "Product.java");
 		assertEquals(1, response.size());		
 	}
 	
 	
 	@Test
 	public void testViewGet() {
-		putDocument("123", "/Product.java", "source");
+		putDocument("123", "Product.java", "source");
 		
-		Document doc = couch.viewGet("core/simple", "/Product.java").bean(Document.class);
+		Document doc = couch.viewGet("core/simple", "Product.java").bean(Document.class);
 		
-		assertEquals("/Product.java", doc.getCode());
+		assertEquals("Product.java", doc.getCode());
 		assertEquals("source", doc.getType());
 	}
 	
 	@Test
 	public void testViewDelete() {
-		putDocument("1", "/Product.java", "source");
-		putDocument("2", "/Address.java", "source");
+		putDocument("1", "Product.java", "source");
+		putDocument("2", "Address.java", "source");
 		
 		couch.viewDelete("core/simple");
 		

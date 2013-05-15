@@ -19,9 +19,9 @@ public class SourceTest {
 	
 	@Test
 	public void testNewSource() {
-		Source source = new Source("/Address.java");
+		Source source = new Source("Address.java");
 		
-		assertEquals("/Address.java", source.getPath());
+		assertEquals("Address.java", source.getPath());
 	}
 	
 	@Test
@@ -33,9 +33,9 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = new File(ResourceUtils.tempPath(TestConstants.PROJECT_PATH + "/Product.java"));
+		File file = new File(ResourceUtils.tempPath(TestConstants.PROJECT_PATH + "Product.java"));
 			
-		Source source = new Source("/Product.java", file);		
+		Source source = new Source("Product.java", file);		
 		new SourceMetrics().apply(source);
 		return source;
 	}	
