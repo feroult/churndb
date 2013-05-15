@@ -47,7 +47,7 @@ public class SourceBotTest {
 	}
 		
 	@Test
-	public void testLoadProjectFirstTime() {			
+	public void testReloadProjectFromGIT() {			
 		
 		Project project = fakeProject();		
 		
@@ -55,12 +55,12 @@ public class SourceBotTest {
 				
 		GIT git = fakeGIT();
 		
-		bot.fromTo(git, couch);			
+		bot.reload(git, couch);			
 
-		Project projectFromCouch = couch.viewGet("core/projects", project.getName()).bean(Project.class);		
+		Project projectFromCouch = couch.viewGet("core/projects", project.getCode()).bean(Project.class);		
 		assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
 		
-		Source source = couch.viewGet("core/sources", project.getName(), "/Product.java").bean(Source.class);
+		Source source = couch.viewGet("core/sources", project.getCode(), "/Product.java").bean(Source.class);
 		assertEquals("/Product.java", source.getPath());
 	}
 
@@ -81,7 +81,7 @@ public class SourceBotTest {
 	private Project fakeProject() {
 		Project project = new Project();
 		
-		project.setName("fake_project");
+		project.setCode("fake_project");
 		project.setRepoUrl("https://github.com/feroult/churndb.git");
 		project.setRoot(PROJECT_PATH);
 		return project;

@@ -16,16 +16,24 @@ public class SourceBot {
 		this.project = project;		
 	}
 
-	public void fromTo(GIT git, CouchClient couch) {
+	public void reload(GIT git, CouchClient couch) {
+		
+		deleteProjectIfExists(couch);
+		
 		couch.put(couch.id(), project.json());
 		
 		SourceScanner scanner = new SourceScanner(project.getRoot());
 		List<Source> sources = scanner.apply(new SourceMetrics());
 		
 		for(Source source : sources) {
-			source.setProject(project.getName());
+			source.setProject(project.getCode());
 			couch.put(couch.id(), source.json());
 		}
+	}
+
+	private void deleteProjectIfExists(CouchClient couch) {
+		couch.viewDelete("core/projects", project.getCode());
+		couch.viewDelete("core/sources", project.getCode());
 	}
 
 }

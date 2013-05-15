@@ -17,5 +17,9 @@ public class CouchResponseView extends CouchResponse {
 	public JsonObject first() {
 		return rows(0);
 	}
+
+	public int totalRows() {
+		return json.get("total_rows").getAsInt();
+	}
 		
 }

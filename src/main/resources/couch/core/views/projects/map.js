@@ -1,5 +1,5 @@
 function(doc) {
   if(doc.type && doc.type == 'project') {
-    emit(doc.name, null);
+    emit(doc.code, doc._rev);
   }
 }

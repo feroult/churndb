@@ -19,6 +19,7 @@ import churndb.couch.response.CouchResponseView;
 import churndb.utils.JsonUtils;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class CouchClient {
 
@@ -122,8 +123,10 @@ public class CouchClient {
 		String module = split[0];
 		String view = split[1];
 
+		String key = keys.length == 0 ? "" : "?key=" + urlEncode(JsonUtils.key(keys));
+		
 		HttpGet request = new HttpGet(
-				requestUrl("_design/" + module + "/_view/" + view + "?key=" + urlEncode(JsonUtils.key(keys))));
+				requestUrl("_design/" + module + "/_view/" + view + key));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
 	}
 
@@ -149,7 +152,19 @@ public class CouchClient {
 	}
 
 	public CouchResponse viewGet(String viewUri, String... keys) {
-		CouchResponseView viewResponse = view(viewUri, keys);		
-		return get(viewResponse.first().get("id"));
+		CouchResponseView response = view(viewUri, keys);		
+		return get(response.first().get("id"));
 	}
+
+	
+	
+	public void viewDelete(String viewUri, String... keys) {
+		CouchResponseView response = view(viewUri, keys);		
+		for(int i = 0; i < response.totalRows(); i++) {
+			JsonObject row = response.rows(i);
+			// the view must emit doc._rev as value to be able use viewDelete
+			delete(row.get("id").getAsString() + "?rev=" + row.get("value").getAsString());
+		}				
+	}
+
 }

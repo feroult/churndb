@@ -1,11 +1,14 @@
 package churndb.couch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.couch.DesignDocument;
+import churndb.couch.response.CouchResponseView;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
@@ -15,16 +18,16 @@ import com.google.gson.JsonObject;
 public class ViewTest extends CouchTestBase {
 
 	public class Document {
-		private String name;
+		private String code;
 		
 		private String type;
 		
-		public String getName() {
-			return name;
+		public String getCode() {
+			return code;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setCode(String code) {
+			this.code = code;
 		}
 
 		public String getType() {
@@ -65,9 +68,20 @@ public class ViewTest extends CouchTestBase {
 		JsonObject jsonView = couch.view("core/simple", "/Product.java").first();
 		JsonObject json = couch.get(jsonView.get("id")).json();
 		
-		Assert.assertEquals("/Product.java", json.get("name").getAsString());
-		Assert.assertEquals("source", json.get("type").getAsString());		
+		assertEquals("/Product.java", json.get("code").getAsString());
+		assertEquals("source", json.get("type").getAsString());		
 	}
+	
+	@Test
+	public void testViewTotalRows() {
+		putDocument("1", "/Product.java", "source");
+		putDocument("2", "/Address.java", "source");
+		
+		CouchResponseView response = couch.view("core/simple");
+		
+		assertEquals(2, response.totalRows());
+	}
+	
 	
 	@Test
 	public void testViewGet() {
@@ -75,13 +89,24 @@ public class ViewTest extends CouchTestBase {
 		
 		Document doc = couch.viewGet("core/simple", "/Product.java").bean(Document.class);
 		
-		Assert.assertEquals("/Product.java", doc.getName());
-		Assert.assertEquals("source", doc.getType());
+		assertEquals("/Product.java", doc.getCode());
+		assertEquals("source", doc.getType());
+	}
+	
+	@Test
+	public void testViewDelete() {
+		putDocument("1", "/Product.java", "source");
+		putDocument("2", "/Address.java", "source");
+		
+		couch.viewDelete("core/simple");
+		
+		assertTrue(couch.get("1").objectNotFound());
+		assertTrue(couch.get("2").objectNotFound());				
 	}
 	
 	private void putDocument(String id, String name, String type) {
 		Document doc = new Document();		
-		doc.setName(name);
+		doc.setCode(name);
 		doc.setType(type);				
 		couch.put(id, doc.json());
 	}	
