@@ -1,8 +1,8 @@
 package churndb.bot;
 
-import java.util.List;
-
 import churndb.couch.CouchClient;
+import churndb.git.Change;
+import churndb.git.Commit;
 import churndb.git.GIT;
 import churndb.model.Project;
 import churndb.model.Source;
@@ -16,18 +16,23 @@ public class SourceBot {
 		this.project = project;		
 	}
 
-	public void reload(GIT git, CouchClient couch) {
-		
-		deleteProjectIfExists(couch);
-		
+	public void reload(GIT git, CouchClient couch) {		
+		deleteProjectIfExists(couch);				
+		reloadProjectFromGIT(git, couch);
+	}
+
+	private void reloadProjectFromGIT(GIT git, CouchClient couch) {
 		couch.put(couch.id(), project.json());
+
+		SourceMetrics metrics = new SourceMetrics();
 		
-		SourceScanner scanner = new SourceScanner(project.getRoot());
-		List<Source> sources = scanner.apply(new SourceMetrics());
-		
-		for(Source source : sources) {
-			source.setProject(project.getCode());
-			couch.put(couch.id(), source.json());
+		for(Commit commit : git.log()) {
+			for(Change change : commit.getChanges()) {
+				Source source = new Source(change.getPath());
+				source.setProject(project.getCode());
+				metrics.apply(source);
+				couch.put(couch.id(), source.json());
+			}			
 		}
 	}
 

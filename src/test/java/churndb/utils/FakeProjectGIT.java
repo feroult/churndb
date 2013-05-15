@@ -10,6 +10,7 @@ public class FakeProjectGIT extends GIT {
 		super(ResourceUtils.tempPath(TestConstants.PROJECT_PATH));
 		FileUtils.deleteQuietly(getPath());
 		getPath().mkdirs();
+		init();
 	}
 	
 	public void commit0() {

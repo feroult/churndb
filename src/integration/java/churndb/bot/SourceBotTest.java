@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
-import churndb.git.GIT;
+import churndb.couch.response.CouchResponseView;
 import churndb.model.Project;
-import churndb.model.Source;
+import churndb.utils.FakeProjectGIT;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
@@ -47,35 +47,19 @@ public class SourceBotTest {
 	}
 		
 	@Test
-	public void testReloadProjectFromGIT() {			
+	public void testReloadProjectFromGIT() {					
+		FakeProjectGIT git = new FakeProjectGIT();		
 		
-		Project project = fakeProject();		
+		git.commit0();
+		git.commit1();
 		
+		Project project = fakeProject();
 		SourceBot bot = new SourceBot(project);
-				
-		GIT git = fakeGIT();
-		
+						
 		bot.reload(git, couch);			
 
-		Project projectFromCouch = couch.viewGet("core/projects", project.getCode()).bean(Project.class);		
-		assertEquals(project.getRepoUrl(), projectFromCouch.getRepoUrl());
-		
-		Source source = couch.viewGet("core/sources", project.getCode(), "/Product.java").bean(Source.class);
-		assertEquals("/Product.java", source.getPath());
-	}
-
-	private GIT fakeGIT() {
-		GIT git = new GIT(PROJECT_PATH);
-		
-		git.init();
-
-		git.add("Product.java");
-		git.add("Customer.java");
-		git.add("Address.java");
-		
-		git.commit("xpto");
-				
-		return git;
+		CouchResponseView response = couch.view("core/sources", project.getCode(), "Address.java");
+		assertEquals(2, response.size());		
 	}
 
 	private Project fakeProject() {

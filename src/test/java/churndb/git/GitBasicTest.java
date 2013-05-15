@@ -13,10 +13,8 @@ public class GitBasicTest {
 	
 	@Test
 	public void testCommits() {
-
 		FakeProjectGIT git = new FakeProjectGIT();
 		
-		git.init();
 		git.commit0();				
 		git.commit1();
 		

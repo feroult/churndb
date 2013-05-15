@@ -21,5 +21,9 @@ public class CouchResponseView extends CouchResponse {
 	public int totalRows() {
 		return json.get("total_rows").getAsInt();
 	}
+
+	public int size() {
+		return json.get("rows").getAsJsonArray().size();
+	}
 		
 }

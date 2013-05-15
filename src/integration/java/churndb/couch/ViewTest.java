@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,10 +65,10 @@ public class ViewTest extends CouchTestBase {
 		putDocument("123", "/Product.java", "source");
 		
 		JsonObject jsonView = couch.view("core/simple", "/Product.java").first();
-		JsonObject json = couch.get(jsonView.get("id")).json();
+		Document doc = couch.get(jsonView.get("id")).bean(Document.class);
 		
-		assertEquals("/Product.java", json.get("code").getAsString());
-		assertEquals("source", json.get("type").getAsString());		
+		assertEquals("/Product.java", doc.getCode());
+		assertEquals("source", doc.getType());		
 	}
 	
 	@Test
@@ -80,6 +79,15 @@ public class ViewTest extends CouchTestBase {
 		CouchResponseView response = couch.view("core/simple");
 		
 		assertEquals(2, response.totalRows());
+	}
+	
+	@Test
+	public void testViewResponseSize() {
+		putDocument("1", "/Product.java", "source");
+		putDocument("2", "/Address.java", "source");
+		
+		CouchResponseView response = couch.view("core/simple", "/Product.java");
+		assertEquals(1, response.size());		
 	}
 	
 	
