@@ -12,6 +12,8 @@ import churndb.utils.TestConstants;
 
 public class SourceTest {
 
+	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
+	
 	@Before
 	public void before() {	
 		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
@@ -33,9 +35,9 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		File file = new File(ResourceUtils.tempPath(TestConstants.PROJECT_PATH + "Product.java"));
+		File file = new File(PROJECT_PATH + "Product.java");
 			
-		Source source = new Source("Product.java", file);		
+		Source source = new Source(PROJECT_PATH, file);		
 		new SourceMetrics().apply(source);
 		return source;
 	}	

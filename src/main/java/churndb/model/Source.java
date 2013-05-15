@@ -28,7 +28,7 @@ public class Source {
 	}
 
 	private String extractRoot(String root, String path) {
-		return path.replaceFirst(normalizePath(root), "/");
+		return path.replaceFirst(normalizePath(root), "");
 	}
 
 	private String normalizePath(String root) {
