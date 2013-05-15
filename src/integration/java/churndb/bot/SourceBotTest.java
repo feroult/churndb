@@ -60,6 +60,7 @@ public class SourceBotTest {
 
 		CouchResponseView response = couch.view("core/sources", project.getCode(), "Address.java");
 		assertEquals(2, response.size());		
+		// TODO assert commit date info
 	}
 
 	private Project fakeProject() {

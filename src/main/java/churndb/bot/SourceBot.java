@@ -30,6 +30,7 @@ public class SourceBot {
 			for(Change change : commit.getChanges()) {
 				Source source = new Source(change.getPath());
 				source.setProject(project.getCode());
+				source.setCommitTime(commit.getCommitTime());
 				metrics.apply(source);
 				couch.put(couch.id(), source.json());
 			}			

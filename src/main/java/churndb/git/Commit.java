@@ -6,9 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Commit {
-
-	List<Change> changes = new ArrayList<Change>();
 	
+	private int commitTime;
+	
+	List<Change> changes = new ArrayList<Change>();
+
+	public Commit(int commitTime) {
+		this.commitTime = commitTime;		
+	}
+	
+	public int getCommitTime() {
+		return commitTime;
+	}
 
 	public void add(Type type, String oldPath, String newPath) {
 		changes.add(new Change(type, oldPath, newPath));
@@ -26,6 +35,6 @@ public class Commit {
 		}
 		
 		return map;
-	}
+	}	
 
 }

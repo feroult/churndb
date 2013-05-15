@@ -18,6 +18,8 @@ public class Source {
 
 	private String project;
 	
+	private Commit commit = new Commit();
+	
 	public Source(String root, File file) {
 		this.path = extractRoot(root, file.getPath());
 		this.file = file;
@@ -72,6 +74,10 @@ public class Source {
 
 	public String getType() {
 		return type;
+	}
+
+	public void setCommitTime(int commitTime) {
+		commit.setCommitTime(commitTime);		
 	}
 
 }

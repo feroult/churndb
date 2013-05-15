@@ -19,7 +19,9 @@ public class FakeProjectGIT extends GIT {
 		add("Address.java");
 		add("Customer.java");
 		add("Product.java");		
-		commit("commit 0");				
+		commit("commit 0");			
+		
+		
 	}
 
 	public void commit1() {

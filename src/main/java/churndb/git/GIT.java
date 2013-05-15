@@ -88,8 +88,9 @@ public class GIT {
 	}
 
 	public Commit parseCommit(RevCommit revCommit) {
-		Commit commit = new Commit();
-		if (!hasCommits()) {
+		Commit commit = new Commit(revCommit.getCommitTime());
+		
+		if (!hasChanges()) {
 			return commit;
 		}
 		
@@ -138,7 +139,7 @@ public class GIT {
 		tw.release();
 	}
 
-	private boolean hasCommits() {
+	private boolean hasChanges() {
 		if (git.getRepository() != null && git.getRepository().getDirectory().exists()) {
 			return (new File(git.getRepository().getDirectory(), "objects").list().length > 2)
 					|| (new File(git.getRepository().getDirectory(), "objects/pack").list().length > 0);
