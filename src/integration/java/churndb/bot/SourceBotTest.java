@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
+import churndb.couch.response.CouchResponseView;
 import churndb.model.Commit;
 import churndb.model.Project;
 import churndb.model.Source;
@@ -61,10 +62,12 @@ public class SourceBotTest {
 						
 		bot.reload(git, couch);			
 				
-		Source soureceCommit0 = couch.viewGetAt("core/sources", 0, project.getCode(), "Address.java").bean(Source.class);
+		CouchResponseView view = couch.view("core/sources",project.getCode(), "Address.java");
+		
+		Source soureceCommit0 = view.get(0).bean(Source.class);
 		asssertCommitTime(soureceCommit0.getCommit(), 2013, Calendar.MAY, 10, 14, 0);
 		
-		Source soureceCommit1 = couch.viewGetAt("core/sources", 1, project.getCode(), "Address.java").bean(Source.class);
+		Source soureceCommit1 = view.get(1).bean(Source.class);
 		asssertCommitTime(soureceCommit1.getCommit(), 2013, Calendar.MAY, 15, 8, 25);
 		
 	}
