@@ -2,7 +2,6 @@ package churndb.couch;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -16,7 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import churndb.couch.response.CouchResponse;
 import churndb.couch.response.CouchResponseHandler;
 import churndb.couch.response.CouchResponseView;
-import churndb.utils.JsonUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -123,19 +121,11 @@ public class CouchClient {
 		String module = split[0];
 		String view = split[1];
 
-		String key = keys.length == 0 ? "" : "?key=" + urlEncode(JsonUtils.key(keys));
+		String normalizedKeys = keys.length == 0 ? "" : CouchUtils.keys(keys);
 		
 		HttpGet request = new HttpGet(
-				requestUrl("_design/" + module + "/_view/" + view + key));
+				requestUrl("_design/" + module + "/_view/" + view + normalizedKeys));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
-	}
-
-	private String urlEncode(String key) {
-		try {
-			return URLEncoder.encode(key, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public void put(DesignDocument designDocument) {
