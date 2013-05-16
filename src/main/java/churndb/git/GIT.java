@@ -149,6 +149,9 @@ public class GIT {
 
 	public File getPath() {
 		return path;
-	}		
-	
+	}
+
+	public Git getGit() {
+		return git;
+	}			
 }

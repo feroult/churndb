@@ -59,7 +59,8 @@ public class SourceBotTest {
 		bot.reload(git, couch);			
 
 		CouchResponseView response = couch.view("core/sources", project.getCode(), "Address.java");
-		assertEquals(2, response.size());		
+		assertEquals(2, response.size());
+		
 		// TODO assert commit date info
 	}
 
