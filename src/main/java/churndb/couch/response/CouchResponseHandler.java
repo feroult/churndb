@@ -11,15 +11,20 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
 
+import churndb.couch.CouchClient;
+
 public class CouchResponseHandler implements ResponseHandler<CouchResponse> {
 
+	private CouchClient couch;
+	
 	private Class<? extends CouchResponse> responseClazz;
 
-	public CouchResponseHandler() {
-		this(CouchResponse.class);
+	public CouchResponseHandler(CouchClient couch) {
+		this(couch, CouchResponse.class);
 	}
 	
-	public CouchResponseHandler(Class<? extends CouchResponse> responseClazz) {
+	public CouchResponseHandler(CouchClient couch, Class<? extends CouchResponse> responseClazz) {
+		this.couch = couch;
 		this.responseClazz = responseClazz;
 	}
 
@@ -35,9 +40,9 @@ public class CouchResponseHandler implements ResponseHandler<CouchResponse> {
 
 	private CouchResponse newCouchResponse(String responseBody, StatusLine statusLine) {
 		try {
-			Constructor<? extends CouchResponse> constructor = responseClazz.getConstructor(String.class,
+			Constructor<? extends CouchResponse> constructor = responseClazz.getConstructor(CouchClient.class, String.class,
 					StatusLine.class);
-			return constructor.newInstance(responseBody, statusLine);
+			return constructor.newInstance(couch, responseBody, statusLine);
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		} catch (NoSuchMethodException e) {

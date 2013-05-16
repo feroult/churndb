@@ -2,20 +2,22 @@ package churndb.couch.response;
 
 import org.apache.http.StatusLine;
 
+import churndb.couch.CouchClient;
+
 import com.google.gson.JsonObject;
 
 public class CouchResponseView extends CouchResponse {
 
-	public CouchResponseView(String responseBody, StatusLine statusLine) {
-		super(responseBody, statusLine);
+	public CouchResponseView(CouchClient couch, String responseBody, StatusLine statusLine) {
+		super(couch, responseBody, statusLine);
 	}
 
-	public JsonObject rows(int i) {
+	public JsonObject json(int i) {
 		return json.get("rows").getAsJsonArray().get(i).getAsJsonObject();
 	}
 	
 	public JsonObject first() {
-		return rows(0);
+		return json(0);
 	}
 
 	public int totalRows() {
@@ -24,6 +26,10 @@ public class CouchResponseView extends CouchResponse {
 
 	public int size() {
 		return json.get("rows").getAsJsonArray().size();
+	}
+
+	public CouchResponse get(int i) {
+		return couch().get(json(i).get("id"));
 	}
 		
 }

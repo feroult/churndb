@@ -72,6 +72,20 @@ public class ViewTest extends CouchTestBase {
 	}
 	
 	@Test
+	public void testGetAtFromView() {
+		putDocument("1", "A", "source");
+		putDocument("2", "Z", "source");
+		
+		CouchResponseView view = couch.view("core/simple");
+		
+		Document docA = view.get(0).bean(Document.class);
+		Document docZ = view.get(1).bean(Document.class);
+		
+		assertEquals(docA.getCode(), "A");
+		assertEquals(docZ.getCode(), "Z");		
+	}
+	
+	@Test
 	public void testViewTotalRows() {
 		putDocument("1", "Product.java", "source");
 		putDocument("2", "Address.java", "source");

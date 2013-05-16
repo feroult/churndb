@@ -70,7 +70,7 @@ public class CouchClient {
 	}
 
 	private CouchResponse executeRequest(HttpUriRequest request) {
-		return executeRequest(request, new CouchResponseHandler());
+		return executeRequest(request, new CouchResponseHandler(this));
 	}
 
 	private CouchResponse executeRequest(HttpUriRequest request, CouchResponseHandler handler) {
@@ -125,7 +125,7 @@ public class CouchClient {
 		
 		HttpGet request = new HttpGet(
 				requestUrl("_design/" + module + "/_view/" + view + normalizedKeys));
-		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(CouchResponseView.class));
+		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 
 	public void put(DesignDocument designDocument) {
@@ -151,7 +151,7 @@ public class CouchClient {
 	public void viewDelete(String viewUri, String... keys) {
 		CouchResponseView response = view(viewUri, keys);		
 		for(int i = 0; i < response.totalRows(); i++) {
-			JsonObject row = response.rows(i);
+			JsonObject row = response.json(i);
 			// the view must emit doc._rev as value to be able use viewDelete
 			delete(row.get("id").getAsString() + "?rev=" + row.get("value").getAsString());
 		}				
@@ -159,7 +159,7 @@ public class CouchClient {
 
 	public CouchResponse viewGetAt(String viewUri, int index, String... keys) {
 		CouchResponseView response = view(viewUri, keys);		
-		return get(response.rows(index).get("id"));
+		return get(response.json(index).get("id"));
 	}
 
 }
