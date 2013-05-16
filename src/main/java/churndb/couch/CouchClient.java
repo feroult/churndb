@@ -141,7 +141,7 @@ public class CouchClient {
 		return request.json().get("uuids").getAsJsonArray().get(0).getAsString();
 	}
 
-	public CouchResponse viewGet(String viewUri, String... keys) {
+	public CouchResponse viewGetFirst(String viewUri, String... keys) {
 		CouchResponseView response = view(viewUri, keys);		
 		return get(response.first().get("id"));
 	}
@@ -155,6 +155,11 @@ public class CouchClient {
 			// the view must emit doc._rev as value to be able use viewDelete
 			delete(row.get("id").getAsString() + "?rev=" + row.get("value").getAsString());
 		}				
+	}
+
+	public CouchResponse viewGetAt(String viewUri, int index, String... keys) {
+		CouchResponseView response = view(viewUri, keys);		
+		return get(response.rows(index).get("id"));
 	}
 
 }
