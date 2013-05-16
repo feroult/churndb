@@ -2,6 +2,8 @@ package churndb.bot;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +11,9 @@ import org.junit.Test;
 import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
 import churndb.couch.response.CouchResponseView;
+import churndb.model.Commit;
 import churndb.model.Project;
+import churndb.model.Source;
 import churndb.utils.FakeProjectGIT;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
@@ -59,9 +63,23 @@ public class SourceBotTest {
 		bot.reload(git, couch);			
 
 		CouchResponseView response = couch.view("core/sources", project.getCode(), "Address.java");
+		
 		assertEquals(2, response.size());
 		
-		// TODO assert commit date info
+		Source soureceCommit0 = couch.get(response.rows(0).get("id")).bean(Source.class);
+		asssertCommitTime(soureceCommit0.getCommit(), 2013, Calendar.MAY, 10, 14, 0);
+		
+		Source soureceCommit1 = couch.get(response.rows(1).get("id")).bean(Source.class);
+		asssertCommitTime(soureceCommit1.getCommit(), 2013, Calendar.MAY, 15, 8, 25);
+		
+	}
+
+	private void asssertCommitTime(Commit commit, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
+		assertEquals(commit.getYear(), year);
+		assertEquals(commit.getMonth(), month);
+		assertEquals(commit.getDayOfMonth(), dayOfMonth);
+		assertEquals(commit.getHourOfDay(), hourOfDay);
+		assertEquals(commit.getMinute(), minute);
 	}
 
 	private Project fakeProject() {

@@ -4,8 +4,8 @@ function(doc) {
           doc.path, 
           doc.commit.year, 
           doc.commit.month, 
-          doc.commit.day, 
-          doc.commit.hour, 
+          doc.commit.dayOfMonth, 
+          doc.commit.hourOfDay, 
           doc.commit.minute], 
     	  doc._rev);
   }

@@ -1,6 +1,7 @@
 package churndb.model;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,8 +77,11 @@ public class Source {
 		return type;
 	}
 
-	public void setCommitTime(int commitTime) {
-		commit.setCommitTime(commitTime);		
+	public void setCommitDate(Date date) {
+		commit.setCommitDate(date);		
 	}
 
+	public Commit getCommit() {
+		return commit;
+	}
 }

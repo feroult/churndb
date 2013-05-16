@@ -7,23 +7,23 @@ import java.util.GregorianCalendar;
 public class Commit {
 
 	private int year;
-	
+
 	private int month;
-	
-	private int day;
-	
-	private int hour;
-	
+
+	private int dayOfMonth;
+
+	private int hourOfDay;
+
 	private int minute;
 
-	private void initCommitTime(int commitTime) {
+	private void initCommitDate(Date date) {
 		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date(commitTime * 1000L));
-		
+		calendar.setTime(date);
+
 		year = calendar.get(Calendar.YEAR);
-		month = calendar.get(Calendar.MONTH) + 1;
-		day = calendar.get(Calendar.DAY_OF_MONTH);
-		hour = calendar.get(Calendar.HOUR_OF_DAY);
+		month = calendar.get(Calendar.MONTH);
+		dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
 		minute = calendar.get(Calendar.MINUTE);
 	}
 
@@ -35,20 +35,19 @@ public class Commit {
 		return month;
 	}
 
-	public int getDay() {
-		return day;
+	public int getDayOfMonth() {
+		return dayOfMonth;
 	}
 
-	public int getHour() {
-		return hour;
+	public int getHourOfDay() {
+		return hourOfDay;
 	}
 
 	public int getMinute() {
 		return minute;
 	}
 
-	public void setCommitTime(int commitTime) {
-		initCommitTime(commitTime);		
+	public void setCommitDate(Date date) {
+		initCommitDate(date);
 	}
-	
 }

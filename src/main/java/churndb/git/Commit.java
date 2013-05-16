@@ -1,22 +1,23 @@
 package churndb.git;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Commit {
 	
-	private int commitTime;
+	private Date date;
 	
 	List<Change> changes = new ArrayList<Change>();
 
-	public Commit(int commitTime) {
-		this.commitTime = commitTime;		
+	public Commit(Date date) {
+		this.date = date;		
 	}
 	
-	public int getCommitTime() {
-		return commitTime;
+	public Date getDate() {
+		return date;
 	}
 
 	public void add(Type type, String oldPath, String newPath) {

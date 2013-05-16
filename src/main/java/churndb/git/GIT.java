@@ -88,7 +88,7 @@ public class GIT {
 	}
 
 	public Commit parseCommit(RevCommit revCommit) {
-		Commit commit = new Commit(revCommit.getCommitTime());
+		Commit commit = new Commit(revCommit.getAuthorIdent().getWhen());
 		
 		if (!hasChanges()) {
 			return commit;
