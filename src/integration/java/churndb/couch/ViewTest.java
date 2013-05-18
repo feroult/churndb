@@ -72,19 +72,19 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testGetFirstFromView() {						
-		putDocument("source", "123", "Product.java");
+		putDocument("simple", "123", "Product.java");
 		
 		JsonObject jsonView = couch.view("core/simple", "Product.java").first();
 		Document doc = couch.get(jsonView.get("id")).bean(Document.class);
 		
 		assertEquals("Product.java", doc.getCode());
-		assertEquals("source", doc.getType());		
+		assertEquals("simple", doc.getType());		
 	}
 	
 	@Test
 	public void testGetAtFromView() {
-		putDocument("source", "1", "A");
-		putDocument("source", "2", "Z");
+		putDocument("simple", "1", "A");
+		putDocument("simple", "2", "Z");
 		
 		CouchResponseView view = couch.view("core/simple");
 		
@@ -97,8 +97,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewTotalRows() {
-		putDocument("source", "1", "Product.java");
-		putDocument("source", "2", "Address.java");
+		putDocument("simple", "1", "Product.java");
+		putDocument("simple", "2", "Address.java");
 		
 		CouchResponseView response = couch.view("core/simple");
 		
@@ -107,8 +107,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewResponseSize() {
-		putDocument("source", "1", "Product.java");
-		putDocument("source", "2", "Address.java");
+		putDocument("simple", "1", "Product.java");
+		putDocument("simple", "2", "Address.java");
 		
 		CouchResponseView response = couch.view("core/simple", "Product.java");
 		assertEquals(1, response.size());		
@@ -117,18 +117,18 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewGetFirst() {
-		putDocument("source", "123", "Product.java");
+		putDocument("simple", "123", "Product.java");
 		
 		Document doc = couch.viewGetFirst("core/simple", "Product.java").bean(Document.class);
 		
 		assertEquals("Product.java", doc.getCode());
-		assertEquals("source", doc.getType());
+		assertEquals("simple", doc.getType());
 	}
 	
 	@Test
 	public void testViewGetAt() {
-		putDocument("source", "1", "A");
-		putDocument("source", "2", "Z");
+		putDocument("simple", "1", "A");
+		putDocument("simple", "2", "Z");
 				
 		Document docA = couch.viewGetAt("core/simple", 0).bean(Document.class);
 		Document docZ = couch.viewGetAt("core/simple", 1).bean(Document.class);
@@ -169,9 +169,9 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testReduce() {
-		putDocument("source", "1", "A");
-		putDocument("source", "2", "B");
-		putDocument("source", "3", "C");
+		putDocument("simple", "1", "A");
+		putDocument("simple", "2", "B");
+		putDocument("simple", "3", "C");
 		
 		System.out.println("test");
 		// from here, test reduce

@@ -1,5 +1,5 @@
 function(doc) {
-  if(doc.type && doc.type == 'source' && doc.code) {
+  if(doc.type && doc.type == 'simple' && doc.code) {
     emit(doc.code, doc._rev);
   }
 }
