@@ -1,9 +1,10 @@
 package churndb.model;
 
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import churndb.git.Commit;
 
 import com.google.gson.Gson;
 
@@ -19,7 +20,7 @@ public class Source {
 
 	private String project;
 	
-	private Commit commit = new Commit();
+	private Churn churn = new Churn();
 	
 	public Source(String root, String path) {
 		this.file = new File(root + path);
@@ -62,11 +63,11 @@ public class Source {
 		return type;
 	}
 
-	public void setCommitDate(Date date) {
-		commit.setCommitDate(date);		
+	public void initChurn(Commit commit) {
+		churn.init(commit);		
 	}
 
-	public Commit getCommit() {
-		return commit;
+	public Churn getChurn() {
+		return churn;
 	}
 }

@@ -43,7 +43,7 @@ public class SourceBot {
 	private Source configureSource(Commit commit, Change change, Metrics metrics) {
 		Source source = new Source(setup.getRoot(project.getCode()), change.getPath());
 		source.setProject(project.getCode());
-		source.setCommitDate(commit.getDate());
+		source.initChurn(commit);
 		metrics.apply(source);
 		return source;
 	}

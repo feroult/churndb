@@ -11,7 +11,7 @@ import org.junit.Test;
 import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
 import churndb.couch.response.CouchResponseView;
-import churndb.model.Commit;
+import churndb.model.Churn;
 import churndb.model.Project;
 import churndb.model.Source;
 import churndb.model.Metrics;
@@ -55,8 +55,8 @@ public class SourceBotTest {
 	public void testReloadProjectFromGIT() {
 		FakeProjectGIT git = new FakeProjectGIT();
 
-		git.commit0();
-		git.commit1();
+		String commit0 = git.commit0();
+		String commit1 = git.commit1();
 
 		Project project = fakeProject();
 		SourceBotSetup setup = new FakeSourceBotSetup();
@@ -67,23 +67,26 @@ public class SourceBotTest {
 
 		CouchResponseView view = couch.view("core/sources", project.getCode(), "Address.java");
 
-		Source commit0 = view.get(0).bean(Source.class);
-		asssertCommitTime(commit0.getCommit(), 2013, Calendar.MAY, 10, 14, 0);
-		assertEquals("0", commit0.getMetric(Metrics.CCN));
-		assertEquals("5", commit0.getMetric(Metrics.LOC));				
+		Source sourceCommit0 = view.get(0).bean(Source.class);
+		assertEquals(commit0, sourceCommit0.getChurn().getCommit());
+		asssertChurnDate(sourceCommit0.getChurn(), 2013, Calendar.MAY, 10, 14, 0);
+		assertEquals("0", sourceCommit0.getMetric(Metrics.CCN));
+		assertEquals("5", sourceCommit0.getMetric(Metrics.LOC));		
 		
-		Source commit1 = view.get(1).bean(Source.class);
-		asssertCommitTime(commit1.getCommit(), 2013, Calendar.MAY, 15, 8, 25);
-		assertEquals("2", commit1.getMetric(Metrics.CCN));
-		assertEquals("14", commit1.getMetric(Metrics.LOC));										
+		
+		Source sourceCommit1 = view.get(1).bean(Source.class);
+		assertEquals(commit1, sourceCommit1.getChurn().getCommit());
+		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
+		assertEquals("2", sourceCommit1.getMetric(Metrics.CCN));
+		assertEquals("14", sourceCommit1.getMetric(Metrics.LOC));										
 	}
 
-	private void asssertCommitTime(Commit commit, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
-		assertEquals(commit.getYear(), year);
-		assertEquals(commit.getMonth(), month);
-		assertEquals(commit.getDayOfMonth(), dayOfMonth);
-		assertEquals(commit.getHourOfDay(), hourOfDay);
-		assertEquals(commit.getMinute(), minute);
+	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
+		assertEquals(churn.getYear(), year);
+		assertEquals(churn.getMonth(), month);
+		assertEquals(churn.getDayOfMonth(), dayOfMonth);
+		assertEquals(churn.getHourOfDay(), hourOfDay);
+		assertEquals(churn.getMinute(), minute);
 	}
 
 	private Project fakeProject() {

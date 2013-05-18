@@ -9,7 +9,7 @@ public class Metrics {
 
 	public static final String LOC = "LOC";
 	
-	public static final String CCN = "ccn";
+	public static final String CCN = "CCN";
 
 	public void apply(Source source) {
 		Javancss javancss = new Javancss(source.getFile());
