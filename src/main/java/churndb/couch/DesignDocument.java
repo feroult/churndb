@@ -21,6 +21,13 @@ public class DesignDocument {
 		View view = views.get(key);
 		view.setMap(source);
 	}
+	
+	public void addViewRedeuce(String key, String source) {
+		createViewIfNotExists(key);
+		
+		View view = views.get(key);
+		view.setReduce(source);		
+	}
 
 	private void createViewIfNotExists(String key) {
 		if(views == null) {
@@ -42,4 +49,5 @@ public class DesignDocument {
 	public String json() {
 		return new Gson().toJson(this);
 	}
+
 }

@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.couch.DesignDocument;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
@@ -28,10 +27,16 @@ public class DesignDocumentTest extends CouchTestBase {
 	public void testCreateDesignDocumentWithView() {		
 		DesignDocument core = new DesignDocument("core");		
 		core.addViewMap("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));
+		core.addViewRedeuce("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
 		
 		couch.put(core);		
 		JsonObject json = couch.get("_design/core").json();
 		
-		Assert.assertNotNull("sources", json.get("views").getAsJsonObject().get("sources"));
+		Assert.assertTrue(viewExists(json, "sources", "map"));
+		Assert.assertTrue(viewExists(json, "sources", "reduce"));
+	}
+
+	private boolean viewExists(JsonObject json, String viewName, String viewPart) {
+		return json.get("views").getAsJsonObject().get(viewName).getAsJsonObject().get(viewPart) != null;
 	}
 }

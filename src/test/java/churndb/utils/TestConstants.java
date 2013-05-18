@@ -10,5 +10,7 @@ public class TestConstants {
 	public static final String PROJECT_COMMIT_1_PATH = "/churndb/project/commit1";
 	
 	public static final String COUCH_SIMPLE_VIEW_MAP = "/churndb/couch/views/simple/map.js";
+
+	public static final String COUCH_SIMPLE_VIEW_REDUCE = "/churndb/couch/views/simple/reduce.js";
 	
 }
