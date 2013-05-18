@@ -20,6 +20,8 @@ public class ViewTest extends CouchTestBase {
 		private String code;
 		
 		private String type;
+
+		private int value;
 		
 		public String getCode() {
 			return code;
@@ -40,6 +42,14 @@ public class ViewTest extends CouchTestBase {
 		public String json() {
 			return new Gson().toJson(this);
 		}
+
+		public void setValue(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}		
 	}
 
 	@Before
@@ -62,7 +72,7 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testGetFirstFromView() {						
-		putDocument("123", "Product.java", "source");
+		putDocument("source", "123", "Product.java");
 		
 		JsonObject jsonView = couch.view("core/simple", "Product.java").first();
 		Document doc = couch.get(jsonView.get("id")).bean(Document.class);
@@ -73,8 +83,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testGetAtFromView() {
-		putDocument("1", "A", "source");
-		putDocument("2", "Z", "source");
+		putDocument("source", "1", "A");
+		putDocument("source", "2", "Z");
 		
 		CouchResponseView view = couch.view("core/simple");
 		
@@ -87,8 +97,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewTotalRows() {
-		putDocument("1", "Product.java", "source");
-		putDocument("2", "Address.java", "source");
+		putDocument("source", "1", "Product.java");
+		putDocument("source", "2", "Address.java");
 		
 		CouchResponseView response = couch.view("core/simple");
 		
@@ -97,8 +107,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewResponseSize() {
-		putDocument("1", "Product.java", "source");
-		putDocument("2", "Address.java", "source");
+		putDocument("source", "1", "Product.java");
+		putDocument("source", "2", "Address.java");
 		
 		CouchResponseView response = couch.view("core/simple", "Product.java");
 		assertEquals(1, response.size());		
@@ -107,7 +117,7 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewGetFirst() {
-		putDocument("123", "Product.java", "source");
+		putDocument("source", "123", "Product.java");
 		
 		Document doc = couch.viewGetFirst("core/simple", "Product.java").bean(Document.class);
 		
@@ -117,8 +127,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewGetAt() {
-		putDocument("1", "A", "source");
-		putDocument("2", "Z", "source");
+		putDocument("source", "1", "A");
+		putDocument("source", "2", "Z");
 				
 		Document docA = couch.viewGetAt("core/simple", 0).bean(Document.class);
 		Document docZ = couch.viewGetAt("core/simple", 1).bean(Document.class);
@@ -129,8 +139,8 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testViewDelete() {
-		putDocument("1", "Product.java", "source");
-		putDocument("2", "Address.java", "source");
+		putDocument("source", "1", "Product.java");
+		putDocument("source", "2", "Address.java");
 		
 		couch.viewDelete("core/simple");
 		
@@ -138,10 +148,26 @@ public class ViewTest extends CouchTestBase {
 		assertTrue(couch.get("2").objectNotFound());				
 	}
 	
-	private void putDocument(String id, String name, String type) {
+	
+	@Test
+	public void testReduce() {
+		putDocument("source", "1", "A");
+		putDocument("source", "2", "B");
+		putDocument("source", "3", "C");
+		
+		System.out.println("test");
+		// from here, test reduce
+	}
+	
+	private void putDocument(String type, String id, String name) {
+		putDocument(type, id, name, 0);
+	}
+	
+	private void putDocument(String type, String id, String name, int value) {
 		Document doc = new Document();		
 		doc.setCode(name);
-		doc.setType(type);				
+		doc.setType(type);
+		doc.setValue(value);
 		couch.put(id, doc.json());
 	}	
 }

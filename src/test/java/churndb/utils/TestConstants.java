@@ -13,4 +13,6 @@ public class TestConstants {
 
 	public static final String COUCH_SIMPLE_VIEW_REDUCE = "/churndb/couch/views/simple/reduce.js";
 	
+	public static final String COUCH_DELETION_TEST_VIEW_MAP = "/churndb/couch/views/deletion/map.js";
+	
 }
