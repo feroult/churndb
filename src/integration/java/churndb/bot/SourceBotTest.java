@@ -63,18 +63,18 @@ public class SourceBotTest {
 
 		bot.reload(git, couch);
 
-		project = couch.viewGetFirst("core/projects", project.getCode()).bean(Project.class);
+		project = couch.viewGetFirst("core/projects", project.getCode()).as(Project.class);
 		assertEquals(commit1, project.getHead());		
 		
 		CouchResponseView view = couch.view("core/sources", project.getCode(), "Address.java");		
 
-		Source sourceCommit0 = view.get(0).bean(Source.class);
+		Source sourceCommit0 = view.get(0).as(Source.class);
 		assertEquals(commit0, sourceCommit0.getChurn().getCommit());
 		asssertChurnDate(sourceCommit0.getChurn(), 2013, Calendar.MAY, 10, 14, 0);
 		assertEquals("0", sourceCommit0.getMetric(Metrics.CCN));
 		assertEquals("5", sourceCommit0.getMetric(Metrics.LOC));		
 				
-		Source sourceCommit1 = view.get(1).bean(Source.class);
+		Source sourceCommit1 = view.get(1).as(Source.class);
 		assertEquals(commit1, sourceCommit1.getChurn().getCommit());
 		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
 		assertEquals("2", sourceCommit1.getMetric(Metrics.CCN));

@@ -31,7 +31,7 @@ public class CouchResponse {
 		return statusLine.getStatusCode() == HttpStatus.SC_NOT_FOUND;
 	}
 
-	public <T> T bean(Class<T> clazz) {
+	public <T> T as(Class<T> clazz) {
 		return new Gson().fromJson(json, clazz);
 	}
 

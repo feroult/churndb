@@ -46,15 +46,15 @@ public class CouchClient {
 	}
 
 	public CouchResponse get(String url) {
-		return executeRequest(new HttpGet(requestUrl(url)));
+		return executeRequest(new HttpGet(fullRequestUrl(url)));
 	}
 
 	public CouchResponse put(String url) {
-		return executeRequest(new HttpPut(requestUrl(url)));
+		return executeRequest(new HttpPut(fullRequestUrl(url)));
 	}
 
 	public CouchResponse put(String url, String body) {
-		HttpPut request = new HttpPut(requestUrl(url));
+		HttpPut request = new HttpPut(fullRequestUrl(url));
 
 		try {
 			request.setEntity(new StringEntity(body));
@@ -66,7 +66,7 @@ public class CouchClient {
 	}
 
 	public CouchResponse delete(String url) {
-		return executeRequest(new HttpDelete(requestUrl(url)));
+		return executeRequest(new HttpDelete(fullRequestUrl(url)));
 	}
 
 	private CouchResponse executeRequest(HttpUriRequest request) {
@@ -88,7 +88,7 @@ public class CouchClient {
 		}
 	}
 
-	private String requestUrl(String url) {
+	private String fullRequestUrl(String url) {
 		StringBuilder sb = new StringBuilder(couchdbHost);
 
 		if (database != null) {
@@ -117,15 +117,23 @@ public class CouchClient {
 	}
 
 	public CouchResponseView view(String viewUri, String... key) {
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, key)));
+		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
+	}
+
+	private String viewRequestUrl(String viewUri, boolean reduce, String... key) {
 		String[] split = viewUri.split("/");
 		String module = split[0];
 		String view = split[1];
 
-		String normalizedKeys = key.length == 0 ? "?reduce=false&" : "?reduce=false&" + CouchUtils.key(key);
-		
-		HttpGet request = new HttpGet(
-				requestUrl("_design/" + module + "/_view/" + view + normalizedKeys));
-		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
+		StringBuilder normalizedKeys = new StringBuilder("?");
+		if (key.length > 0) {
+			normalizedKeys.append(CouchUtils.key(key));
+		}
+		normalizedKeys.append("&reduce=" + reduce);
+
+		String viewRequestUrl = "_design/" + module + "/_view/" + view + normalizedKeys;
+		return viewRequestUrl;
 	}
 
 	public void put(DesignDocument designDocument) {
@@ -142,41 +150,39 @@ public class CouchClient {
 	}
 
 	public CouchResponse viewGetFirst(String viewUri, String... keys) {
-		CouchResponseView response = view(viewUri, keys);		
+		CouchResponseView response = view(viewUri, keys);
 		return get(response.first().get("id"));
 	}
 
-	
-	
 	public void viewDelete(String viewUri, String... keys) {
-		CouchResponseView response = view(viewUri, keys);		
-		for(int i = 0; i < response.totalRows(); i++) {
+		CouchResponseView response = view(viewUri, keys);
+		for (int i = 0; i < response.size(); i++) {
 			JsonObject row = response.json(i);
 			// the view must emit doc._rev as value to be able use viewDelete
 			delete(row.get("id").getAsString() + "?rev=" + extractRevision(row.get("value")));
-		}				
+		}
 	}
 
 	private String extractRevision(JsonElement value) {
 		if (value.isJsonArray()) {
 			return value.getAsJsonArray().get(0).getAsString();
 		}
-		
+
 		if (value.isJsonObject()) {
 			return value.getAsJsonObject().get("_rev").getAsString();
 		}
-		
+
 		return value.getAsString();
 	}
 
 	public CouchResponse viewGetAt(String viewUri, int index, String... keys) {
-		CouchResponseView response = view(viewUri, keys);		
+		CouchResponseView response = view(viewUri, keys);
 		return get(response.json(index).get("id"));
 	}
 
-	public void viewGroup(String string) {
-		// TODO Auto-generated method stub
-		
+	public CouchResponseReduce reduce(String viewUri, String... key) {
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, true, key)));
+		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 
 }

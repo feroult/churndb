@@ -63,7 +63,7 @@ public class DocumentTest extends CouchTestBase {
 		person.setName("James");
 		
 		couch.put(DOC, person.json());
-		person = couch.get(DOC).bean(Person.class);
+		person = couch.get(DOC).as(Person.class);
 		
 		Assert.assertEquals("James", person.getName());
 	}

@@ -76,7 +76,7 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "123", "Product.java");
 		
 		JsonObject jsonView = couch.view("core/simple", "Product.java").first();
-		Document doc = couch.get(jsonView.get("id")).bean(Document.class);
+		Document doc = couch.get(jsonView.get("id")).as(Document.class);
 		
 		assertEquals("Product.java", doc.getCode());
 		assertEquals("simple", doc.getType());		
@@ -89,21 +89,11 @@ public class ViewTest extends CouchTestBase {
 		
 		CouchResponseView view = couch.view("core/simple");
 		
-		Document docA = view.get(0).bean(Document.class);
-		Document docZ = view.get(1).bean(Document.class);
+		Document docA = view.get(0).as(Document.class);
+		Document docZ = view.get(1).as(Document.class);
 		
 		assertEquals(docA.getCode(), "A");
 		assertEquals(docZ.getCode(), "Z");		
-	}
-	
-	@Test
-	public void testViewTotalRows() {
-		putDocument("simple", "1", "Product.java");
-		putDocument("simple", "2", "Address.java");
-		
-		CouchResponseView response = couch.view("core/simple");
-		
-		assertEquals(2, response.totalRows());
 	}
 	
 	@Test
@@ -120,7 +110,7 @@ public class ViewTest extends CouchTestBase {
 	public void testViewGetFirst() {
 		putDocument("simple", "123", "Product.java");
 		
-		Document doc = couch.viewGetFirst("core/simple", "Product.java").bean(Document.class);
+		Document doc = couch.viewGetFirst("core/simple", "Product.java").as(Document.class);
 		
 		assertEquals("Product.java", doc.getCode());
 		assertEquals("simple", doc.getType());
@@ -131,8 +121,8 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "1", "A");
 		putDocument("simple", "2", "Z");
 				
-		Document docA = couch.viewGetAt("core/simple", 0).bean(Document.class);
-		Document docZ = couch.viewGetAt("core/simple", 1).bean(Document.class);
+		Document docA = couch.viewGetAt("core/simple", 0).as(Document.class);
+		Document docZ = couch.viewGetAt("core/simple", 1).as(Document.class);
 		
 		assertEquals(docA.getCode(), "A");
 		assertEquals(docZ.getCode(), "Z");
@@ -174,8 +164,9 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "2", "B", 20);
 		putDocument("simple", "3", "C", 30);
 		
-		couch.viewGroup("core/simple");
-		// from here, test reduce
+		Integer total = couch.reduce("core/simple").as(Integer.class);
+		
+		assertEquals(new Integer(60), total);
 	}
 	
 	private void putDocument(String type, String id, String name) {
