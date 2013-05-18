@@ -153,8 +153,20 @@ public class CouchClient {
 		for(int i = 0; i < response.totalRows(); i++) {
 			JsonObject row = response.json(i);
 			// the view must emit doc._rev as value to be able use viewDelete
-			delete(row.get("id").getAsString() + "?rev=" + row.get("value").getAsString());
+			delete(row.get("id").getAsString() + "?rev=" + extractRevision(row.get("value")));
 		}				
+	}
+
+	private String extractRevision(JsonElement value) {
+		if (value.isJsonArray()) {
+			return value.getAsJsonArray().get(0).getAsString();
+		}
+		
+		if (value.isJsonObject()) {
+			return value.getAsJsonObject().get("_rev").getAsString();
+		}
+		
+		return value.getAsString();
 	}
 
 	public CouchResponse viewGetAt(String viewUri, int index, String... keys) {
