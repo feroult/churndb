@@ -12,8 +12,11 @@ public class Commit {
 	
 	List<Change> changes = new ArrayList<Change>();
 
-	public Commit(Date date) {
-		this.date = date;		
+	private String name;
+
+	public Commit(Date date, String name) {
+		this.date = date;
+		this.name = name;		
 	}
 	
 	public Date getDate() {
@@ -36,6 +39,10 @@ public class Commit {
 		}
 		
 		return map;
-	}	
+	}
+
+	public String getName() {
+		return name;
+	}			
 
 }

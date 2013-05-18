@@ -21,24 +21,9 @@ public class Source {
 	
 	private Commit commit = new Commit();
 	
-	public Source(String root, File file) {
-		this.path = extractRoot(root, file.getPath());
-		this.file = file;
-	}
-
-	public Source(String path) {
+	public Source(String root, String path) {
+		this.file = new File(root + path);
 		this.path = path;
-	}
-
-	private String extractRoot(String root, String path) {
-		return path.replaceFirst(normalizePath(root), "");
-	}
-
-	private String normalizePath(String root) {
-		if(!root.endsWith("/")) {
-			root += "/";
-		}
-		return root;
 	}
 
 	public String getPath() {

@@ -24,7 +24,7 @@ import org.eclipse.jgit.util.io.DisabledOutputStream;
 public class GIT {
 
 	private Git git;
-	
+
 	private File path;
 
 	public GIT(String path) {
@@ -58,7 +58,7 @@ public class GIT {
 	public void add(String filepattern) {
 		try {
 			git.add().addFilepattern(filepattern).call();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -66,34 +66,34 @@ public class GIT {
 	public void commit(String message) {
 		try {
 			git.commit().setMessage(message).call();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public List<Commit> log() {
 		try {
-			List<Commit> commits = new ArrayList<Commit>();			
+			List<Commit> commits = new ArrayList<Commit>();
 			Iterable<RevCommit> call = git.log().call();
-						
-			for(RevCommit commit : call) {
-				commits.add(parseCommit(commit));
+
+			for (RevCommit revCommit : call) {
+				commits.add(parseCommit(revCommit));
 			}
-		
+
 			return commits;
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}			
+		}
 	}
 
 	public Commit parseCommit(RevCommit revCommit) {
-		Commit commit = new Commit(revCommit.getAuthorIdent().getWhen());
-		
+		Commit commit = new Commit(revCommit.getAuthorIdent().getWhen(), revCommit.getName());
+
 		if (!hasChanges()) {
 			return commit;
 		}
-		
+
 		try {
 			if (revCommit.getParentCount() == 0) {
 				parseFirstCommit(revCommit, commit);
@@ -103,32 +103,40 @@ public class GIT {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return commit;
 	}
 
-	private void parseOtherCommits(RevCommit revCommit, Commit commit)
-			throws MissingObjectException, IncorrectObjectTypeException, IOException {
-		
+	public void checkout(String name) {
+		try {
+			git.checkout().setName(name).call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void parseOtherCommits(RevCommit revCommit, Commit commit) throws MissingObjectException,
+			IncorrectObjectTypeException, IOException {
+
 		RevWalk rw = new RevWalk(git.getRepository());
-		
-		try {			
+
+		try {
 			RevCommit parent = rw.parseCommit(revCommit.getParent(0).getId());
 			DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
 			df.setRepository(git.getRepository());
 			df.setDiffComparator(RawTextComparator.DEFAULT);
 			df.setDetectRenames(true);
 			List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
-			for (DiffEntry diff : diffs) {					
-				commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());					
+			for (DiffEntry diff : diffs) {
+				commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());
 			}
 		} finally {
 			rw.dispose();
 		}
 	}
 
-	private void parseFirstCommit(RevCommit revCommit, Commit commit)
-			throws MissingObjectException, IncorrectObjectTypeException, CorruptObjectException, IOException {
+	private void parseFirstCommit(RevCommit revCommit, Commit commit) throws MissingObjectException,
+			IncorrectObjectTypeException, CorruptObjectException, IOException {
 		TreeWalk tw = new TreeWalk(git.getRepository());
 		tw.reset();
 		tw.setRecursive(true);
@@ -153,5 +161,6 @@ public class GIT {
 
 	public Git getGit() {
 		return git;
-	}			
+	}
+
 }
