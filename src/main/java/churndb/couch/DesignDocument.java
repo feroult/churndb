@@ -22,7 +22,7 @@ public class DesignDocument {
 		view.setMap(source);
 	}
 	
-	public void addViewRedeuce(String key, String source) {
+	public void addViewReduce(String key, String source) {
 		createViewIfNotExists(key);
 		
 		View view = views.get(key);

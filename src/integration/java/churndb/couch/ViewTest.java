@@ -62,6 +62,7 @@ public class ViewTest extends CouchTestBase {
 	private void createSimpleView() {
 		DesignDocument core = new DesignDocument("core");		
 		core.addViewMap("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));		
+		core.addViewReduce("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
 		couch.put(core);
 	}
 	
@@ -169,11 +170,11 @@ public class ViewTest extends CouchTestBase {
 	
 	@Test
 	public void testReduce() {
-		putDocument("simple", "1", "A");
-		putDocument("simple", "2", "B");
-		putDocument("simple", "3", "C");
+		putDocument("simple", "1", "A", 10);
+		putDocument("simple", "2", "B", 20);
+		putDocument("simple", "3", "C", 30);
 		
-		System.out.println("test");
+		couch.viewGroup("core/simple");
 		// from here, test reduce
 	}
 	

@@ -116,12 +116,12 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponseView view(String viewUri, String... keys) {
+	public CouchResponseView view(String viewUri, String... key) {
 		String[] split = viewUri.split("/");
 		String module = split[0];
 		String view = split[1];
 
-		String normalizedKeys = keys.length == 0 ? "" : CouchUtils.keys(keys);
+		String normalizedKeys = key.length == 0 ? "?reduce=false&" : "?reduce=false&" + CouchUtils.key(key);
 		
 		HttpGet request = new HttpGet(
 				requestUrl("_design/" + module + "/_view/" + view + normalizedKeys));
@@ -172,6 +172,11 @@ public class CouchClient {
 	public CouchResponse viewGetAt(String viewUri, int index, String... keys) {
 		CouchResponseView response = view(viewUri, keys);		
 		return get(response.json(index).get("id"));
+	}
+
+	public void viewGroup(String string) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

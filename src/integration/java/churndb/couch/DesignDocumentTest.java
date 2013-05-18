@@ -27,7 +27,7 @@ public class DesignDocumentTest extends CouchTestBase {
 	public void testCreateDesignDocumentWithView() {		
 		DesignDocument core = new DesignDocument("core");		
 		core.addViewMap("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));
-		core.addViewRedeuce("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
+		core.addViewReduce("sources", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
 		
 		couch.put(core);		
 		JsonObject json = couch.get("_design/core").json();

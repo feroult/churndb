@@ -10,9 +10,9 @@ import com.google.gson.Gson;
 
 public class CouchUtils {
 
-	public static String keys(String... keys) {
+	public static String key(String... keys) {
 		if (keys.length == 1) {
-			return "?key=" + urlEncode(new Gson().toJson(keys[0]));
+			return "key=" + urlEncode(new Gson().toJson(keys[0]));
 		}
 		
 		return keysForRange(keys);
@@ -20,7 +20,7 @@ public class CouchUtils {
 
 	private static String keysForRange(String... keys) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("?startkey=");
+		sb.append("startkey=");
 		
 		List<String> keysList = new ArrayList<String>(Arrays.asList(keys));
 		
