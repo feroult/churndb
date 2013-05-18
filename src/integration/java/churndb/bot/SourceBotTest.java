@@ -12,16 +12,14 @@ import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
 import churndb.couch.response.CouchResponseView;
 import churndb.model.Churn;
+import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.model.Metrics;
 import churndb.utils.FakeProjectGIT;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
 public class SourceBotTest {
-
-	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 
 	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
@@ -65,15 +63,17 @@ public class SourceBotTest {
 
 		bot.reload(git, couch);
 
-		CouchResponseView view = couch.view("core/sources", project.getCode(), "Address.java");
+		project = couch.viewGetFirst("core/projects", project.getCode()).bean(Project.class);
+		assertEquals(commit1, project.getHead());		
+		
+		CouchResponseView view = couch.view("core/sources", project.getCode(), "Address.java");		
 
 		Source sourceCommit0 = view.get(0).bean(Source.class);
 		assertEquals(commit0, sourceCommit0.getChurn().getCommit());
 		asssertChurnDate(sourceCommit0.getChurn(), 2013, Calendar.MAY, 10, 14, 0);
 		assertEquals("0", sourceCommit0.getMetric(Metrics.CCN));
 		assertEquals("5", sourceCommit0.getMetric(Metrics.LOC));		
-		
-		
+				
 		Source sourceCommit1 = view.get(1).bean(Source.class);
 		assertEquals(commit1, sourceCommit1.getChurn().getCommit());
 		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
@@ -94,7 +94,6 @@ public class SourceBotTest {
 
 		project.setCode("fake_project");
 		project.setRepoUrl("https://github.com/feroult/churndb.git");
-		project.setRoot(PROJECT_PATH);
 		return project;
 	}
 }

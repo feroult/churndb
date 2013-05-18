@@ -24,12 +24,17 @@ public class SourceBot {
 		reloadProjectFromGIT(git, couch);
 	}
 
-	private void reloadProjectFromGIT(GIT git, CouchClient couch) {
-		couch.put(couch.id(), project.json());
+	private void reloadProjectFromGIT(GIT git, CouchClient couch) {		
+		boolean first = true;
 
 		Metrics metrics = new Metrics();
-		
+			
 		for(Commit commit : git.log()) {
+			if(first) {
+				first = false;
+				project.setHead(commit.getName());
+				couch.put(couch.id(), project.json());
+			}
 			
 			git.checkout(commit.getName());
 			

@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 
 public class Project {	
 	private String code;
-	
-	private String root;
-	
+		
 	private String repoUrl;
 
-	private String type = "project";	
+	private String type = "project";
+
+	private String head;	
 	
 	public String getCode() {
 		return code;
@@ -17,14 +17,6 @@ public class Project {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getRoot() {
-		return root;
-	}
-
-	public void setRoot(String root) {
-		this.root = root;
 	}
 
 	public String getRepoUrl() {
@@ -41,5 +33,14 @@ public class Project {
 
 	public String getType() {
 		return type;
+	}
+
+	public String getHead() {
+		return head;
+	}
+
+	public void setHead(String head) {
+		this.head = head;
+		
 	}
 }
