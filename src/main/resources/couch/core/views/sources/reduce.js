@@ -12,19 +12,20 @@
 
 function(keys, values, rereduce) {	
 	if(rereduce) {		
-		var result = {};		
+		var result = { count: values[0].count };		
+		
+		for(var i = 1, l=values.length; i < l; ++i) {
+			result.count = result.count + values[i].count;
+		}
+		
 		for( var metricKey in values[0] ) {
-			result[metricKey] = {
-				sum: values[0][metricKey].sum,
-				count: values[0][metricKey].count
-			}			
+			result[metricKey] = { sum: values[0][metricKey].sum	};
 				
 			for(var i = 1, l=values.length; i < l; ++i) {
-					result[metricKey].sum = result[metricKey].sum + values[i][metricKey].sum;
-		            result[metricKey].count = result[metricKey].count + values[i][metricKey].count;	        
+				result[metricKey].sum = result[metricKey].sum + values[i][metricKey].sum;
 			}
 		
-			result[metricKey].avg = (result[metricKey].sum / result[metricKey].count);
+			result[metricKey].avg = (result[metricKey].sum / result.count);
         }
 
 		log('rereduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));	    
@@ -32,19 +33,15 @@ function(keys, values, rereduce) {
 	}
 	
 	// non-rereduce
-	var result = {};		
+	var result = { count: values.length };		
 	for( var metricKey in values[0].metrics ) {		
-		result[metricKey] = {
-			sum: values[0].metrics[metricKey],
-			count: 1
-		}			
+		result[metricKey] = { sum: values[0].metrics[metricKey] };			
 			
 		for(var i = 1, l=values.length; i < l; ++i) {
-				result[metricKey].sum = result[metricKey].sum + values[i].metrics[metricKey];
-	            result[metricKey].count = result[metricKey].count + 1;	        
+			result[metricKey].sum = result[metricKey].sum + values[i].metrics[metricKey];
 		}
 	
-		result[metricKey].avg = (result[metricKey].sum / result[metricKey].count);
+		result[metricKey].avg = (result[metricKey].sum / result.count);
 	}
 	
 	log('reduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));    
