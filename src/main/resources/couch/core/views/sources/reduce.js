@@ -28,7 +28,7 @@ function(keys, values, rereduce) {
 			result[metricKey].avg = (result[metricKey].sum / result.count);
         }
 
-		log('rereduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));	    
+		//log('rereduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));	    
 		return result;		
 	}
 	
@@ -44,6 +44,6 @@ function(keys, values, rereduce) {
 		result[metricKey].avg = (result[metricKey].sum / result.count);
 	}
 	
-	log('reduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));    
+	//log('reduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));    
 	return result;
 }
