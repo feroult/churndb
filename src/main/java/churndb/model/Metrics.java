@@ -31,7 +31,7 @@ public class Metrics {
 			return;
 		}
 		
-		long ccn = 0;		
+		int ccn = 0;		
 		
 		for(FunctionMetric metric : functionMetrics) {
 			ccn += metric.ccn;

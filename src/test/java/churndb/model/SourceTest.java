@@ -21,8 +21,8 @@ public class SourceTest {
 	public void testCCN() {
 		Source source = loadJavaSourceAndMetrics();
 		
-		assertEquals("25", source.getMetric(Metrics.CCN));
-		assertEquals("61", source.getMetric(Metrics.LOC));		
+		assertEquals((Integer)25, source.getMetric(Metrics.CCN));
+		assertEquals((Integer)61, source.getMetric(Metrics.LOC));		
 	}
 
 	private Source loadJavaSourceAndMetrics() {

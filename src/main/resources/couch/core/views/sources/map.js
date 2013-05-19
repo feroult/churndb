@@ -7,6 +7,6 @@ function(doc) {
           doc.churn.dayOfMonth, 
           doc.churn.hourOfDay, 
           doc.churn.minute], 
-    	  doc._rev);
+    	  doc);
   }
 }

@@ -16,7 +16,7 @@ public class Source {
 	
 	private transient File file;
 	
-	private Map<String, String> metrics = new HashMap<String, String>();
+	private Map<String, Integer> metrics = new HashMap<String, Integer>();
 
 	private String project;
 	
@@ -35,16 +35,12 @@ public class Source {
 		return file;
 	}
 
-	public String getMetric(String key) {
+	public Integer getMetric(String key) {
 		return metrics.get(key);
 	}
-	
-	private void setMetric(String key, String value) {
-		metrics.put(key, value);
-	}
 		
-	public void setMetric(String key, long value) {
-		setMetric(key, String.valueOf(value));		
+	public void setMetric(String key, Integer value) {
+		metrics.put(key, value);		
 	}
 
 	public String json() {

@@ -41,6 +41,7 @@ public class SourceBotTest {
 
 		core.addViewMap("projects", ResourceUtils.asString("/couch/core/views/projects/map.js"));
 		core.addViewMap("sources", ResourceUtils.asString("/couch/core/views/sources/map.js"));
+		core.addViewReduce("sources", ResourceUtils.asString("/couch/core/views/sources/reduce.js"));
 		couch.put(core);
 	}
 
@@ -71,14 +72,14 @@ public class SourceBotTest {
 		Source sourceCommit0 = view.get(0).as(Source.class);
 		assertEquals(commit0, sourceCommit0.getChurn().getCommit());
 		asssertChurnDate(sourceCommit0.getChurn(), 2013, Calendar.MAY, 10, 14, 0);
-		assertEquals("0", sourceCommit0.getMetric(Metrics.CCN));
-		assertEquals("5", sourceCommit0.getMetric(Metrics.LOC));		
+		assertEquals((Integer)0, sourceCommit0.getMetric(Metrics.CCN));
+		assertEquals((Integer)5, sourceCommit0.getMetric(Metrics.LOC));		
 				
 		Source sourceCommit1 = view.get(1).as(Source.class);
 		assertEquals(commit1, sourceCommit1.getChurn().getCommit());
 		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
-		assertEquals("2", sourceCommit1.getMetric(Metrics.CCN));
-		assertEquals("14", sourceCommit1.getMetric(Metrics.LOC));										
+		assertEquals((Integer)2, sourceCommit1.getMetric(Metrics.CCN));
+		assertEquals((Integer)14, sourceCommit1.getMetric(Metrics.LOC));										
 	}
 
 	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
