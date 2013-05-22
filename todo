@@ -1,4 +1,5 @@
 views organization / different reduces for the same view
+deal with LOC for whole project, avoid couting same file twice
 clone
 deal with renames
 deal with deletions
