@@ -48,7 +48,7 @@ public class ProjectTaskTest {
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
 
-		Project project = reloadProjectFromGIT();
+		Project project = reloadProject();
 
 		project = couch.viewGetFirst("core/projects", project.getCode()).as(Project.class);
 		assertEquals(commit1, project.getHead());		
@@ -68,7 +68,7 @@ public class ProjectTaskTest {
 		assertEquals((Integer)14, sourceCommit1.getMetric(Metrics.LOC));										
 	}
 
-	private Project reloadProjectFromGIT() {
+	private Project reloadProject() {
 		Project project = createTestProject();				
 		ProjectTask task = createProjectTask(project);
 		task.reload();
