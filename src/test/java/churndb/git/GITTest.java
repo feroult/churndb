@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import churndb.utils.FakeProjectGIT;
+import churndb.utils.TestProjectGIT;
 
 public class GITTest {
 	
 	@Test
 	public void testCommits() {
-		FakeProjectGIT git = new FakeProjectGIT();
+		TestProjectGIT git = new TestProjectGIT();
 		
 		git.commit0();				
 		git.commit1();

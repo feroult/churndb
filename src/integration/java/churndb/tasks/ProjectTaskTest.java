@@ -14,7 +14,7 @@ import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.utils.FakeProjectGIT;
+import churndb.utils.TestProjectGIT;
 import churndb.utils.TestConstants;
 
 public class ProjectTaskTest {
@@ -43,15 +43,12 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testReloadProjectFromGIT() {
-		FakeProjectGIT git = new FakeProjectGIT();
+		TestProjectGIT git = new TestProjectGIT();
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
 
-		Project project = fakeProject();
-				
-		ProjectTask task = createProjectTask(project);
-		task.reload();
+		Project project = reloadProjectFromGIT();
 
 		project = couch.viewGetFirst("core/projects", project.getCode()).as(Project.class);
 		assertEquals(commit1, project.getHead());		
@@ -69,6 +66,13 @@ public class ProjectTaskTest {
 		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
 		assertEquals((Integer)2, sourceCommit1.getMetric(Metrics.CCN));
 		assertEquals((Integer)14, sourceCommit1.getMetric(Metrics.LOC));										
+	}
+
+	private Project reloadProjectFromGIT() {
+		Project project = createTestProject();				
+		ProjectTask task = createProjectTask(project);
+		task.reload();
+		return project;
 	}
 
 	private ProjectTask createProjectTask(Project project) {
@@ -89,7 +93,7 @@ public class ProjectTaskTest {
 		assertEquals(churn.getMinute(), minute);
 	}
 
-	private Project fakeProject() {
+	private Project createTestProject() {
 		Project project = new Project();
 
 		project.setCode("fake_project");
