@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import churndb.utils.TestProjectGIT;
 
 public class GITTest {
 	

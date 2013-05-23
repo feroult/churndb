@@ -5,16 +5,16 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.utils.ResourceUtils;
+import churndb.utils.TestResourceUtils;
 import churndb.utils.TestConstants;
 
 public class SourceTest {
 
-	private static final String PROJECT_PATH = ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
+	private static final String PROJECT_PATH = TestResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 	
 	@Before
 	public void before() {	
-		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
 	}
 		
 	@Test

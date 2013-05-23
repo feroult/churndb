@@ -1,14 +1,14 @@
 package churndb.tasks;
 
 import churndb.tasks.Setup;
-import churndb.utils.ResourceUtils;
+import churndb.utils.TestResourceUtils;
 import churndb.utils.TestConstants;
 
 public class TestSetup extends Setup {
 
 	@Override
 	public String getRoot(String code) {
-		return ResourceUtils.tempPath(TestConstants.PROJECT_PATH);
+		return TestResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 	}
 
 	@Override

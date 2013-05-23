@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import churndb.couch.CouchClient;
 import churndb.couch.response.CouchResponseView;
+import churndb.git.TestProjectGIT;
 import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.utils.TestProjectGIT;
 import churndb.utils.TestConstants;
 
 public class ProjectTaskTest {
