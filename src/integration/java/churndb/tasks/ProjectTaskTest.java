@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import churndb.couch.CouchClient;
 import churndb.couch.response.CouchResponseView;
-import churndb.git.TestProjectGIT;
+import churndb.git.TestRepository;
 import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
@@ -43,7 +43,7 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testReloadProjectFromGIT() {
-		TestProjectGIT git = new TestProjectGIT();
+		TestRepository git = new TestRepository();
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();

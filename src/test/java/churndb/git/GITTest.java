@@ -12,7 +12,7 @@ public class GITTest {
 	
 	@Test
 	public void testCommits() {
-		TestProjectGIT git = new TestProjectGIT();
+		TestRepository git = new TestRepository();
 		
 		git.commit0();				
 		git.commit1();
