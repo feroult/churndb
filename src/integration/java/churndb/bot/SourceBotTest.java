@@ -9,45 +9,41 @@ import org.junit.Before;
 import org.junit.Test;
 
 import churndb.couch.CouchClient;
-import churndb.couch.DesignDocument;
 import churndb.couch.response.CouchResponseView;
 import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
+import churndb.tasks.ChurnDB;
+import churndb.tasks.ChurnDBSetup;
 import churndb.utils.FakeProjectGIT;
 import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
 public class SourceBotTest {
 
-	private static final String COUCHDB_HOST = "http://127.0.0.1:5984";
+	private CouchClient couch = new CouchClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
 
-	private static final String CHURNDB = "churndbtest";
-
-	private CouchClient couch = new CouchClient(COUCHDB_HOST, CHURNDB);
+	ChurnDBSetup setup = new TestChurnDBSetup();
+	
+	private ChurnDB churnDB = new ChurnDB() {
+		@Override
+		protected ChurnDBSetup setup() {
+			return setup;
+		}		
+	};
 
 	@Before
-	public void before() {
-		couch.dropIfExists();
-		couch.create();
-		deployViews();
+	public void before() {		
+		churnDB.undeploy(); // if exists
+		churnDB.deploy();
 
 		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);
 	}
 
-	private void deployViews() {
-		DesignDocument core = new DesignDocument("core");
-
-		core.addViewMap("projects", ResourceUtils.asString("/couch/core/views/projects/map.js"));
-		core.addViewMap("sources", ResourceUtils.asString("/couch/core/views/sources/map.js"));
-		core.addViewReduce("sources", ResourceUtils.asString("/couch/core/views/sources/reduce.js"));
-		couch.put(core);
-	}
-
 	@After
 	public void after() {
-		couch.drop();
+		churnDB.undeploy();
 	}
 
 	@Test
@@ -58,8 +54,7 @@ public class SourceBotTest {
 		String commit1 = git.commit1();
 
 		Project project = fakeProject();
-		SourceBotSetup setup = new FakeSourceBotSetup();
-		
+				
 		SourceBot bot = new SourceBot(project, setup);
 
 		bot.reload(git, couch);

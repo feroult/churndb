@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import churndb.couch.response.CouchResponse;
+import churndb.utils.TestConstants;
 
 import com.google.gson.JsonObject;
 
@@ -21,11 +22,11 @@ public class DatabaseTest extends CouchTestBase {
 		couch.create();
 	
 		JsonObject info = couch.get().json();
-		Assert.assertEquals(CHURNDB, info.get("db_name").getAsString());
+		Assert.assertEquals(TestConstants.CHURNDB, info.get("db_name").getAsString());
 	
 		couch.drop();
 		
-		CouchResponse response = couch.get(CHURNDB);
+		CouchResponse response = couch.get(TestConstants.CHURNDB);
 		Assert.assertTrue(response.objectNotFound());
 	}
 

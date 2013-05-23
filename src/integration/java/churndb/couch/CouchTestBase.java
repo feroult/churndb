@@ -1,11 +1,10 @@
 package churndb.couch;
 
 import churndb.couch.CouchClient;
+import churndb.utils.TestConstants;
 
 public class CouchTestBase {
 
-	protected static final String COUCHDB_HOST = "http://127.0.0.1:5984";
-	protected static final String CHURNDB = "churndbtest";
-	protected CouchClient couch = new CouchClient(COUCHDB_HOST, CHURNDB);
+	protected CouchClient couch = new CouchClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
 
 }

@@ -2,6 +2,9 @@ package churndb.utils;
 
 public class TestConstants {
 
+	public static final String COUCHDB_HOST = "http://127.0.0.1:5984";
+
+	public static final String CHURNDB = "churndbtest";
 	
 	public static final String PROJECT_PATH = "/churndb/project/";
 	

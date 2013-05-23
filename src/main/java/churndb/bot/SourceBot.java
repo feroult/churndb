@@ -7,14 +7,15 @@ import churndb.git.GIT;
 import churndb.model.Project;
 import churndb.model.Source;
 import churndb.model.Metrics;
+import churndb.tasks.ChurnDBSetup;
 
 public class SourceBot {
 
 	private Project project;
 	
-	private SourceBotSetup setup;
+	private ChurnDBSetup setup;
 
-	public SourceBot(Project project, SourceBotSetup setup) {
+	public SourceBot(Project project, ChurnDBSetup setup) {
 		this.project = project;
 		this.setup = setup;		
 	}
