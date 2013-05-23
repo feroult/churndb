@@ -13,8 +13,10 @@ public abstract class ChurnDBTask {
 	}
 	
 	protected Setup setup() {
-		// TODO Auto-generated method stub
-		return null;
+		if(setup == null ) {
+			setup = Setup.homeFolderSetup();
+		}
+		return setup;
 	}
 	
 }

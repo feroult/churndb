@@ -6,6 +6,10 @@ import churndb.utils.TestConstants;
 
 public class TestSetup extends Setup {
 
+	public TestSetup() {
+		super(null);
+	}
+	
 	@Override
 	public String getRoot(String code) {
 		return TestResourceUtils.tempPath(TestConstants.PROJECT_PATH);
