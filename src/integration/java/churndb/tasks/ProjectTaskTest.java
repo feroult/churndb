@@ -14,10 +14,7 @@ import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.tasks.ApplicationTask;
-import churndb.tasks.Setup;
 import churndb.utils.FakeProjectGIT;
-import churndb.utils.ResourceUtils;
 import churndb.utils.TestConstants;
 
 public class ProjectTaskTest {
@@ -37,8 +34,6 @@ public class ProjectTaskTest {
 	public void before() {		
 		applicationTask.undeploy(); // if exists
 		applicationTask.deploy();
-
-		ResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);
 	}
 
 	@After
