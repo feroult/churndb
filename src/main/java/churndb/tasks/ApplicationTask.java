@@ -1,17 +1,10 @@
 package churndb.tasks;
 
-import churndb.couch.CouchClient;
 import churndb.couch.DesignDocument;
 import churndb.utils.ResourceUtils;
 
 public class ApplicationTask extends ChurnDBTask {
 			
-	private CouchClient couch;	
-
-	public ApplicationTask() {		
-		this.couch = new CouchClient(setup().getHost(), setup().getDatabase());
-	}
-	
 	public void deploy() {		
 		couch.create();
 		

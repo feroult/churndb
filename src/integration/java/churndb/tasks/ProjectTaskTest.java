@@ -57,7 +57,7 @@ public class ProjectTaskTest {
 				
 		ProjectTask task = createProjectTask(project);
 
-		task.reload(git, couch);
+		task.reload(git);
 
 		project = couch.viewGetFirst("core/projects", project.getCode()).as(Project.class);
 		assertEquals(commit1, project.getHead());		
