@@ -11,17 +11,20 @@ public class ProjectTask extends ChurnDBTask {
 
 	private Project project;
 	
+	private GIT git;
+	
 	public ProjectTask(Project project) {
 		super();
 		this.project = project;
+		this.git = new GIT(setup().getRoot(project.getCode()));
 	}
 
-	public void reload(GIT git) {		
+	public void reload() {		
 		deleteProjectIfExists();				
-		reloadProjectFromGIT(git);
+		reloadProjectFromGIT();
 	}
 
-	private void reloadProjectFromGIT(GIT git) {		
+	private void reloadProjectFromGIT() {		
 		boolean first = true;
 
 		Metrics metrics = new Metrics();
