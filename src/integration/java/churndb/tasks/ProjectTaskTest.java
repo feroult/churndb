@@ -33,7 +33,7 @@ public class ProjectTaskTest {
 
 	@Before
 	public void before() {		
-		System.setProperty("user.home", TestResourceUtils.realPath(""));
+		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
 		
 		applicationTask.undeploy(); // if exists
 		applicationTask.deploy();

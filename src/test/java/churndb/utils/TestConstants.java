@@ -1,6 +1,8 @@
 package churndb.utils;
 
 public class TestConstants {
+	
+	public static final String HOME_FOLDER = "/churndb/home";
 
 	public static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
@@ -21,5 +23,6 @@ public class TestConstants {
 	public static final String COUCH_DELETION_VIEW_MAP2 = "/churndb/couch/views/deletion/map2.js";
 
 	public static final String COUCH_DELETION_VIEW_MAP3 = "/churndb/couch/views/deletion/map3.js";
+
 	
 }
