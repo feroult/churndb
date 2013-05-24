@@ -8,7 +8,9 @@ public class TestConstants {
 
 	public static final String CHURNDB = "churndbtest";
 	
-	public static final String PROJECT_PATH = "/churndb/fake_project/";
+	public static final String PROJECT_CODE = "fake_project";
+	
+	public static final String PROJECT_PATH = "/churndb/" + PROJECT_CODE + "/";
 	
 	public static final String PROJECT_COMMIT_0_PATH = "/churndb/project/commit0";
 	
@@ -23,6 +25,7 @@ public class TestConstants {
 	public static final String COUCH_DELETION_VIEW_MAP2 = "/churndb/couch/views/deletion/map2.js";
 
 	public static final String COUCH_DELETION_VIEW_MAP3 = "/churndb/couch/views/deletion/map3.js";
+
 
 	
 }

@@ -40,14 +40,18 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testReloadProjectFromGIT() {
+		// given
 		TestRepository git = new TestRepository();
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
 
-		Project project = reloadProject();
+		// when
+		ProjectTask task = new ProjectTask(createTestProject());
+		task.reload();
 
-		project = couch.viewGetFirst("core/projects", project.getCode()).as(Project.class);
+		// then
+		Project project = couch.viewGetFirst("core/projects", TestConstants.PROJECT_CODE).as(Project.class);
 		assertEquals(commit1, project.getHead());		
 		
 		CouchResponseView view = couch.view("core/sources", project.getCode(), "Address.java");		
@@ -63,17 +67,6 @@ public class ProjectTaskTest {
 		asssertChurnDate(sourceCommit1.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
 		assertEquals((Integer)2, sourceCommit1.getMetric(Metrics.CCN));
 		assertEquals((Integer)14, sourceCommit1.getMetric(Metrics.LOC));										
-	}
-
-	private Project reloadProject() {
-		Project project = createTestProject();				
-		ProjectTask task = createProjectTask(project);
-		task.reload();
-		return project;
-	}
-
-	private ProjectTask createProjectTask(Project project) {
-		return new ProjectTask(project);
 	}
 
 	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
