@@ -39,7 +39,7 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	public void testReloadProjectFromGIT() {
+	public void testReload() {
 		// given
 		TestRepository git = new TestRepository();
 
