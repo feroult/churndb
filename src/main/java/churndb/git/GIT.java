@@ -36,12 +36,21 @@ public class GIT {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository;
 		try {
-			repository = builder.findGitDir(path).build();
-			repository.isBare();
+			if(alreadyInit()) {
+				builder.findGitDir(path);
+			} else {
+				builder.setGitDir(path);
+			}
+			
+			repository = builder.build();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		return repository;
+	}
+
+	private boolean alreadyInit() {
+		return new File(path + "/.git").exists();
 	}
 
 	public void init() {

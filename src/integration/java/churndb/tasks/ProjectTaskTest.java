@@ -16,6 +16,7 @@ import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
 import churndb.utils.TestConstants;
+import churndb.utils.TestResourceUtils;
 
 public class ProjectTaskTest {
 
@@ -32,6 +33,8 @@ public class ProjectTaskTest {
 
 	@Before
 	public void before() {		
+		System.setProperty("user.home", TestResourceUtils.realPath(""));
+		
 		applicationTask.undeploy(); // if exists
 		applicationTask.deploy();
 	}

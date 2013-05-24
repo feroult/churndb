@@ -13,7 +13,8 @@ public class TestResourceUtils {
 	}
 
 	public static String tempPath(String path) {
-		return realPath("/churndb") + "/../../../tmp" + path;
+		//return realPath("/churndb") + "/../../../tmp" + path;
+		return "/tmp" + path;
 	}
 
 	public static String resourcesPath(String path) {

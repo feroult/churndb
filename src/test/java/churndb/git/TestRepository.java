@@ -15,7 +15,7 @@ import churndb.utils.TestConstants;
 
 public class TestRepository extends GIT {
 
-	public TestRepository() {
+	public TestRepository() {		
 		super(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
 		FileUtils.deleteQuietly(getPath());
 		getPath().mkdirs();
