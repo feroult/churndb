@@ -18,7 +18,7 @@ public class Setup {
 	}
 
 	public String getRoot(String code) {
-		return properties.getProperty(ROOT) + "/code";
+		return properties.getProperty(ROOT) + "/" + code;
 	}
 	
 	public String getHost() {

@@ -8,7 +8,7 @@ public class TestConstants {
 
 	public static final String CHURNDB = "churndbtest";
 	
-	public static final String PROJECT_PATH = "/churndb/project/";
+	public static final String PROJECT_PATH = "/churndb/fake_project/";
 	
 	public static final String PROJECT_COMMIT_0_PATH = "/churndb/project/commit0";
 	

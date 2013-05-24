@@ -23,8 +23,15 @@ public class Source {
 	private Churn churn = new Churn();
 	
 	public Source(String root, String path) {
-		this.file = new File(root + path);
+		this.file = new File(normalizeRoot(root) + path);
 		this.path = path;
+	}
+
+	private String normalizeRoot(String root) {
+		if(root.endsWith("/")) {
+			return root;
+		}
+		return root + "/";
 	}
 
 	public String getPath() {

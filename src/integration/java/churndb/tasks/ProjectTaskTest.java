@@ -21,21 +21,15 @@ import churndb.utils.TestResourceUtils;
 public class ProjectTaskTest {
 
 	private CouchClient couch = new CouchClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
-
-	private Setup testSetup = new TestSetup();
 	
-	private ApplicationTask applicationTask = new ApplicationTask() {
-		@Override
-		protected Setup setup() {
-			return testSetup;
-		}		
-	};
+	private ApplicationTask applicationTask;
 
 	@Before
 	public void before() {		
 		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
-		
-		applicationTask.undeploy(); // if exists
+				
+		applicationTask = new ApplicationTask();
+		applicationTask.undeploy();
 		applicationTask.deploy();
 	}
 
@@ -79,13 +73,7 @@ public class ProjectTaskTest {
 	}
 
 	private ProjectTask createProjectTask(Project project) {
-		return new ProjectTask(project) {
-			@Override
-			protected Setup setup() {
-				return testSetup;
-			}
-			
-		};
+		return new ProjectTask(project);
 	}
 
 	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
