@@ -13,12 +13,16 @@
 function(keys, values, rereduce) {	
 	if(rereduce) {		
 		var result = { count: values[0].count };		
-		
+				
 		for(var i = 1, l=values.length; i < l; ++i) {
 			result.count = result.count + values[i].count;
 		}
-		
-		for( var metricKey in values[0] ) {
+				
+		for( var metricKey in values[0] ) {			
+			if(metricKey == 'count') { 
+				continue;
+			}
+			
 			result[metricKey] = { sum: values[0][metricKey].sum	};
 				
 			for(var i = 1, l=values.length; i < l; ++i) {
@@ -28,7 +32,7 @@ function(keys, values, rereduce) {
 			result[metricKey].avg = (result[metricKey].sum / result.count);
         }
 
-		//log('rereduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));	    
+		log('rereduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));	    
 		return result;		
 	}
 	
@@ -44,6 +48,6 @@ function(keys, values, rereduce) {
 		result[metricKey].avg = (result[metricKey].sum / result.count);
 	}
 	
-	//log('reduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));    
+	log('reduce keys:'+toJSON(keys)+' values:'+toJSON(values)+' result:'+toJSON(result));    
 	return result;
 }
