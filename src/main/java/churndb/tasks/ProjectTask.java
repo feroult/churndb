@@ -39,13 +39,22 @@ public class ProjectTask extends ChurnDBTask {
 			git.checkout(commit.getName());
 			
 			for(Change change : commit.getChanges()) {
+				
+				if(!isSupportedSourceType(change.getPath())) {
+					continue;
+				}
+				
 				Source source = configureSource(commit, change, metrics);
 				couch.put(couch.id(), source.json());
 			}			
 		}
 	}
 
-	private Source configureSource(Commit commit, Change change, Metrics metrics) {
+	private boolean isSupportedSourceType(String path) {
+		return path.endsWith(".java");
+	}
+
+	private Source configureSource(Commit commit, Change change, Metrics metrics) {		 		
 		Source source = new Source(setup().getRoot(project.getCode()), change.getPath());
 		source.setProject(project.getCode());
 		source.initChurn(commit);
@@ -58,7 +67,7 @@ public class ProjectTask extends ChurnDBTask {
 		couch.viewDelete("core/sources", project.getCode());
 	}
 
-	public void cloneProject() {
+	public void cloneRepository() {
 		deleteProjectIfExists();		
 		git.cloneRepository(project.getRepoUrl());
 		couch.put(couch.id(), project.json());

@@ -96,16 +96,30 @@ public class ProjectTaskTest {
 		// when
 		Project project = new Project();		
 		project.setCode(TestConstants.PROJECT_CLONE_CODE);
-		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
-		// TODO from here - project.setRepoUrl("git@github.com:feroult/churndb.git");
+		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));			
 		
 		ProjectTask projectTask = new ProjectTask(project);
-		projectTask.cloneProject();
+		projectTask.cloneRepository();
 		
 		// then
 		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH));		
 		List<Commit> log = git.log();
 		assertEquals(2, log.size());
+	}
+
+	@Test
+	public void testCloneRemote() {
+
+		Project project = new Project();		
+		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
+		project.setRepoUrl("git://github.com/feroult/churndb.git");
+
+		ProjectTask projectTask = new ProjectTask(project);
+		
+		projectTask.cloneRepository();
+		projectTask.reload();
+		
+		System.out.println("reload churndb!");
 	}
 	
 	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {

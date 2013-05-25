@@ -29,7 +29,11 @@ public class GIT {
 
 	public GIT(String path) {
 		this.path = new File(path);
-		this.git = new Git(buildRepository());
+		this.git = loadGitClient();
+	}
+
+	private Git loadGitClient() {
+		return new Git(buildRepository());
 	}
 
 	private Repository buildRepository() {
@@ -175,6 +179,7 @@ public class GIT {
 	public void cloneRepository(String repoUrl) {
 		try {
 			Git.cloneRepository().setDirectory(path).setURI(repoUrl).call();
+			git = loadGitClient();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
