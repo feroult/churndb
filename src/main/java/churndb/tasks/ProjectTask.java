@@ -59,7 +59,9 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	public void cloneProject() {
-		git.cloneRepository(project.getRepoUrl());		
+		deleteProjectIfExists();		
+		git.cloneRepository(project.getRepoUrl());
+		couch.put(couch.id(), project.json());
 	}
 
 
