@@ -2,14 +2,19 @@ package churndb.tasks;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import churndb.couch.CouchClient;
 import churndb.couch.response.CouchResponseView;
+import churndb.git.Commit;
+import churndb.git.GIT;
 import churndb.git.TestRepository;
 import churndb.model.Churn;
 import churndb.model.Metrics;
@@ -25,12 +30,19 @@ public class ProjectTaskTest {
 	private ApplicationTask applicationTask;
 
 	@Before
-	public void before() {		
+	public void before() {				
 		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
+		
+		deleteProjectFolders();
 				
 		applicationTask = new ApplicationTask();
 		applicationTask.undeploy();
 		applicationTask.deploy();
+	}
+
+	private void deleteProjectFolders() {
+		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));
+		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
 	}
 
 	@After
@@ -84,4 +96,24 @@ public class ProjectTaskTest {
 		project.setRepoUrl("https://github.com/feroult/churndb.git");
 		return project;
 	}
+	
+	@Test
+	public void testClone() {		
+		// given
+		new TestRepository().doAllCommits();
+		
+		// when
+		Project project = new Project();		
+		project.setCode(TestConstants.PROJECT_CLONE_CODE);
+		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
+		
+		ProjectTask projectTask = new ProjectTask(project);
+		projectTask.cloneProject();
+		
+		// then
+		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH));
+		
+		List<Commit> log = git.log();
+		assertEquals(2, log.size());
+	}	
 }

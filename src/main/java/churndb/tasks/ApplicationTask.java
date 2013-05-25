@@ -1,6 +1,7 @@
 package churndb.tasks;
 
 import churndb.couch.DesignDocument;
+import churndb.model.Project;
 import churndb.utils.ResourceUtils;
 
 public class ApplicationTask extends ChurnDBTask {

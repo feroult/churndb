@@ -52,5 +52,10 @@ public class TestRepository extends GIT {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public void doAllCommits() {
+		commit0();
+		commit1();		
+	}
 	
 }

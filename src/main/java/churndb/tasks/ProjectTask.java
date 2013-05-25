@@ -58,4 +58,9 @@ public class ProjectTask extends ChurnDBTask {
 		couch.viewDelete("core/sources", project.getCode());
 	}
 
+	public void cloneProject() {
+		git.cloneRepository(project.getRepoUrl());		
+	}
+
+
 }

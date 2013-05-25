@@ -172,4 +172,13 @@ public class GIT {
 		return git;
 	}
 
+	public void cloneRepository(String repoUrl) {
+		try {
+			Git.cloneRepository().setDirectory(path).setURI(repoUrl).call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
 }

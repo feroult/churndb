@@ -10,7 +10,13 @@ public class TestConstants {
 	
 	public static final String PROJECT_CODE = "fake_project";
 	
-	public static final String PROJECT_PATH = "/churndb/" + PROJECT_CODE + "/";
+	public static final String PROJECT_CLONE_CODE = "clone_project";
+	
+	public static final String CHURNDB_ROOT = "/churndb/";
+	
+	public static final String PROJECT_PATH = CHURNDB_ROOT + PROJECT_CODE + "/";
+	
+	public static final String PROJECT_CLONE_PATH = CHURNDB_ROOT + PROJECT_CLONE_CODE + "/";
 	
 	public static final String PROJECT_COMMIT_0_PATH = "/churndb/project/commit0";
 	
@@ -25,6 +31,7 @@ public class TestConstants {
 	public static final String COUCH_DELETION_VIEW_MAP2 = "/churndb/couch/views/deletion/map2.js";
 
 	public static final String COUCH_DELETION_VIEW_MAP3 = "/churndb/couch/views/deletion/map3.js";
+
 
 
 	
