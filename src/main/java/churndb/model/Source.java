@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import churndb.git.Commit;
-
 import com.google.gson.Gson;
 
-public class Source {
-
+public class Source {	
+	
+	private String _id;
+	
 	private String path;
 	
 	private String type = "source";
@@ -19,9 +19,11 @@ public class Source {
 	private Map<String, Integer> metrics = new HashMap<String, Integer>();
 
 	private String project;
-	
-	private Churn churn = new Churn();
-	
+
+	private String lastCommit;
+
+	private int churn = 1;
+		
 	public Source(String root, String path) {
 		this.file = new File(normalizeRoot(root) + path);
 		this.path = path;
@@ -66,11 +68,28 @@ public class Source {
 		return type;
 	}
 
-	public void initChurn(Commit commit) {
-		churn.init(commit);		
+	public void setLastCommit(String lastCommit) {
+		this.lastCommit = lastCommit;		
+	}
+	
+	public String getLastCommit() {		
+		return lastCommit;
 	}
 
-	public Churn getChurn() {
+	public int getChurn() {
 		return churn;
 	}
+
+	public void addChurn() {
+		churn++;		
+	}
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
+	
 }

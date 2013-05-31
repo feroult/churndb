@@ -27,5 +27,9 @@ public class CouchResponseView extends CouchResponse {
 	public CouchResponse get(int i) {
 		return couch().get(json(i).get("id"));
 	}
+
+	public boolean isEmpty() {
+		return size() == 0;
+	}
 		
 }

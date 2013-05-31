@@ -1,5 +1,6 @@
 package churndb.tasks;
 
+import churndb.couch.response.CouchResponseView;
 import churndb.git.Change;
 import churndb.git.Commit;
 import churndb.git.GIT;
@@ -44,8 +45,7 @@ public class ProjectTask extends ChurnDBTask {
 					continue;
 				}
 				
-				Source source = configureSource(commit, change, metrics);
-				couch.put(couch.id(), source.json());
+				updateSource(commit, change, metrics);				
 			}			
 		}
 	}
@@ -54,12 +54,23 @@ public class ProjectTask extends ChurnDBTask {
 		return path.endsWith(".java");
 	}
 
-	private Source configureSource(Commit commit, Change change, Metrics metrics) {		 		
-		Source source = new Source(setup().getRoot(project.getCode()), change.getPath());
-		source.setProject(project.getCode());
-		source.initChurn(commit);
-		metrics.apply(source);
-		return source;
+	private void updateSource(Commit commit, Change change, Metrics metrics) {
+		CouchResponseView view = couch.view("core/sources", project.getCode(), change.getPath());
+		
+		if(view.isEmpty()) {
+			Source source = new Source(setup().getRoot(project.getCode()), change.getPath());
+			source.setProject(project.getCode());
+			source.setLastCommit(commit.getName());
+			
+			metrics.apply(source);
+			
+			couch.put(couch.id(), source.json());
+		} else {
+			Source source = view.get(0).as(Source.class);
+			source.addChurn();
+			
+			couch.put(source.get_id(), source.json());
+		}				
 	}
 
 	private void deleteProjectIfExists() {

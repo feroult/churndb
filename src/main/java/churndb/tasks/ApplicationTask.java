@@ -12,7 +12,7 @@ public class ApplicationTask extends ChurnDBTask {
 	
 		core.addViewMap("projects", ResourceUtils.asString("/couch/core/views/projects/map.js"));
 		core.addViewMap("sources", ResourceUtils.asString("/couch/core/views/sources/map.js"));
-		core.addViewReduce("sources", ResourceUtils.asString("/couch/core/views/sources/reduce.js"));
+		//core.addViewReduce("sources", ResourceUtils.asString("/couch/core/views/sources/reduce.js"));
 		couch.put(core);
 	}
 	
