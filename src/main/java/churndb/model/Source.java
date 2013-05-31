@@ -6,8 +6,6 @@ import java.util.Map;
 
 import churndb.couch.CouchBean;
 
-import com.google.gson.Gson;
-
 public class Source extends CouchBean {	
 	
 	private String path;
@@ -50,10 +48,6 @@ public class Source extends CouchBean {
 		
 	public void setMetric(String key, Integer value) {
 		metrics.put(key, value);		
-	}
-
-	public String json() {
-		return new Gson().toJson(this);
 	}
 
 	public void setProject(String project) {

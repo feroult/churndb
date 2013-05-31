@@ -1,8 +1,9 @@
 package churndb.model;
 
-import com.google.gson.Gson;
+import churndb.couch.CouchBean;
+import churndb.couch.response.CouchResponseView;
 
-public class Project {	
+public class Project extends CouchBean {	
 	private String code;
 		
 	private String repoUrl;
@@ -27,10 +28,6 @@ public class Project {
 		this.repoUrl = repoUrl;
 	}
 
-	public String json() {
-		return new Gson().toJson(this);
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -42,5 +39,15 @@ public class Project {
 	public void setHead(String head) {
 		this.head = head;
 		
+	}
+
+	// service methods
+	
+	public Source getSource(String path) {		
+		CouchResponseView view = couch.view("core/sources", code, path);		
+		if(view.isEmpty()) {
+			return null;
+		}		
+		return view.get(0).as(Source.class);		
 	}
 }

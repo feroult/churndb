@@ -54,9 +54,10 @@ public class ProjectTask extends ChurnDBTask {
 		return path.endsWith(".java");
 	}
 
-	private void updateSource(Commit commit, Change change, Metrics metrics) {				
-		Source source = findExistingSource(change);
+	private void updateSource(Commit commit, Change change, Metrics metrics) {
 		
+		Source source = project.getSource(change.getPathBeforeChange());
+				
 		if(source != null) {
 			source.addChurn();
 		} else {
@@ -67,18 +68,6 @@ public class ProjectTask extends ChurnDBTask {
 		}				
 		
 		couch.put(source);
-	}
-
-	private Source findExistingSource(Change change) {
-		String path = change.getOldPath() == null ? change.getPath() : change.getOldPath();
-		
-		CouchResponseView view = couch.view("core/sources", project.getCode(), path);
-		
-		if(view.isEmpty()) {
-			return null;
-		}
-		
-		return view.get(0).as(Source.class);
 	}
 
 	private void deleteProjectIfExists() {

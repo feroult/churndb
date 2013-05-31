@@ -12,13 +12,14 @@ public class Change {
 		this.newPath = newPath;
 	}
 
-	public String getPath() {
-		if(newPath == null) {
-			return oldPath;
-		}
-		return newPath;
+	public String getPathBeforeChange() {
+		return oldPath == null ? newPath : oldPath;
 	}
-
+	
+	public String getPath() {
+		return newPath == null? oldPath : newPath;
+	}
+	
 	public Type getType() {
 		return type;
 	}
@@ -30,5 +31,4 @@ public class Change {
 	public String getNewPath() {
 		return newPath;
 	}
-
 }
