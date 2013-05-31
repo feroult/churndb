@@ -43,6 +43,11 @@ public class Project extends CouchBean {
 
 	// service methods
 	
+	public void deleteIfExists() {
+		couch.viewDelete("core/projects", code);
+		couch.viewDelete("core/sources", code);
+	}
+	
 	public Source getSource(String path) {		
 		CouchResponseView view = couch.view("core/sources", code, path);		
 		if(view.isEmpty()) {
@@ -50,4 +55,5 @@ public class Project extends CouchBean {
 		}		
 		return view.get(0).as(Source.class);		
 	}
+
 }

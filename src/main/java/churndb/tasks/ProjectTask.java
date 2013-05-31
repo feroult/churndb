@@ -1,12 +1,11 @@
 package churndb.tasks;
 
-import churndb.couch.response.CouchResponseView;
 import churndb.git.Change;
 import churndb.git.Commit;
 import churndb.git.GIT;
+import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.model.Metrics;
 
 public class ProjectTask extends ChurnDBTask {
 
@@ -21,7 +20,7 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	public void reload() {		
-		deleteProjectIfExists();				
+		project.deleteIfExists();				
 		reloadProjectFromGIT();
 	}
 
@@ -70,16 +69,10 @@ public class ProjectTask extends ChurnDBTask {
 		couch.put(source);
 	}
 
-	private void deleteProjectIfExists() {
-		couch.viewDelete("core/projects", project.getCode());
-		couch.viewDelete("core/sources", project.getCode());
-	}
-
 	public void cloneRepository() {
-		deleteProjectIfExists();		
-		git.cloneRepository(project.getRepoUrl());
-		couch.put(couch.id(), project.json());
+		project.deleteIfExists();		
+		git.cloneRepository(project.getRepoUrl());		
+		couch.put(project);
 	}
-
 
 }
