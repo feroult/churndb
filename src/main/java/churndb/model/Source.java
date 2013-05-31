@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import churndb.couch.CouchBean;
+
 import com.google.gson.Gson;
 
-public class Source {	
-	
-	private String _id;
+public class Source extends CouchBean {	
 	
 	private String path;
 	
@@ -82,14 +82,6 @@ public class Source {
 
 	public void addChurn() {
 		churn++;		
-	}
-
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
 	}
 	
 }

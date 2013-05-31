@@ -50,7 +50,6 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testReload() {
 		// given
 		TestRepository git = new TestRepository();

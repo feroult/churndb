@@ -34,7 +34,7 @@ public class CouchClient {
 	}
 
 	public void create() {
-		put("");
+		executeRequest(new HttpPut(fullRequestUrl("")));
 	}
 
 	public void drop() {
@@ -48,11 +48,7 @@ public class CouchClient {
 	public CouchResponse get(String url) {
 		return executeRequest(new HttpGet(fullRequestUrl(url)));
 	}
-
-	public CouchResponse put(String url) {
-		return executeRequest(new HttpPut(fullRequestUrl(url)));
-	}
-
+	
 	public CouchResponse put(String url, String body) {
 		HttpPut request = new HttpPut(fullRequestUrl(url));
 
@@ -183,6 +179,10 @@ public class CouchClient {
 	public CouchResponseReduce reduce(String viewUri, String... key) {
 		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, true, key)));
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
+	}
+
+	public void put(CouchBean bean) {
+		put(bean.get_id(), bean.json());
 	}
 
 }
