@@ -185,4 +185,8 @@ public class CouchClient {
 		put(bean.get_id(), bean.json());
 	}
 
+	public void put(String id, CouchBean bean) {
+		put(id, bean.json());
+	}
+
 }

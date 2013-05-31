@@ -64,7 +64,7 @@ public class ProjectTask extends ChurnDBTask {
 			
 			metrics.apply(source);
 			
-			couch.put(couch.id(), source.json());
+			couch.put(couch.id(), source);
 		} else {
 			Source source = view.get(0).as(Source.class);
 			source.addChurn();
