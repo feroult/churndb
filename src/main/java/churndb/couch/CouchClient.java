@@ -182,10 +182,13 @@ public class CouchClient {
 	}
 
 	public void put(CouchBean bean) {
+		if(bean.get_id() == null) {
+			bean.set_id(id());
+		}		
 		put(bean.get_id(), bean.json());
 	}
 
-	public void put(String id, CouchBean bean) {
+	public void put(String id, CouchBean bean) {		
 		put(id, bean.json());
 	}
 
