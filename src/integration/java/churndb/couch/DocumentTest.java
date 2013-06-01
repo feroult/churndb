@@ -5,10 +5,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import churndb.utils.TestConstants;
-import churndb.utils.TestResourceUtils;
-
 import com.google.gson.JsonObject;
 
 public class DocumentTest extends CouchTestBase {
@@ -29,8 +25,6 @@ public class DocumentTest extends CouchTestBase {
 	
 	@Before
 	public void before() {
-		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
-		
 		couch.dropIfExists();		
 		couch.create();		
 	}
