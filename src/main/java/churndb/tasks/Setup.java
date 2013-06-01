@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class Setup {
-
+	
 	private static final String ROOT = "root";
 
 	private static final String HOST = "host";

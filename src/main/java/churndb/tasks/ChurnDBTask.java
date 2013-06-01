@@ -1,22 +1,15 @@
 package churndb.tasks;
 
-import churndb.couch.CouchClient;
+import churndb.utils.ChurnClient;
 
 public abstract class ChurnDBTask {
 
-	protected Setup setup;
+	protected Setup setup = Setup.homeFolderSetup();
 	
-	protected CouchClient couch;
+	protected ChurnClient churn;
 
 	public ChurnDBTask() {
-		this.couch = new CouchClient(setup().getHost(), setup().getDatabase());
+		this.churn = new ChurnClient(setup.getHost(), setup.getDatabase());
 	}
-	
-	protected Setup setup() {
-		if(setup == null ) {
-			setup = Setup.homeFolderSetup();
-		}
-		return setup;
-	}
-	
+		
 }

@@ -16,11 +16,11 @@ public class ProjectTask extends ChurnDBTask {
 	public ProjectTask(Project project) {
 		super();
 		this.project = project;
-		this.git = new GIT(setup().getRoot(project.getCode()));
+		this.git = new GIT(setup.getRoot(project.getCode()));
 	}
 
 	public void reload() {		
-		project.deleteIfExists();				
+		churn.deleteProject(project.getCode());				
 		reloadProjectFromGIT();
 	}
 
@@ -32,7 +32,7 @@ public class ProjectTask extends ChurnDBTask {
 			if(isNewerCommitForProject(commit, project)) {
 				project.setLastCommit(commit.getName());
 				project.setLastChange(commit.getDate());
-				couch.put(project);
+				churn.put(project);
 			}
 			
 			git.checkout(commit.getName());
@@ -62,7 +62,7 @@ public class ProjectTask extends ChurnDBTask {
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 		
-		Source source = project.getSource(change.getPathBeforeChange());
+		Source source = churn.getSource(project.getCode(), change.getPathBeforeChange());		
 						
 		if(isNewerCommitForSource(commit, source)) {
 			source.setLastCommit(commit.getName());		
@@ -71,7 +71,7 @@ public class ProjectTask extends ChurnDBTask {
 		} 
 		
 		source.addChurn();
-		couch.put(source);
+		churn.put(source);
 	}
 
 	private boolean isNewerCommitForSource(Commit commit, Source source) {
@@ -83,9 +83,9 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	public void cloneRepository() {
-		project.deleteIfExists();		
+		churn.deleteProject(project.getCode());
 		git.cloneRepository(project.getRepoUrl());		
-		couch.put(project);
+		churn.put(project);
 	}
 
 }
