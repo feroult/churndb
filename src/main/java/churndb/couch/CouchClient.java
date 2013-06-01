@@ -155,7 +155,7 @@ public class CouchClient {
 		CouchResponseView response = view(viewUri, keys);
 		for (int i = 0; i < response.size(); i++) {
 			JsonObject row = response.json(i);
-			// the view must emit doc._rev as value to be able use viewDelete
+			// the view must emit doc._rev, [doc._rev, or doc or as value to be able use viewDelete
 			delete(row.get("id").getAsString() + "?rev=" + extractRevision(row.get("value")));
 		}
 	}

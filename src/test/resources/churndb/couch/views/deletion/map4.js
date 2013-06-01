@@ -1,5 +1,5 @@
 function(doc) {
   if(doc.type && doc.type == 'deletion' && doc.code) {
-    emit([doc.code], doc);
+    emit([doc.type, doc.code], doc);
   }
 }

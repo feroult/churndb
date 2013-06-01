@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -25,11 +26,11 @@ public class CouchUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append("startkey=");
 		
-		List<String> keysList = new ArrayList<String>(Arrays.asList(keys));
+		List<Object> keysList = new ArrayList<Object>(Arrays.asList(keys));
 		
 		sb.append(urlEncode(new Gson().toJson(keysList)));
 				
-		keysList.add("{}");
+		keysList.add(new HashMap<String, String>()); // add an {} element at endkey to match the key range
 		sb.append("&endkey=");
 		sb.append(urlEncode(new Gson().toJson(keysList)));
 				

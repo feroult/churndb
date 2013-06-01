@@ -152,8 +152,7 @@ public class ViewTest extends CouchTestBase {
 		putDocument("deletion", "1", "Product.java");
 		putDocument("deletion", "2", "Address.java");
 		
-		couch.viewDelete("deletion/map", "Product.java");
-		couch.viewDelete("deletion/map", "Address.java");
+		couch.viewDelete("deletion/map", "deletion");
 		
 		assertTrue(couch.get("1").objectNotFound());
 		assertTrue(couch.get("2").objectNotFound());				
