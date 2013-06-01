@@ -11,11 +11,13 @@ import com.google.gson.Gson;
 public class CouchUtils {
 
 	public static String keys(String... keys) {
+		/*
 		if (keys.length == 1) {
 			// TODO not working for some cases
 			return "key=" + urlEncode(new Gson().toJson(keys[0]));
-		}
+		}*/
 		
+		// FIXME to work with viewDelete a view need to export its key as an array		
 		return keysForRange(keys);
 	}
 

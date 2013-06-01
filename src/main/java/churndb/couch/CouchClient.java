@@ -112,10 +112,6 @@ public class CouchClient {
 			drop();
 		}
 	}
-
-	public CouchResponseView view(String viewUri, String keys) {
-		return null;
-	}
 	
 	public CouchResponseView view(String viewUri, String... keys) {
 		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, keys)));
