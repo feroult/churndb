@@ -142,6 +142,22 @@ public class ViewTest extends CouchTestBase {
 	public void testViewDeleteCase3() {
 		testViewDeleteFor(TestConstants.COUCH_DELETION_VIEW_MAP3);				
 	}
+	
+	@Test
+	public void testViewDeleteCase4() {
+		DesignDocument dd = new DesignDocument("deletion");		
+		dd.addViewMap("map", ResourceUtils.asString(TestConstants.COUCH_DELETION_VIEW_MAP4));		
+		couch.put(dd);
+		
+		putDocument("deletion", "1", "Product.java");
+		putDocument("deletion", "2", "Address.java");
+		
+		couch.viewDelete("deletion/map", "Product.java");
+		couch.viewDelete("deletion/map", "Address.java");
+		
+		assertTrue(couch.get("1").objectNotFound());
+		assertTrue(couch.get("2").objectNotFound());				
+	}
 
 	private void testViewDeleteFor(String mapFunction) {
 		DesignDocument dd = new DesignDocument("deletion");		

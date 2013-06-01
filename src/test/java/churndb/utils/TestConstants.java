@@ -32,7 +32,6 @@ public class TestConstants {
 
 	public static final String COUCH_DELETION_VIEW_MAP3 = "/churndb/couch/views/deletion/map3.js";
 
+	public static final String COUCH_DELETION_VIEW_MAP4 = "/churndb/couch/views/deletion/map4.js";
 
-
-	
 }

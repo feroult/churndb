@@ -113,8 +113,12 @@ public class CouchClient {
 		}
 	}
 
-	public CouchResponseView view(String viewUri, String... key) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, key)));
+	public CouchResponseView view(String viewUri, String keys) {
+		return null;
+	}
+	
+	public CouchResponseView view(String viewUri, String... keys) {
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, keys)));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 
@@ -177,8 +181,8 @@ public class CouchClient {
 		return get(response.json(index).get("id"));
 	}
 
-	public CouchResponseReduce reduce(String viewUri, String... key) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, true, key)));
+	public CouchResponseReduce reduce(String viewUri, String... keys) {
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, true, keys)));
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 
