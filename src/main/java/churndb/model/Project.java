@@ -1,17 +1,21 @@
 package churndb.model;
 
+import java.util.Date;
+
 import churndb.couch.CouchBean;
 import churndb.couch.response.CouchResponseView;
 
-public class Project extends CouchBean {	
+public class Project extends CouchBean {
 	private String code;
-		
+
 	private String repoUrl;
 
 	private String type = "project";
 
-	private String head;	
-	
+	private String lastCommit;
+
+	private Date lastChange;
+
 	public String getCode() {
 		return code;
 	}
@@ -32,28 +36,43 @@ public class Project extends CouchBean {
 		return type;
 	}
 
-	public String getHead() {
-		return head;
+	public String getLastCommit() {
+		return lastCommit;
 	}
 
-	public void setHead(String head) {
-		this.head = head;
-		
+	public void setLastCommit(String lastCommit) {
+		this.lastCommit = lastCommit;
+
 	}
 
-	// service methods
+	public void setLastChange(Date lastChange) {
+		this.lastChange = lastChange;
+	}
 	
+	public Date getLastChange() {
+		return lastChange;
+	}	
+	
+	// service methods
+
 	public void deleteIfExists() {
 		couch.viewDelete("core/projects", code);
 		couch.viewDelete("core/sources", code);
 	}
-	
-	public Source getSource(String path) {		
-		CouchResponseView view = couch.view("core/sources", code, path);		
-		if(view.isEmpty()) {
-			return null;
-		}		
-		return view.get(0).as(Source.class);		
+
+	public Source getSource(String path) {
+		CouchResponseView view = couch.view("core/sources", code, path);
+		if (view.isEmpty()) {
+			return newSource(path);
+		}
+		return view.get(0).as(Source.class);
 	}
+
+	private Source newSource(String path) {
+		Source source = new Source(setup().getRoot(code), path);
+		source.setProject(code);
+		return source;
+	}
+
 
 }

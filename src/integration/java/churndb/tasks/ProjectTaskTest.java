@@ -51,26 +51,36 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testReload() {
-		// given
-		TestRepository git = new TestRepository();
-
-		String commit0 = git.commit0();
-		String commit1 = git.commit1();
-
-		// when
+		TestRepository git = new TestRepository();		
+				
+		// commit 0
 		ProjectTask task = new ProjectTask(createTestProject());
+		String commit0 = git.commit0();
 		task.reload();
 
-		// then
 		Project project = couch.viewGetFirst("core/projects", TestConstants.PROJECT_CODE).as(Project.class);
-		assertEquals(commit1, project.getHead());		
+		assertEquals(commit0, project.getLastCommit());		
 		
-		Source source = couch.viewGetFirst("core/sources", project.getCode(), "Address.java").as(Source.class);		
-				
-		assertEquals(commit1, source.getLastCommit());
-		assertEquals(2, source.getChurn());
-		assertEquals((Integer)2, source.getMetric(Metrics.CCN));
-		assertEquals((Integer)14, source.getMetric(Metrics.LOC));		
+		Source source = couch.viewGetFirst("core/sources", project.getCode(), "Address.java").as(Source.class);						
+		assertSource(source, commit0, 1, 0, 5);		
+		
+		// commit 1
+		task = new ProjectTask(createTestProject());
+		String commit1 = git.commit1();
+		task.reload();
+
+		project = couch.viewGetFirst("core/projects", TestConstants.PROJECT_CODE).as(Project.class);
+		assertEquals(commit1, project.getLastCommit());		
+		
+		source = couch.viewGetFirst("core/sources", project.getCode(), "Address.java").as(Source.class);						
+		assertSource(source, commit1, 2, 2, 14);		
+	}
+
+	private void assertSource(Source source, String commit, int churn, int ccn, int loc) {
+		assertEquals(commit, source.getLastCommit());
+		assertEquals(churn, source.getChurn());
+		assertEquals((Integer)ccn, source.getMetric(Metrics.CCN));
+		assertEquals((Integer)loc, source.getMetric(Metrics.LOC));
 	}
 
 	/*

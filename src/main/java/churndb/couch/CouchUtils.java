@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 
 public class CouchUtils {
 
-	public static String key(String... keys) {
+	public static String keys(String... keys) {
 		if (keys.length == 1) {
 			return "key=" + urlEncode(new Gson().toJson(keys[0]));
 		}

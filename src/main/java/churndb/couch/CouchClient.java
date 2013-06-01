@@ -118,14 +118,14 @@ public class CouchClient {
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 
-	private String viewRequestUrl(String viewUri, boolean reduce, String... key) {
+	private String viewRequestUrl(String viewUri, boolean reduce, String... keys) {
 		String[] split = viewUri.split("/");
 		String module = split[0];
 		String view = split[1];
 
 		StringBuilder normalizedKeys = new StringBuilder("?");
-		if (key.length > 0) {
-			normalizedKeys.append(CouchUtils.key(key));
+		if (keys.length > 0) {
+			normalizedKeys.append(CouchUtils.keys(keys));
 		}
 		normalizedKeys.append("&reduce=" + reduce);
 
@@ -182,15 +182,21 @@ public class CouchClient {
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 
-	public void put(CouchBean bean) {
+	public CouchBean put(CouchBean bean) {
 		if (bean.get_id() == null) {
 			bean.set_id(id());
 		}
-		put(bean.get_id(), bean.json());
+		CouchResponse response = put(bean.get_id(), bean.json());
+		bean.set_rev(response.json().get("rev").getAsString());
+		
+		return bean;
 	}
 
-	public void put(String id, CouchBean bean) {
-		put(id, bean.json());
+	public CouchBean put(String id, CouchBean bean) {
+		if(bean.get_id() == null) {
+			bean.set_id(id);
+		}
+		return put(bean);
 	}
 
 }

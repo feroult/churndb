@@ -25,15 +25,14 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	private void reloadProjectFromGIT() {		
-		boolean first = true;
-
 		Metrics metrics = new Metrics();
 			
 		for(Commit commit : git.log()) {
-			if(first) {
-				first = false;
-				project.setHead(commit.getName());
-				couch.put(couch.id(), project.json());
+			
+			if(isNewerCommitForProject(commit, project)) {
+				project.setLastCommit(commit.getName());
+				project.setLastChange(commit.getDate());
+				couch.put(project);
 			}
 			
 			git.checkout(commit.getName());
@@ -49,6 +48,14 @@ public class ProjectTask extends ChurnDBTask {
 		}
 	}
 
+	private boolean isNewerCommitForProject(Commit commit, Project project2) {
+		if(project.getLastChange() == null) { 
+			return true;
+		}
+		
+		return commit.getDate().after(project.getLastChange());
+	}
+
 	private boolean isSupportedSourceType(String path) {
 		return path.endsWith(".java");
 	}
@@ -56,17 +63,23 @@ public class ProjectTask extends ChurnDBTask {
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 		
 		Source source = project.getSource(change.getPathBeforeChange());
-				
-		if(source != null) {
-			source.addChurn();
-		} else {
-			source = new Source(setup().getRoot(project.getCode()), change.getPath());
-			source.setProject(project.getCode());
-			source.setLastCommit(commit.getName());			
+						
+		if(isNewerCommitForSource(commit, source)) {
+			source.setLastCommit(commit.getName());		
+			source.setLastChange(commit.getDate());
 			metrics.apply(source);						
-		}				
+		} 
 		
+		source.addChurn();
 		couch.put(source);
+	}
+
+	private boolean isNewerCommitForSource(Commit commit, Source source) {
+		if(source.getLastChange() == null) {
+			return true;
+		}
+		
+		return commit.getDate().after(source.getLastChange());
 	}
 
 	public void cloneRepository() {

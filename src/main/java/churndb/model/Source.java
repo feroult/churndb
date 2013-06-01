@@ -1,6 +1,7 @@
 package churndb.model;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ public class Source extends CouchBean {
 
 	private String lastCommit;
 
-	private int churn = 1;
+	private int churn = 0;
+
+	private Date lastChange;
 		
 	public Source(String root, String path) {
 		this.file = new File(normalizeRoot(root) + path);
@@ -76,6 +79,15 @@ public class Source extends CouchBean {
 
 	public void addChurn() {
 		churn++;		
+	}
+
+	public Date getLastChange() {
+		return lastChange;
+	}
+
+	public void setLastChange(Date lastChange) {
+		this.lastChange = lastChange;
+		
 	}
 	
 }
