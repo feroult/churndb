@@ -102,9 +102,11 @@ public class ProjectTask extends ChurnDBTask {
 
 	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
 		if(source != null) {
-			// TODO throw exception, invalid case
+			throw new RuntimeException("Added source already existed in churndb");
 		}		
 		
+		source = new Source(project.getCode(), change.getPath());
+				
 		updateSourceCommit(source, commit, metrics);						
 		
 		source.addChurn();

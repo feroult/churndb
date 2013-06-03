@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import churndb.couch.CouchClient;
 import churndb.git.Commit;
 import churndb.git.GIT;
 import churndb.git.TestRepository;
@@ -19,12 +18,13 @@ import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
+import churndb.utils.ChurnClient;
 import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
 public class ProjectTaskTest {
 
-	private CouchClient couch = new CouchClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
+	private ChurnClient churn = new ChurnClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
 	
 	private ApplicationTask applicationTask;
 
@@ -58,10 +58,10 @@ public class ProjectTaskTest {
 		String commit0 = git.commit0();
 		task.reload();
 
-		Project project = couch.viewGetFirst("core/projects", TestConstants.PROJECT_CODE).as(Project.class);
+		Project project = churn.getProject(TestConstants.PROJECT_CODE);
 		assertEquals(commit0, project.getLastCommit());		
 		
-		Source source = couch.viewGetFirst("core/sources", project.getCode(), "Address.java").as(Source.class);						
+		Source source = churn.getSource(project.getCode(), "Address.java");
 		assertSource(source, commit0, 1, 0, 5);		
 		
 		// commit 1
@@ -69,10 +69,10 @@ public class ProjectTaskTest {
 		String commit1 = git.commit1();
 		task.reload();
 
-		project = couch.viewGetFirst("core/projects", TestConstants.PROJECT_CODE).as(Project.class);
+		project = churn.getProject(TestConstants.PROJECT_CODE);
 		assertEquals(commit1, project.getLastCommit());		
 		
-		source = couch.viewGetFirst("core/sources", project.getCode(), "Address.java").as(Source.class);						
+		source = churn.getSource(project.getCode(), "Address.java");				
 		assertSource(source, commit1, 2, 2, 14);		
 	}
 
