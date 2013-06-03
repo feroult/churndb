@@ -18,6 +18,11 @@ public class ChurnClient extends CouchClient {
 	public Project getProject(String projectCode) {
 		return viewGetFirst(CORE_PROJECTS, TestConstants.PROJECT_CODE).as(Project.class);
 	}
+	
+	public void deleteProject(String projectCode) {
+		viewDelete(CORE_PROJECTS, projectCode);
+		viewDelete(CORE_SOURCES, projectCode);
+	}
 
 	public Source getSource(String projectCode, String path) {
 		CouchResponseView view = view(CORE_SOURCES, projectCode, path);
@@ -27,8 +32,4 @@ public class ChurnClient extends CouchClient {
 		return view.get(0).as(Source.class);
 	}
 
-	public void deleteProject(String projectCode) {
-		viewDelete(CORE_PROJECTS, projectCode);
-		viewDelete(CORE_SOURCES, projectCode);
-	}
 }
