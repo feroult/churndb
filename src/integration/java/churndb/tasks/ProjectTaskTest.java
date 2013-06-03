@@ -24,6 +24,17 @@ import churndb.utils.TestResourceUtils;
 
 public class ProjectTaskTest {
 
+	public class ProjectTaskReloadTest extends ProjectTask {
+		public ProjectTaskReloadTest() {
+			super(createTestProject());
+		}
+
+		@Override
+		public void run() {
+			reload();
+		}		
+	}
+
 	private ChurnClient churn = new ChurnClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
 	
 	private ApplicationTask applicationTask;
@@ -51,34 +62,39 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testReload() {
-		TestRepository git = new TestRepository();		
-				
-		// commit 0
-		ProjectTask task = new ProjectTask(createTestProject());
+		TestRepository git = new TestRepository();
+		
+		assertCommit0(git, new ProjectTaskReloadTest());
+		assertCommit1(git, new ProjectTaskReloadTest());
+		//assertCommit2(task);
+		
+	}
+	
+	private void assertCommit0(TestRepository git, ProjectTask task) {
 		String commit0 = git.commit0();
-		task.reload();
-
-		Project project = churn.getProject(TestConstants.PROJECT_CODE);
-		assertEquals(commit0, project.getLastCommit());		
+		task.run();
 		
-		Source source = churn.getSource(project.getCode(), "Address.java");
-		assertSource(source, commit0, 1, 0, 5);		
-		
-		// commit 1
-		task = new ProjectTask(createTestProject());
-		String commit1 = git.commit1();
-		task.reload();
-
-		project = churn.getProject(TestConstants.PROJECT_CODE);
-		assertEquals(commit1, project.getLastCommit());		
-		
-		source = churn.getSource(project.getCode(), "Address.java");				
-		assertSource(source, commit1, 2, 2, 14);		
+		assertProject(TestConstants.PROJECT_CODE, commit0);
+		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);		
 	}
 
-	private void assertSource(Source source, String commit, int churn, int ccn, int loc) {
+	private void assertCommit1(TestRepository git, ProjectTask task) {
+		String commit1 = git.commit1();
+		task.run();
+		
+		assertProject(TestConstants.PROJECT_CODE, commit1);
+		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit1, 2, 2, 14);		
+	}
+	
+	private void assertProject(String projectCode, String lastCommit) {
+		Project project = churn.getProject(TestConstants.PROJECT_CODE);
+		assertEquals(lastCommit, project.getLastCommit());		
+	}
+	
+	private void assertSource(String projectCode, String path, String commit, int churnCount, int ccn, int loc) {
+		Source source = churn.getSource(projectCode, path);	
 		assertEquals(commit, source.getLastCommit());
-		assertEquals(churn, source.getChurn());
+		assertEquals(churnCount, source.getChurnCount());
 		assertEquals((Integer)ccn, source.getMetric(Metrics.CCN));
 		assertEquals((Integer)loc, source.getMetric(Metrics.LOC));
 	}

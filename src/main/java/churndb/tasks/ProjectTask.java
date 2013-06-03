@@ -91,7 +91,7 @@ public class ProjectTask extends ChurnDBTask {
 			updateSourceCommit(source, commit, metrics);						
 		} 
 		
-		source.addChurn();
+		source.addChurnCount();
 		churn.put(source);
 	}
 
@@ -109,7 +109,7 @@ public class ProjectTask extends ChurnDBTask {
 				
 		updateSourceCommit(source, commit, metrics);						
 		
-		source.addChurn();
+		source.addChurnCount();
 		churn.put(source);
 	}
 

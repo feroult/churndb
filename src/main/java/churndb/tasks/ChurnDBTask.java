@@ -10,4 +10,7 @@ public abstract class ChurnDBTask {
 		this.churn = new ChurnClient(Setup.getHost(), Setup.getDatabase());
 	}
 		
+	public void run() {
+		// default task behavior, do nothing or extend
+	}
 }

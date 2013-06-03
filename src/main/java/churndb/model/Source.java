@@ -18,7 +18,7 @@ public class Source extends CouchBean {
 
 	private String lastCommit;
 
-	private int churn = 0;
+	private int churnCount = 0;
 
 	private Date lastChange;
 		
@@ -59,12 +59,12 @@ public class Source extends CouchBean {
 		return lastCommit;
 	}
 
-	public int getChurn() {
-		return churn;
+	public int getChurnCount() {
+		return churnCount;
 	}
 
-	public void addChurn() {
-		churn++;		
+	public void addChurnCount() {
+		churnCount++;		
 	}
 
 	public Date getLastChange() {
