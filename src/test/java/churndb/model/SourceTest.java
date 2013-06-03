@@ -9,11 +9,11 @@ import churndb.utils.TestResourceUtils;
 import churndb.utils.TestConstants;
 
 public class SourceTest {
-
-	private static final String PROJECT_PATH = TestResourceUtils.tempPath(TestConstants.PROJECT_PATH);
 	
 	@Before
 	public void before() {	
+		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));		
+		
 		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
 	}
 		
@@ -26,7 +26,7 @@ public class SourceTest {
 	}
 
 	private Source loadJavaSourceAndMetrics() {
-		Source source = new Source(PROJECT_PATH, "Product.java");		
+		Source source = new Source(TestConstants.PROJECT_CODE, "Product.java");				
 		new Metrics().apply(source);
 		return source;
 	}	

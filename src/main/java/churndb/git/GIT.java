@@ -3,6 +3,7 @@ package churndb.git;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
@@ -93,6 +94,7 @@ public class GIT {
 				commits.add(parseCommit(revCommit));
 			}
 
+			Collections.reverse(commits);		
 			return commits;
 
 		} catch (Exception e) {

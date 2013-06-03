@@ -1,6 +1,6 @@
 function(doc) {
   if(doc.type && doc.type == 'source') {
-    emit([doc.project, 
+    emit([doc.projectCode, 
           doc.path], 
     	  doc);
   }

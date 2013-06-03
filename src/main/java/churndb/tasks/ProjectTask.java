@@ -16,7 +16,7 @@ public class ProjectTask extends ChurnDBTask {
 	public ProjectTask(Project project) {
 		super();
 		this.project = project;
-		this.git = new GIT(setup.getRoot(project.getCode()));
+		this.git = new GIT(Setup.getRoot(project.getCode()));
 	}
 
 	public void reload() {		

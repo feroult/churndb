@@ -1,6 +1,5 @@
 package churndb.model;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +11,10 @@ public class Source extends CouchBean {
 	private String path;
 	
 	private String type = "source";
-	
-	private transient File file;
-	
+		
 	private Map<String, Integer> metrics = new HashMap<String, Integer>();
 
-	private String project;
+	private String projectCode;
 
 	private String lastCommit;
 
@@ -25,24 +22,13 @@ public class Source extends CouchBean {
 
 	private Date lastChange;
 		
-	public Source(String root, String path) {
-		this.file = new File(normalizeRoot(root) + path);
+	public Source(String projectCode, String path) {
+		this.projectCode = projectCode;
 		this.path = path;
-	}
-
-	private String normalizeRoot(String root) {
-		if(root.endsWith("/")) {
-			return root;
-		}
-		return root + "/";
 	}
 
 	public String getPath() {
 		return path;
-	}
-
-	public File getFile() {
-		return file;
 	}
 
 	public Integer getMetric(String key) {
@@ -53,12 +39,12 @@ public class Source extends CouchBean {
 		metrics.put(key, value);		
 	}
 
-	public void setProject(String project) {
-		this.project = project;		
+	public void setProjectCode(String projectCode) {
+		this.projectCode = projectCode;		
 	}
 
-	public String getProject() {
-		return project;
+	public String getProjectCode() {
+		return projectCode;
 	}
 
 	public String getType() {

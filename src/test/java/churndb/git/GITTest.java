@@ -19,8 +19,8 @@ public class GITTest {
 		
 		List<Commit> commits = git.log(); 
 			
-		assertCommit(commits.get(0), mockChange(Type.MODIFY, "Address.java"));
-		assertCommit(commits.get(1), mockChange(Type.ADD, "Address.java"), mockChange(Type.ADD, "Customer.java"), mockChange(Type.ADD, "Product.java"));	
+		assertCommit(commits.get(0), mockChange(Type.ADD, "Address.java"), mockChange(Type.ADD, "Customer.java"), mockChange(Type.ADD, "Product.java"));	
+		assertCommit(commits.get(1), mockChange(Type.MODIFY, "Address.java"));
 	}
 
 	private Change mockChange(Type type, String path) {

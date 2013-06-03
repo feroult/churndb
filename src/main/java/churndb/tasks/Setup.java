@@ -1,7 +1,10 @@
 package churndb.tasks;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+
+import churndb.model.Source;
 
 public class Setup {
 	
@@ -11,22 +14,29 @@ public class Setup {
 
 	private static final String DATABASE = "database";
 	
+	private static final Setup me = homeFolderSetup();	
+	
 	private Properties properties;
 
 	public Setup(Properties properties) {
 		this.properties = properties;
 	}
 
-	public String getRoot(String code) {
-		return properties.getProperty(ROOT) + "/" + code;
+	public static String getRoot(String code) {
+		return me.properties.getProperty(ROOT) + "/" + code;
 	}
 	
-	public String getHost() {
-		return properties.getProperty(HOST);
+	public static String getHost() {
+		return me.properties.getProperty(HOST);
 	}
 
-	public String getDatabase() {
-		return properties.getProperty(DATABASE);
+	public static String getDatabase() {
+		return me.properties.getProperty(DATABASE);
+	}
+
+
+	public static File getSourceFile(Source source) {
+		return new File(getRoot(source.getProjectCode() + "/" + source.getPath()));
 	}
 
 	public static Setup homeFolderSetup() {		
@@ -42,5 +52,4 @@ public class Setup {
 			throw new RuntimeException(e);
 		}		
 	}
-
 }
