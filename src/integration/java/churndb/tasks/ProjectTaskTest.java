@@ -123,7 +123,7 @@ public class ProjectTaskTest {
 		// then
 		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH));		
 		List<Commit> log = git.log();
-		assertEquals(2, log.size());
+		assertEquals(3, log.size());
 	}
 
 	@Test

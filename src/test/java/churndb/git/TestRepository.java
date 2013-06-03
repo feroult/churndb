@@ -42,6 +42,16 @@ public class TestRepository extends GIT {
 		return commit("commit 1", calendar.getTime());
 	}
 	
+	public String commit2() {
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_2_PATH, TestConstants.PROJECT_PATH);
+		
+		rm("Product.java");
+		add("ProductRename.java");
+		
+		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 20, 11, 25);
+		return commit("commit 2", calendar.getTime());
+	}
+	
 	private String commit(String message, Date date) {
 		try {
 			CommitCommand commit = getGit().commit();
@@ -56,6 +66,7 @@ public class TestRepository extends GIT {
 	public void doAllCommits() {
 		commit0();
 		commit1();		
+		commit2();
 	}
 	
 }

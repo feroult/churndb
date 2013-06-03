@@ -76,6 +76,15 @@ public class GIT {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public void rm(String filepattern) {
+		try {
+			git.rm().addFilepattern(filepattern).call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
 
 	public void commit(String message) {
 		try {
