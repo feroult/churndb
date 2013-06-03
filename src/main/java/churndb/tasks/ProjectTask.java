@@ -64,14 +64,57 @@ public class ProjectTask extends ChurnDBTask {
 		
 		Source source = churn.getSource(project.getCode(), change.getPathBeforeChange());		
 						
+		switch (change.getType()) {
+		case COPY:
+		case ADD:			
+			addSource(source, commit, change, metrics);			
+			break;
+		case DELETE:
+			deleteSource(source, commit, change, metrics);
+			break;
+		case MODIFY:
+			modifySource(source, commit, change, metrics);
+			break;
+		case RENAME:
+			renameSource(source, commit, change, metrics);
+			break;
+		}				
+	}
+
+	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
 		if(isNewerCommitForSource(commit, source)) {
-			source.setLastCommit(commit.getName());		
-			source.setLastChange(commit.getDate());
-			metrics.apply(source);						
+			updateSourceCommit(source, commit, metrics);						
 		} 
 		
 		source.addChurn();
 		churn.put(source);
+	}
+
+	private void deleteSource(Source source, Commit commit, Change change, Metrics metrics) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
+		if(source != null) {
+			// TODO throw exception, invalid case
+		}		
+		
+		updateSourceCommit(source, commit, metrics);						
+		
+		source.addChurn();
+		churn.put(source);
+	}
+
+	private void updateSourceCommit(Source source, Commit commit, Metrics metrics) {
+		source.setLastCommit(commit.getName());		
+		source.setLastChange(commit.getDate());
+		metrics.apply(source);
 	}
 
 	private boolean isNewerCommitForSource(Commit commit, Source source) {
