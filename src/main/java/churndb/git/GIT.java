@@ -12,9 +12,13 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.diff.RenameDetector;
+import org.eclipse.jgit.errors.AmbiguousObjectException;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
+import org.eclipse.jgit.errors.RevisionSyntaxException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -142,6 +146,13 @@ public class GIT {
 	private void parseOtherCommits(RevCommit revCommit, Commit commit) throws MissingObjectException,
 			IncorrectObjectTypeException, IOException {
 
+		List<DiffEntry> diffs = getDiffEntries(revCommit);
+		for (DiffEntry diff : diffs) {
+			commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());
+		}
+	}
+
+	private List<DiffEntry> getDiffEntries(RevCommit revCommit)  {
 		RevWalk rw = new RevWalk(git.getRepository());
 
 		try {
@@ -151,12 +162,13 @@ public class GIT {
 			df.setDiffComparator(RawTextComparator.DEFAULT);
 			df.setDetectRenames(true);
 			List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
-			for (DiffEntry diff : diffs) {
-				commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());
-			}
+			return diffs;
+		} catch(Exception e) {
+			throw new RuntimeException(e);
 		} finally {
 			rw.dispose();
 		}
+
 	}
 
 	private void parseFirstCommit(RevCommit revCommit, Commit commit) throws MissingObjectException,
@@ -195,6 +207,77 @@ public class GIT {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+	public String findRenameAcrossCommits(String commitName, String path) {
+
+		
+		DiffEntry entry = findEntry(commitName, path);
+		
+		try {
+			Iterable<RevCommit> call = git.log().call();			
+			
+			for (RevCommit revCommit : call) {
+
+				if(revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
+					continue;
+				}
+				
+				String pathRaname = findRenameInCommit(entry, revCommit);
+				
+				if(pathRaname != null) {
+					return pathRaname;
+				}
+			}
+			
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String findRenameInCommit(DiffEntry entry, RevCommit revCommit) {
+		
+		try {
+			RenameDetector detector = new RenameDetector(git.getRepository());
+						
+			detector.add(entry);
+			detector.addAll(getDiffEntries(revCommit));
+						
+			List<DiffEntry> renames = detector.compute();
+			
+			if(renames.size() == 0) {
+				return null;
+			}
+			
+			return renames.get(0).getOldPath();
+			
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private DiffEntry findEntry(String commitName, String path) {
+		try {
+			ObjectId commitId = git.getRepository().resolve(commitName);
+			
+			RevWalk walk = new RevWalk(git.getRepository());
+			
+			RevCommit revCommit = walk.parseCommit(commitId);
+			
+			List<DiffEntry> diffEntries = getDiffEntries(revCommit);
+			
+			for(DiffEntry entry : diffEntries) {				
+				if(entry.getNewPath().equals(path)) {
+					return entry;
+				}			
+			}
+						
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 }

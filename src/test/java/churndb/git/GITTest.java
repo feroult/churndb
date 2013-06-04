@@ -24,6 +24,21 @@ public class GITTest {
 		assertCommit(commits.get(1), mockChange(Type.MODIFY, "Address.java"));
 		assertCommit(commits.get(2), mockChange(Type.RENAME, "ProductRename.java"));
 	}
+	
+	@Test
+	public void testRenameAcrossCommits() {
+		TestRepository git = new TestRepository();
+		
+		git.commit0();
+		git.commit1();
+		git.commit2();
+		git.commit3();
+		String commit = git.commit4();
+		
+		String oldPath = git.findRenameAcrossCommits(commit, "AddressRename.java");
+		
+		assertEquals("Address.java", oldPath);
+	}
 
 	private Change mockChange(Type type, String path) {
 		return new Change(type, null, path);

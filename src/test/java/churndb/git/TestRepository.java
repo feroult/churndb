@@ -9,9 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.lib.PersonIdent;
 
-import churndb.git.GIT;
-import churndb.utils.TestResourceUtils;
 import churndb.utils.TestConstants;
+import churndb.utils.TestResourceUtils;
 
 public class TestRepository extends GIT {
 
@@ -52,6 +51,23 @@ public class TestRepository extends GIT {
 		return commit("commit 2", calendar.getTime());
 	}
 	
+
+	public String commit3() {		
+		rm("Address.java");
+		
+		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 22, 10, 30);
+		return commit("commit 3", calendar.getTime());				
+	}
+		
+	public String commit4() {
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_4_PATH, TestConstants.PROJECT_PATH);
+		
+		add("AddressRename.java");
+		
+		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 22, 11, 12);
+		return commit("commit 4", calendar.getTime());		
+	}
+	
 	private String commit(String message, Date date) {
 		try {
 			CommitCommand commit = getGit().commit();
@@ -68,5 +84,6 @@ public class TestRepository extends GIT {
 		commit1();		
 		commit2();
 	}
+
 	
 }
