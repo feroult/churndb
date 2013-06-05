@@ -1,6 +1,8 @@
 package churndb.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -14,7 +16,6 @@ import org.junit.Test;
 import churndb.git.Commit;
 import churndb.git.GIT;
 import churndb.git.TestRepository;
-import churndb.model.Churn;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
@@ -66,8 +67,9 @@ public class ProjectTaskTest {
 		
 		assertCommit0(git, new ProjectTaskReloadTest());
 		assertCommit1(git, new ProjectTaskReloadTest());
-		//assertCommit2(task);
-		
+		assertCommit2(git, new ProjectTaskReloadTest());
+		assertCommit3(git, new ProjectTaskReloadTest());
+		assertCommit4(git, new ProjectTaskReloadTest());		
 	}
 	
 	private void assertCommit0(TestRepository git, ProjectTask task) {
@@ -75,7 +77,10 @@ public class ProjectTaskTest {
 		task.run();
 		
 		assertProject(TestConstants.PROJECT_CODE, commit0);
-		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);		
+		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);
+		assertSource(TestConstants.PROJECT_CODE, "Customer.java", commit0, 1, 0, 5);		
+		assertSource(TestConstants.PROJECT_CODE, "Product.java", commit0, 1, 25, 61);
+		assertSource(TestConstants.PROJECT_CODE, "Order.java", commit0, 1, 4, 25);
 	}
 
 	private void assertCommit1(TestRepository git, ProjectTask task) {
@@ -84,7 +89,40 @@ public class ProjectTaskTest {
 		
 		assertProject(TestConstants.PROJECT_CODE, commit1);
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit1, 2, 2, 14);		
+		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit1, 1, 4, 25);
+		
 	}
+	
+	private void assertCommit2(TestRepository git, ProjectTask task) {
+		String commit2 = git.commit2();
+		task.run();
+		
+		assertProject(TestConstants.PROJECT_CODE, commit2);
+		assertSource(TestConstants.PROJECT_CODE, "ProductRename.java", commit2, 2, 25, 61);		
+	}	
+	
+	private void assertCommit3(TestRepository git, ProjectTask task) {
+		String commit3 = git.commit3();
+		task.run();
+			
+		assertProject(TestConstants.PROJECT_CODE, commit3);
+		
+		Source source = churn.getSource(TestConstants.PROJECT_CODE, "Address.java");
+		assertTrue(source.isDeleted());		
+	}		
+	
+	private void assertCommit4(TestRepository git, ProjectTask task) {
+		String commit4 = git.commit4();
+		task.run();
+			
+		assertProject(TestConstants.PROJECT_CODE, commit4);
+		
+		assertSource(TestConstants.PROJECT_CODE, "AddressRename.java", commit4, 3, 2, 14);			
+		assertNull(churn.getSource(TestConstants.PROJECT_CODE, "Address.java"));
+				
+		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit4, 2, 4, 25);
+		assertNull(churn.getSource(TestConstants.PROJECT_CODE, "Order.java"));
+	}		
 	
 	private void assertProject(String projectCode, String lastCommit) {
 		Project project = churn.getProject(TestConstants.PROJECT_CODE);
@@ -98,23 +136,6 @@ public class ProjectTaskTest {
 		assertEquals((Integer)ccn, source.getMetric(Metrics.CCN));
 		assertEquals((Integer)loc, source.getMetric(Metrics.LOC));
 	}
-
-	/*
-	private void assertCommit1(String commit1, CouchResponseView view) {
-		Source source = view.get(1).as(Source.class);
-		assertEquals(commit1, source.getChurn().getCommit());
-		asssertChurnDate(source.getChurn(), 2013, Calendar.MAY, 15, 8, 25);
-		assertEquals((Integer)2, source.getMetric(Metrics.CCN));
-		assertEquals((Integer)14, source.getMetric(Metrics.LOC));
-	}
-
-	private void assertCommit0(String commit0, CouchResponseView view) {
-		Source sourceCommit0 = view.get(0).as(Source.class);
-		assertEquals(commit0, sourceCommit0.getChurn().getCommit());
-		asssertChurnDate(sourceCommit0.getChurn(), 2013, Calendar.MAY, 10, 14, 0);
-		assertEquals((Integer)0, sourceCommit0.getMetric(Metrics.CCN));
-		assertEquals((Integer)5, sourceCommit0.getMetric(Metrics.LOC));
-	}*/
 
 	private Project createTestProject() {
 		Project project = new Project();
@@ -143,7 +164,6 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCloneRemote() {
 
 		Project project = new Project();		
@@ -156,13 +176,5 @@ public class ProjectTaskTest {
 		projectTask.reload();
 		
 		System.out.println("reload churndb!");
-	}
-	
-	private void asssertChurnDate(Churn churn, int year, int month, int dayOfMonth, int hourOfDay, int minute) {
-		assertEquals(churn.getYear(), year);
-		assertEquals(churn.getMonth(), month);
-		assertEquals(churn.getDayOfMonth(), dayOfMonth);
-		assertEquals(churn.getHourOfDay(), hourOfDay);
-		assertEquals(churn.getMinute(), minute);
 	}
 }

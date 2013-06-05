@@ -35,7 +35,7 @@ public class Commit {
 		Map<String, Change> map = new HashMap<String, Change>();
 		
 		for(Change change : changes) {
-			map.put(change.getPath(), change);
+			map.put(change.getPathAfterChange(), change);
 		}
 		
 		return map;

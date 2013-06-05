@@ -154,6 +154,12 @@ public class GIT {
 	}
 
 	private List<DiffEntry> getDiffEntries(RevCommit revCommit) {
+		
+		// ignore first commit
+		if(revCommit.getParentCount() == 0) {
+			return new ArrayList<DiffEntry>();
+		}
+		
 		RevWalk rw = new RevWalk(git.getRepository());
 
 		try {
@@ -214,15 +220,19 @@ public class GIT {
 		try {
 			DiffEntry entry = findDiffEntryForCommmit(commitName, path);
 
+			// first commit doesnt have old commits in tree
+			if(entry == null) {
+				return null;
+			}
+			
 			Iterable<RevCommit> log = git.log().add(git.getRepository().resolve(commitName)).call();
 
 			int countParents = 0;
-
 			for (RevCommit revCommit : log) {
 				if (revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
 					continue;
 				}
-
+				
 				String pathRaname = findRenameInCommit(entry, revCommit, type);
 				if (pathRaname != null) {
 					return pathRaname;

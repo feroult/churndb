@@ -3,6 +3,7 @@ package churndb.tasks;
 import churndb.git.Change;
 import churndb.git.Commit;
 import churndb.git.GIT;
+import churndb.git.Type;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
@@ -39,7 +40,7 @@ public class ProjectTask extends ChurnDBTask {
 			
 			for(Change change : commit.getChanges()) {
 				
-				if(!isSupportedSourceType(change.getPath())) {
+				if(!isSupportedSourceType(change.getPathBeforeChange())) {
 					continue;
 				}
 				
@@ -81,9 +82,15 @@ public class ProjectTask extends ChurnDBTask {
 		}				
 	}
 
-	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
-		// TODO Auto-generated method stub
+	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {		
+		source.setPath(change.getNewPath());
 		
+		if(isNewerCommitForSource(commit, source)) {
+			updateSourceCommit(source, commit, metrics);						
+		} 		
+		
+		source.addChurnCount();
+		churn.put(source);		
 	}
 
 	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
@@ -96,8 +103,20 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	private void deleteSource(Source source, Commit commit, Change change, Metrics metrics) {
-		// TODO Auto-generated method stub
+		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 		
+		if(renamedPath != null) {
+			Source renamedSource = churn.getSource(project.getCode(), renamedPath);
+			renamedSource.setLastCommit(commit.getName());
+			renamedSource.addChurnCount(source.getChurnCount());
+			churn.put(renamedSource);
+			churn.deleteSource(project.getCode(), source);
+		} else {
+			source.setDeleted(true);
+			source.setLastCommit(commit.getName());
+			source.setLastChange(commit.getDate());
+			churn.put(source);
+		}						
 	}
 
 	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
@@ -105,7 +124,15 @@ public class ProjectTask extends ChurnDBTask {
 			throw new RuntimeException("Added source already existed in churndb");
 		}		
 		
-		source = new Source(project.getCode(), change.getPath());
+		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
+		
+		if(renamedPath != null) {
+			source = churn.getSource(project.getCode(), renamedPath);
+			source.setDeleted(false);
+			source.setPath(change.getPathAfterChange());			
+		} else {		
+			source = new Source(project.getCode(), change.getPathAfterChange());
+		}
 				
 		updateSourceCommit(source, commit, metrics);						
 		

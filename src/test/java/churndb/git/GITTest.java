@@ -47,7 +47,7 @@ public class GITTest {
 		Map<String, Change> changes = commit.getChangesAsMap();
 		
 		for(Change expectedChange : expectedChanges) {
-			Change change = changes.get(expectedChange.getPath());
+			Change change = changes.get(expectedChange.getPathAfterChange());
 			assertEquals(expectedChange.getType(), change.getType());
 		}		
 	}

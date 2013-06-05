@@ -13,11 +13,11 @@ public class Change {
 	}
 
 	public String getPathBeforeChange() {
-		return oldPath == null ? newPath : oldPath;
+		return oldPath == null || oldPath.equals("/dev/null") ? newPath : oldPath;
 	}
 	
-	public String getPath() {
-		return newPath == null? oldPath : newPath;
+	public String getPathAfterChange() {
+		return newPath == null || newPath.equals("/dev/null")? oldPath : newPath;
 	}
 	
 	public Type getType() {

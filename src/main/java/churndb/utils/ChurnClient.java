@@ -32,4 +32,8 @@ public class ChurnClient extends CouchClient {
 		return view.get(0).as(Source.class);
 	}
 
+	public void deleteSource(String projectCode, Source source) {
+		viewDelete(CORE_SOURCES, projectCode, source.getPath());	
+	}
+
 }
