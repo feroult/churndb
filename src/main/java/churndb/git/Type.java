@@ -23,4 +23,8 @@ public enum Type {
 		}
 	}
 
+	public boolean isSameChangeType(ChangeType changeType) {		
+		return (this.equals(getType(changeType)));
+	}
+	
 }

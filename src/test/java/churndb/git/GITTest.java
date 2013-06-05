@@ -35,7 +35,7 @@ public class GITTest {
 		git.commit3();
 		String commit = git.commit4();
 		
-		String oldPath = git.findRenameAcrossCommits(commit, "AddressRename.java");
+		String oldPath = git.findSimilarInOldCommits(commit, "AddressRename.java", Type.DELETE);
 		
 		assertEquals("Address.java", oldPath);
 	}

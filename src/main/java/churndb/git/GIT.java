@@ -10,14 +10,13 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.diff.RenameDetector;
-import org.eclipse.jgit.errors.AmbiguousObjectException;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
-import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -27,6 +26,8 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 public class GIT {
+
+	private static final int MAX_COMMITS_FOR_RENAME = 10;
 
 	private Git git;
 
@@ -45,12 +46,12 @@ public class GIT {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository;
 		try {
-			if(alreadyInit()) {
+			if (alreadyInit()) {
 				builder.findGitDir(path);
 			} else {
 				builder.setGitDir(path);
 			}
-			
+
 			repository = builder.build();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -80,14 +81,14 @@ public class GIT {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void rm(String filepattern) {
 		try {
 			git.rm().addFilepattern(filepattern).call();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
 	public void commit(String message) {
@@ -107,7 +108,7 @@ public class GIT {
 				commits.add(parseCommit(revCommit));
 			}
 
-			Collections.reverse(commits);		
+			Collections.reverse(commits);
 			return commits;
 
 		} catch (Exception e) {
@@ -152,7 +153,7 @@ public class GIT {
 		}
 	}
 
-	private List<DiffEntry> getDiffEntries(RevCommit revCommit)  {
+	private List<DiffEntry> getDiffEntries(RevCommit revCommit) {
 		RevWalk rw = new RevWalk(git.getRepository());
 
 		try {
@@ -163,7 +164,7 @@ public class GIT {
 			df.setDetectRenames(true);
 			List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
 			return diffs;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
 			rw.dispose();
@@ -206,78 +207,96 @@ public class GIT {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
-	public String findRenameAcrossCommits(String commitName, String path) {
-
-		
-		DiffEntry entry = findEntry(commitName, path);
-		
+	public String findSimilarInOldCommits(String commitName, String path, Type type) {
 		try {
-			Iterable<RevCommit> call = git.log().call();			
+			DiffEntry entry = findDiffEntryForCommmit(commitName, path);
 			
-			for (RevCommit revCommit : call) {
-
-				if(revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
+			Iterable<RevCommit> log = git.log().add(git.getRepository().resolve(commitName)).call();
+			
+			int countParents = 0;
+			
+			for (RevCommit revCommit : log) {
+				if (revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
 					continue;
 				}
-				
-				String pathRaname = findRenameInCommit(entry, revCommit);
-				
-				if(pathRaname != null) {
+
+				String pathRaname = findRenameInCommit(entry, revCommit, type);
+				if (pathRaname != null) {
 					return pathRaname;
+				}
+				
+				if(++countParents > MAX_COMMITS_FOR_RENAME) {
+					break;
+				}
+			}
+
+			return null;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String findRenameInCommit(DiffEntry entry, RevCommit revCommit, Type type) {
+
+		try {
+			RenameDetector detector = new RenameDetector(git.getRepository());
+			detector.add(entry);
+			detector.addAll(getDiffEntries(revCommit, type));
+
+			List<DiffEntry> possibleRenameEntries = detector.compute();
+			for (DiffEntry possibleRenameEntry : possibleRenameEntries) {
+
+				if (possibleRenameEntry.getChangeType() != ChangeType.RENAME) {
+					continue;
+				}
+
+				if (possibleRenameEntry.getNewId().equals(entry.getNewId())) {
+					return possibleRenameEntry.getOldPath();
+				}
+			}
+
+			return null;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private List<DiffEntry> getDiffEntries(RevCommit revCommit, Type type) {
+		List<DiffEntry> filteredDiffEntries = new ArrayList<DiffEntry>();
+
+		for (DiffEntry entry : getDiffEntries(revCommit)) {
+			if (type.isSameChangeType(entry.getChangeType())) {
+				filteredDiffEntries.add(entry);
+			}
+		}
+
+		return filteredDiffEntries;
+	}
+
+	private DiffEntry findDiffEntryForCommmit(String commitName, String path) {
+		RevWalk walk = new RevWalk(git.getRepository());
+		try {
+			ObjectId commitId = git.getRepository().resolve(commitName);
+			RevCommit revCommit = walk.parseCommit(commitId);
+			List<DiffEntry> diffEntries = getDiffEntries(revCommit);
+
+			for (DiffEntry entry : diffEntries) {
+				if (entry.getNewPath().equals(path)) {
+					return entry;
 				}
 			}
 			
 			return null;
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		} finally {
+			walk.dispose();
 		}
-	}
-
-	private String findRenameInCommit(DiffEntry entry, RevCommit revCommit) {
-		
-		try {
-			RenameDetector detector = new RenameDetector(git.getRepository());
-						
-			detector.add(entry);
-			detector.addAll(getDiffEntries(revCommit));
-						
-			List<DiffEntry> renames = detector.compute();
-			
-			if(renames.size() == 0) {
-				return null;
-			}
-			
-			return renames.get(0).getOldPath();
-			
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private DiffEntry findEntry(String commitName, String path) {
-		try {
-			ObjectId commitId = git.getRepository().resolve(commitName);
-			
-			RevWalk walk = new RevWalk(git.getRepository());
-			
-			RevCommit revCommit = walk.parseCommit(commitId);
-			
-			List<DiffEntry> diffEntries = getDiffEntries(revCommit);
-			
-			for(DiffEntry entry : diffEntries) {				
-				if(entry.getNewPath().equals(path)) {
-					return entry;
-				}			
-			}
-						
-			return null;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 }
