@@ -35,9 +35,8 @@ public class GITTest {
 		git.commit3();
 		String commit = git.commit4();
 		
-		String oldPath = git.findSimilarInOldCommits(commit, "AddressRename.java", Type.DELETE);
-		
-		assertEquals("Address.java", oldPath);
+		assertEquals("Address.java", git.findSimilarInOldCommits(commit, "AddressRename.java", Type.DELETE));		
+		assertEquals("OrderRename.java", git.findSimilarInOldCommits(commit, "Order.java", Type.ADD));
 	}
 
 	private Change mockChange(Type type, String path) {

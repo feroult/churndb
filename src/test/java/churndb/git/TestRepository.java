@@ -1,5 +1,6 @@
 package churndb.git;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,7 +27,8 @@ public class TestRepository extends GIT {
 		
 		add("Address.java");
 		add("Customer.java");
-		add("Product.java");		
+		add("Product.java");
+		add("Order.java");
 		
 		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 10, 14, 0);		
 		return commit("commit 0", calendar.getTime());							
@@ -34,8 +36,12 @@ public class TestRepository extends GIT {
 
 	public String commit1() {
 		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_1_PATH, TestConstants.PROJECT_PATH);
+					
+		add("Address.java");
 		
-		add("Address.java");		
+		// rename but delete only on file system
+		FileUtils.deleteQuietly(new File(TestConstants.PROJECT_PATH + "Order.java"));
+		add("OrderRename.java");
 		
 		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 15, 8, 25);
 		return commit("commit 1", calendar.getTime());
@@ -52,8 +58,8 @@ public class TestRepository extends GIT {
 	}
 	
 
-	public String commit3() {		
-		rm("Address.java");
+	public String commit3() {				
+		rm("Address.java"); // rename but forget to add the new file
 		
 		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 22, 10, 30);
 		return commit("commit 3", calendar.getTime());				
@@ -62,7 +68,8 @@ public class TestRepository extends GIT {
 	public String commit4() {
 		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_4_PATH, TestConstants.PROJECT_PATH);
 		
-		add("AddressRename.java");
+		add("AddressRename.java"); // added the new file rename -- rename across commits
+		rm("Order.java"); // delete the old file renamed -- rename across commits
 		
 		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 22, 11, 12);
 		return commit("commit 4", calendar.getTime());		

@@ -213,11 +213,11 @@ public class GIT {
 	public String findSimilarInOldCommits(String commitName, String path, Type type) {
 		try {
 			DiffEntry entry = findDiffEntryForCommmit(commitName, path);
-			
+
 			Iterable<RevCommit> log = git.log().add(git.getRepository().resolve(commitName)).call();
-			
+
 			int countParents = 0;
-			
+
 			for (RevCommit revCommit : log) {
 				if (revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
 					continue;
@@ -227,8 +227,8 @@ public class GIT {
 				if (pathRaname != null) {
 					return pathRaname;
 				}
-				
-				if(++countParents > MAX_COMMITS_FOR_RENAME) {
+
+				if (++countParents > MAX_COMMITS_FOR_RENAME) {
 					break;
 				}
 			}
@@ -253,9 +253,18 @@ public class GIT {
 					continue;
 				}
 
-				if (possibleRenameEntry.getNewId().equals(entry.getNewId())) {
-					return possibleRenameEntry.getOldPath();
-				}
+				if(type == Type.DELETE) { 
+					if (possibleRenameEntry.getNewId().equals(entry.getNewId())) {
+						return possibleRenameEntry.getOldPath();
+					}
+					continue;				
+				} 
+				
+				if(type == Type.ADD)  {
+					if (possibleRenameEntry.getOldId().equals(entry.getOldId())) {
+						return possibleRenameEntry.getNewPath();
+					}				
+				}				
 			}
 
 			return null;
@@ -285,11 +294,18 @@ public class GIT {
 			List<DiffEntry> diffEntries = getDiffEntries(revCommit);
 
 			for (DiffEntry entry : diffEntries) {
-				if (entry.getNewPath().equals(path)) {
+
+				String entryPath = entry.getNewPath();
+
+				if (entryPath == null || entryPath.equals("/dev/null")) {
+					entryPath = entry.getOldPath();
+				}
+
+				if (entryPath.equals(path)) {
 					return entry;
 				}
 			}
-			
+
 			return null;
 
 		} catch (Exception e) {

@@ -1,4 +1,4 @@
-package churndb.sourcebot.model;
+package churndb.project;
 
 public class Product {
 
