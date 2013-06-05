@@ -7,25 +7,25 @@ import churndb.model.Source;
 
 public class ChurnClient extends CouchClient {
 
-	private static final String CORE_PROJECTS = "core/projects";
+	private static final String PROJECTS_ALL = "projects/all";
 
-	private static final String CORE_SOURCES = "core/sources";
+	private static final String SOURCES_ALL = "sources/all";
 
 	public ChurnClient(String host, String database) {
 		super(host, database);
 	}
 
 	public Project getProject(String projectCode) {
-		return viewGetFirst(CORE_PROJECTS, TestConstants.PROJECT_CODE).as(Project.class);
+		return viewGetFirst(PROJECTS_ALL, TestConstants.PROJECT_CODE).as(Project.class);
 	}
 	
 	public void deleteProject(String projectCode) {
-		viewDelete(CORE_PROJECTS, projectCode);
-		viewDelete(CORE_SOURCES, projectCode);
+		viewDelete(PROJECTS_ALL, projectCode);
+		viewDelete(SOURCES_ALL, projectCode);
 	}
 
 	public Source getSource(String projectCode, String path) {
-		CouchResponseView view = view(CORE_SOURCES, projectCode, path);
+		CouchResponseView view = view(SOURCES_ALL, projectCode, path);
 		if (view.isEmpty()) {
 			return null;
 		}
@@ -33,7 +33,7 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public void deleteSource(String projectCode, Source source) {
-		viewDelete(CORE_SOURCES, projectCode, source.getPath());	
+		viewDelete(SOURCES_ALL, projectCode, source.getPath());	
 	}
 
 }

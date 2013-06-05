@@ -8,12 +8,13 @@ public class ApplicationTask extends ChurnDBTask {
 	public void deploy() {		
 		churn.create();
 		
-		DesignDocument core = new DesignDocument("core");
-	
-		core.addViewMap("projects", ResourceUtils.asString("/couch/core/views/projects/map.js"));
-		core.addViewMap("sources", ResourceUtils.asString("/couch/core/views/sources/map.js"));
-		//core.addViewReduce("sources", ResourceUtils.asString("/couch/core/views/sources/reduce.js"));
-		churn.put(core);
+		DesignDocument projects = new DesignDocument("projects");
+		projects.addViewMap("all", ResourceUtils.asString("/churn/projects/map/all.js"));
+		churn.put(projects);
+		
+		DesignDocument sources = new DesignDocument("sources");
+		sources.addViewMap("all", ResourceUtils.asString("/churn/sources/map/all.js"));
+		churn.put(sources);
 	}
 	
 	public void undeploy() {
