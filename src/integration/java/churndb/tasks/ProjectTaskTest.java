@@ -164,20 +164,16 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCloneRemote() {
-
+		System.setProperty("user.home", "/home/fernando");
+		
 		Project project = new Project();		
 		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
 		project.setRepoUrl("git@github.com:feroult/churndb.git");
 
 		ProjectTask projectTask = new ProjectTask(project);
-		
-		
-		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
+				
 		projectTask.cloneRepository();
-		
-		
 		projectTask.reload();
 		
 		System.out.println("reload churndb!");

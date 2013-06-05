@@ -14,6 +14,7 @@ public class ApplicationTask extends ChurnDBTask {
 		
 		DesignDocument sources = new DesignDocument("sources");
 		sources.addViewMap("all", ResourceUtils.asString("/churn/sources/map/all.js"));
+		sources.addViewMap("active", ResourceUtils.asString("/churn/sources/map/active.js"));
 		churn.put(sources);
 	}
 	
