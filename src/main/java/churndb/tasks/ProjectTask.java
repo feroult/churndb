@@ -58,7 +58,7 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	private boolean isSupportedSourceType(String path) {
-		return path.endsWith(".java");
+		return path.endsWith(".java") || path.endsWith(".java_");
 	}
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
@@ -106,7 +106,7 @@ public class ProjectTask extends ChurnDBTask {
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 		
 		if(renamedPath != null) {
-			Source renamedSource = churn.getSource(project.getCode(), renamedPath);
+			Source renamedSource = churn.getSource(project.getCode(), renamedPath);			
 			renamedSource.setLastCommit(commit.getName());
 			renamedSource.addChurnCount(source.getChurnCount());
 			churn.put(renamedSource);
@@ -155,9 +155,7 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	public void cloneRepository() {
-		churn.deleteProject(project.getCode());
 		git.cloneRepository(project.getRepoUrl());		
-		churn.put(project);
 	}
 
 }

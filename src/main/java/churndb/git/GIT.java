@@ -227,13 +227,15 @@ public class GIT {
 			
 			Iterable<RevCommit> log = git.log().add(git.getRepository().resolve(commitName)).call();
 
+			List<DiffEntry> renameEntries = new ArrayList<DiffEntry>();
+			
 			int countParents = 0;
 			for (RevCommit revCommit : log) {
 				if (revCommit.getName().equals(commitName) || revCommit.getParentCount() == 0) {
 					continue;
 				}
 				
-				String pathRaname = findRenameInCommit(entry, revCommit, type);
+				String pathRaname = findRenameInCommit(entry, revCommit, type, renameEntries);
 				if (pathRaname != null) {
 					return pathRaname;
 				}
@@ -249,12 +251,21 @@ public class GIT {
 		}
 	}
 
-	private String findRenameInCommit(DiffEntry entry, RevCommit revCommit, Type type) {
+	private String findRenameInCommit(DiffEntry entry, RevCommit revCommit, Type type, List<DiffEntry> renameEntries) {
 
 		try {
+			// record rename entries do avoid conflict in rename detection across commits
+			renameEntries.addAll(getDiffEntries(revCommit, Type.RENAME));
+			
+			List<DiffEntry> diffEntries = getDiffEntries(revCommit, type);
+			
+			if(diffEntries.size() == 0) {
+				return null;
+			}
+			
 			RenameDetector detector = new RenameDetector(git.getRepository());
 			detector.add(entry);
-			detector.addAll(getDiffEntries(revCommit, type));
+			detector.addAll(diffEntries);
 
 			List<DiffEntry> possibleRenameEntries = detector.compute();
 			for (DiffEntry possibleRenameEntry : possibleRenameEntries) {
@@ -271,7 +282,8 @@ public class GIT {
 				} 
 				
 				if(type == Type.ADD)  {
-					if (possibleRenameEntry.getOldId().equals(entry.getOldId())) {
+					if (possibleRenameEntry.getOldId().equals(entry.getOldId())
+						&& isValidAddedFile(entry, possibleRenameEntry, renameEntries)) { 
 						return possibleRenameEntry.getNewPath();
 					}				
 				}				
@@ -282,6 +294,24 @@ public class GIT {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private boolean isValidAddedFile(DiffEntry entry, DiffEntry possibleRenameEntry, List<DiffEntry> renameEntries) {
+		String renamePath = possibleRenameEntry.getNewPath();
+		boolean validPath = renamePath != null && !renamePath.equals("/dev/null")
+				&& !renamePath.equals(entry.getOldPath());
+
+		if (!validPath) {
+			return false;
+		}
+		
+		for(DiffEntry renameEntry : renameEntries) {
+			if(renamePath.equals(renameEntry.getOldPath())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	private List<DiffEntry> getDiffEntries(RevCommit revCommit, Type type) {

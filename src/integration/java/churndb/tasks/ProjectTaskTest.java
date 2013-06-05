@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import churndb.git.Commit;
@@ -165,14 +164,16 @@ public class ProjectTaskTest {
 
 	@Test
 	public void testCloneRemote() {
+		System.setProperty("user.home", "/home/fernando");
 
 		Project project = new Project();		
 		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
-		project.setRepoUrl("git://github.com/feroult/churndb.git");
+		project.setRepoUrl("git@github.com:feroult/churndb.git");
 
 		ProjectTask projectTask = new ProjectTask(project);
-		
+				
 		projectTask.cloneRepository();
+		
 		projectTask.reload();
 		
 		System.out.println("reload churndb!");
