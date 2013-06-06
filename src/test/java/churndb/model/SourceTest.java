@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.utils.TestResourceUtils;
 import churndb.utils.TestConstants;
+import churndb.utils.TestResourceUtils;
 
 public class SourceTest {
 	

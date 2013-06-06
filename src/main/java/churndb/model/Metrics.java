@@ -2,10 +2,9 @@ package churndb.model;
 
 import java.util.List;
 
-import churndb.tasks.Setup;
-
 import javancss.FunctionMetric;
 import javancss.Javancss;
+import churndb.tasks.Setup;
 
 public class Metrics {
 

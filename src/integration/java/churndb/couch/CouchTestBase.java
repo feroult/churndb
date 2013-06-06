@@ -1,6 +1,5 @@
 package churndb.couch;
 
-import churndb.couch.CouchClient;
 import churndb.utils.TestConstants;
 
 public class CouchTestBase {
