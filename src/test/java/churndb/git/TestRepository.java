@@ -90,6 +90,8 @@ public class TestRepository extends GIT {
 		commit0();
 		commit1();		
 		commit2();
+		commit3();
+		commit4();
 	}
 
 	

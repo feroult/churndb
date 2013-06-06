@@ -16,11 +16,14 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Project getProject(String projectCode) {
-		return viewGetFirst(PROJECTS_ALL, TestConstants.PROJECT_CODE).as(Project.class);
+		CouchResponseView view = view(PROJECTS_ALL, projectCode);
+		if (view.isEmpty()) {
+			return null;
+		}
+		return view.get(0).as(Project.class);
 	}
 	
-	public void deleteProject(String projectCode) {
-		viewDelete(PROJECTS_ALL, projectCode);
+	public void deleteProjectSources(String projectCode) {
 		viewDelete(SOURCES_ALL, projectCode);
 	}
 

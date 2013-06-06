@@ -107,25 +107,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<id>db-create</id>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>churndb.setup.CouchCreate</mainClass>
-				</configuration>
-			</plugin>
-
+			</plugin>			
 		</plugins>
 	</build>
 

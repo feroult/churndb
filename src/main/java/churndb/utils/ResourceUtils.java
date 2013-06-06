@@ -9,13 +9,13 @@ public class ResourceUtils {
 
 	public static String asString(String uri) {
 		try {
-			return FileUtils.readFileToString(FileUtils.toFile(TestResourceUtils.class.getResource(uri)));
+			return FileUtils.readFileToString(FileUtils.toFile(ResourceUtils.class.getResource(uri)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static File asFile(String uri) {
-		return FileUtils.toFile(TestResourceUtils.class.getResource(uri));
+		return FileUtils.toFile(ResourceUtils.class.getResource(uri));
 	}
 }

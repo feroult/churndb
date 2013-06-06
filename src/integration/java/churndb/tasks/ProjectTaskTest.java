@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -27,12 +28,12 @@ public class ProjectTaskTest {
 
 	public class ProjectTaskReloadTest extends ProjectTask {
 		public ProjectTaskReloadTest() {
-			super(createTestProject());
+			super(new PrintWriter(System.out));
 		}
 
 		@Override
 		public void run() {
-			reload();
+			reload(TestConstants.PROJECT_CODE);
 		}		
 	}
 
@@ -64,6 +65,8 @@ public class ProjectTaskTest {
 	@Test
 	public void testReload() {
 		TestRepository git = new TestRepository();
+		
+		addProject(createTestProject());
 		
 		assertCommit0(git, new ProjectTaskReloadTest());
 		assertCommit1(git, new ProjectTaskReloadTest());
@@ -136,34 +139,29 @@ public class ProjectTaskTest {
 		assertEquals((Integer)ccn, source.getMetric(Metrics.CCN));
 		assertEquals((Integer)loc, source.getMetric(Metrics.LOC));
 	}
-
-	private Project createTestProject() {
-		Project project = new Project();
-		project.setCode(TestConstants.PROJECT_CODE);
-		project.setRepoUrl("https://github.com/feroult/churndb.git");
-		return project;
-	}
 	
 	@Test
 	public void testClone() {		
 		// given
 		new TestRepository().doAllCommits();
 		
-		// when
 		Project project = new Project();		
 		project.setCode(TestConstants.PROJECT_CLONE_CODE);
-		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));			
+		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
+		addProject(project);
 		
-		ProjectTask projectTask = new ProjectTask(project);
-		projectTask.cloneRepository();
+		// when		
+		ProjectTask projectTask = new ProjectTask();
+		projectTask.cloneRepository(TestConstants.PROJECT_CLONE_CODE);
 		
 		// then
 		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH));		
 		List<Commit> log = git.log();
-		assertEquals(3, log.size());
+		assertEquals(5, log.size());
 	}
 
 	@Test
+	@Ignore
 	public void testCloneRemote() {
 		System.setProperty("user.home", "/home/fernando");
 		
@@ -173,11 +171,23 @@ public class ProjectTaskTest {
 		//project.setRepoUrl("git@github.com:dextra/bicbanco_sgc.git");
 		project.setRepoUrl("git@github.com:dextra/a4c.git");
 
-		ProjectTask projectTask = new ProjectTask(project);
+		ProjectTask projectTask = new ProjectTask();
 				
-		projectTask.cloneRepository();
-		projectTask.reload();
+		projectTask.cloneRepository(null);
+		projectTask.reload(null);
 		
 		System.out.println("reload churndb!");
+	}
+	
+	private void addProject(Project project) {
+		ProjectTask task = new ProjectTask();
+		task.add(project.getCode(), project.getRepoUrl());
+	}
+	
+	private Project createTestProject() {
+		Project project = new Project();
+		project.setCode(TestConstants.PROJECT_CODE);
+		project.setRepoUrl("https://github.com/feroult/churndb.git");
+		return project;
 	}
 }
