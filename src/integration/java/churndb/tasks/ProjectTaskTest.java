@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import churndb.git.Commit;
@@ -54,7 +53,7 @@ public class ProjectTaskTest {
 
 	private void deleteProjectFolders() {
 		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));
-		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
+		//FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
 	}
 
 	@After
@@ -161,8 +160,8 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCloneRemote() {
+		// given
 		System.setProperty("user.home", "/home/fernando");
 		
 		Project project = new Project();		
@@ -170,13 +169,15 @@ public class ProjectTaskTest {
 		//project.setRepoUrl("git@github.com:feroult/churndb.git");
 		//project.setRepoUrl("git@github.com:dextra/bicbanco_sgc.git");
 		project.setRepoUrl("git@github.com:dextra/a4c.git");
+		addProject(project);
 
-		ProjectTask projectTask = new ProjectTask();
-				
-		projectTask.cloneRepository(null);
-		projectTask.reload(null);
+		// when
+		ProjectTask projectTask = new ProjectTask();				
+		//projectTask.cloneRepository(TestConstants.PROJECT_CLONE_CODE);
+		projectTask.reload(TestConstants.PROJECT_CLONE_CODE);
 		
-		System.out.println("reload churndb!");
+		// then
+		System.out.println("reloaded =)");
 	}
 	
 	private void addProject(Project project) {
