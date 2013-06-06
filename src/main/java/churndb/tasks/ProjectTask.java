@@ -12,7 +12,7 @@ import churndb.model.Source;
 
 public class ProjectTask extends ChurnDBTask {
 
-	private static final String PROJECT_CODE_HELP = "project_code";
+	private static final String PROJECT_CODE_HELP = "projectCode";
 
 	private static final String REPO_URL_HELP = "repoUrl";
 
@@ -53,6 +53,15 @@ public class ProjectTask extends ChurnDBTask {
 		project.setRepoUrl(repoUrl);
 		churn.put(project);
 	}
+	
+	@RunnerHelp(PROJECT_CODE_HELP)
+	public void cloneRepository(String projectCode) {
+		if (!init(projectCode)) {
+			return;
+		}
+		
+		git.cloneRepository(project.getRepoUrl());
+	}
 
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void reload(String projectCode) {
@@ -64,14 +73,6 @@ public class ProjectTask extends ChurnDBTask {
 		reloadProjectFromGIT();
 	}
 
-	@RunnerHelp(PROJECT_CODE_HELP)
-	public void cloneRepository(String projectCode) {
-		if (!init(projectCode)) {
-			return;
-		}
-
-		git.cloneRepository(project.getRepoUrl());
-	}
 
 	private void reloadProjectFromGIT() {
 		Metrics metrics = new Metrics();
