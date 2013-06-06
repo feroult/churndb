@@ -10,16 +10,20 @@ import churndb.model.Source;
 
 public class ProjectTask extends ChurnDBTask {
 
+	private static final String PROJECT_CODE_HELP = "project_code";
+
 	private Project project;
 	
 	private GIT git;
-	
+		
 	public ProjectTask(Project project) {
 		super();
 		this.project = project;
 		this.git = new GIT(Setup.getRoot(project.getCode()));
 	}
 
+	
+	@RunnerHelp(PROJECT_CODE_HELP)
 	public void reload() {		
 		churn.deleteProject(project.getCode());				
 		reloadProjectFromGIT();
@@ -154,6 +158,7 @@ public class ProjectTask extends ChurnDBTask {
 		return commit.getDate().after(source.getLastChange());
 	}
 
+	@RunnerHelp(PROJECT_CODE_HELP)
 	public void cloneRepository() {
 		git.cloneRepository(project.getRepoUrl());		
 	}

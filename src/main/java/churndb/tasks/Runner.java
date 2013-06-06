@@ -1,6 +1,7 @@
 package churndb.tasks;
 
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class Runner {
 
 		pw.close();
 	}
-
+	
 	private static void setupTasks() {
 		tasks = new ArrayList<Class<? extends ChurnDBTask>>();
 
@@ -42,8 +43,18 @@ public class Runner {
 				continue;
 			}
 			
-			pw.println(prefix + getTaskName(task) + ":" + getTaskMethodName(method));
+			pw.println(prefix + getTaskName(task) + ":" + getTaskMethodName(method) + getTaskMethodHelp(method));
 		}
+	}
+
+	private static String getTaskMethodHelp(Method method) {
+		RunnerHelp help = method.getAnnotation(RunnerHelp.class);
+		
+		if(help == null || help.value().equals("")) {
+			return "";
+		}
+		
+		return " " + help.value();
 	}
 
 	private static String getTaskMethodName(Method method) {
