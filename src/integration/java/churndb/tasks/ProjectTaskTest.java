@@ -191,4 +191,21 @@ public class ProjectTaskTest {
 		project.setRepoUrl("https://github.com/feroult/churndb.git");
 		return project;
 	}
+	
+	@Test
+	public void testNewDiff() {
+		System.setProperty("user.home", "/home/fernando");
+		
+		Project project = new Project();		
+		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
+		project.setRepoUrl("git@github.com:dextra/a4c.git");
+		addProject(project);
+
+		ProjectTask projectTask = new ProjectTask();				
+		projectTask.diffCommit(TestConstants.PROJECT_CLONE_CODE, "dc7dd74");
+		
+		// then
+		System.out.println("test");
+		
+	}
 }

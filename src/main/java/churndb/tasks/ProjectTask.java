@@ -132,6 +132,9 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
+		if(source == null) {
+			System.out.println("xxx");
+		}
 		source.setPath(change.getNewPath());
 
 		if (isNewerCommitForSource(commit, source)) {
@@ -170,7 +173,8 @@ public class ProjectTask extends ChurnDBTask {
 
 	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
 		if (source != null) {
-			throw new RuntimeException("Added source already existed in churndb");
+			return;
+			//throw new RuntimeException("Added source already existed in churndb");
 		}
 
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
@@ -203,4 +207,11 @@ public class ProjectTask extends ChurnDBTask {
 		return commit.getDate().after(source.getLastChange());
 	}
 
+	
+	// test
+	
+	public void diffCommit(String projectCode, String commitName) {
+		init(projectCode);
+		git.diffCommit(commitName);
+	}
 }
