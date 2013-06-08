@@ -146,6 +146,11 @@ public class ProjectTask extends ChurnDBTask {
 	}
 
 	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
+		if(source == null) {
+			System.out.println("x");
+			return;
+		}
+		
 		if (isNewerCommitForSource(commit, source)) {
 			updateSourceCommit(source, commit, metrics);
 		}

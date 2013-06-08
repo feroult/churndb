@@ -326,6 +326,7 @@ public class GIT {
 
 				String pathRaname = findRenameInCommit(entry, revCommit, type, renameEntries);
 				if (pathRaname != null) {
+					System.out.println("Rename " + path + " -> " + pathRaname);
 					return pathRaname;
 				}
 
