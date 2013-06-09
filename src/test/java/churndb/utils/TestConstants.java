@@ -12,6 +12,8 @@ public class TestConstants {
 	
 	public static final String PROJECT_CLONE_CODE = "clone_project";
 	
+	public static final String PROJECT_CLONE_REMOTE_CODE = "clone_remote_project";
+	
 	public static final String CHURNDB_ROOT = "/churndb/";
 	
 	public static final String PROJECT_PATH = CHURNDB_ROOT + PROJECT_CODE + "/";

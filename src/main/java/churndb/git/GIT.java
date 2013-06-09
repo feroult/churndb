@@ -152,8 +152,8 @@ public class GIT {
 	private void parseOtherCommits(RevCommit revCommit, Commit commit) throws MissingObjectException,
 			IncorrectObjectTypeException, IOException {
 
-		Collection<DiffEntry> diffs = getDiffEntries(revCommit);
-		//Collection<DiffEntry> diffs = diffCommit(revCommit);
+		//Collection<DiffEntry> diffs = getDiffEntries(revCommit);
+		Collection<DiffEntry> diffs = diffCommitActiveGit(revCommit);
 		for (DiffEntry diff : diffs) {
 			commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());
 		}
@@ -262,7 +262,6 @@ public class GIT {
 
 				String pathRaname = findRenameInCommit(entry, revCommit, type, renameEntries);
 				if (pathRaname != null) {
-					System.out.println("Rename " + path + " -> " + pathRaname);
 					return pathRaname;
 				}
 
@@ -348,7 +347,10 @@ public class GIT {
 	private List<DiffEntry> getDiffEntries(RevCommit revCommit, Type type) {
 		List<DiffEntry> filteredDiffEntries = new ArrayList<DiffEntry>();
 
-		for (DiffEntry entry : getDiffEntries(revCommit)) {
+		//Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
+		Collection<DiffEntry> diffEntries = diffCommitActiveGit(revCommit);
+		
+		for (DiffEntry entry : diffEntries) {
 			if (type.isSameChangeType(entry.getChangeType())) {
 				filteredDiffEntries.add(entry);
 			}
@@ -362,8 +364,9 @@ public class GIT {
 		try {
 			ObjectId commitId = git.getRepository().resolve(commitName);
 			RevCommit revCommit = walk.parseCommit(commitId);
-			Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
-
+			//Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
+			Collection<DiffEntry> diffEntries = diffCommitActiveGit(revCommit);
+			
 			for (DiffEntry entry : diffEntries) {
 
 				String entryPath = entry.getNewPath();

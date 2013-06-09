@@ -18,7 +18,7 @@ import churndb.model.Source;
 public class ProjectTask extends Task {
 
 	private static Logger logger = LoggerFactory.getLogger(ProjectTask.class);
-	
+
 	private static final String PROJECT_CODE_HELP = "projectCode";
 
 	private static final String REPO_URL_HELP = "repoUrl";
@@ -60,20 +60,20 @@ public class ProjectTask extends Task {
 		project.setRepoUrl(repoUrl);
 		churn.put(project);
 	}
-	
+
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void cloneRepository(String projectCode) {
 		if (!init(projectCode)) {
 			return;
 		}
-		
+
 		git.cloneRepository(project.getRepoUrl());
 	}
 
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void reload(String projectCode) {
 		clockStart();
-		
+
 		if (!init(projectCode)) {
 			return;
 		}
@@ -82,14 +82,14 @@ public class ProjectTask extends Task {
 		reloadProjectFromGIT();
 	}
 
-
 	private void reloadProjectFromGIT() {
 		Metrics metrics = new Metrics();
 
 		List<Commit> log = git.log();
-		
-		clockLogSeconds("git log");
-		
+
+		logSeconds("git log");
+		info("reloading " + log.size() + " commits");
+
 		for (Commit commit : log) {
 
 			if (isNewerCommitForProject(commit, project)) {
@@ -109,6 +109,8 @@ public class ProjectTask extends Task {
 				updateSource(commit, change, metrics);
 			}
 		}
+
+		logSeconds("reload project");
 	}
 
 	private boolean isNewerCommitForProject(Commit commit, Project project2) {
@@ -126,9 +128,9 @@ public class ProjectTask extends Task {
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 
 		Source source = churn.getSource(project.getCode(), change.getPathBeforeChange());
-		
-		logger.debug(getSourceChangeLog(commit, change, source, "UPDATE SOURCE"));
-		
+
+		debug(getSourceChangeLog(commit, change, source, "UPDATE SOURCE"));
+
 		switch (change.getType()) {
 		case COPY:
 		case ADD:
@@ -146,18 +148,30 @@ public class ProjectTask extends Task {
 		}
 	}
 
+	private void info(String message) {
+		logger.info(MessageFormat.format("project {0} | " + message, project.getCode()));
+	}
+
+	private void debug(String message) {
+		logger.debug(MessageFormat.format("project {0} | " + message, project.getCode()));
+	}
+
+	private void error(String message) {
+		logger.error(MessageFormat.format("project {0} | " + message, project.getCode()));
+	}
+
 	private String getSourceChangeLog(Commit commit, Change change, Source source, String message) {
-		return MessageFormat.format("project {0} | {1} | {2} | {3} | {4} | {5} | {6}", message, project.getCode(),
-				commit.getName(), change.getType(), change.getPathBeforeChange(), change.getPathAfterChange(), source);
+		return MessageFormat.format("{0} | {1} | {2} | {3} | {4} | {5}", message, commit.getName(), change.getType(),
+				change.getPathBeforeChange(), change.getPathAfterChange(), source);
 	}
 
 	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
-		if(source == null) {
+		if (source == null) {
 			// TODO deal with specific cases of branch conflict
-			logger.error(getSourceChangeLog(commit, change, source, "RENAME SOURCE | missing source"));
+			error(getSourceChangeLog(commit, change, source, "RENAME SOURCE | missing source"));
 			return;
 		}
-		
+
 		source.setPath(change.getNewPath());
 
 		if (isNewerCommitForSource(commit, source)) {
@@ -169,12 +183,12 @@ public class ProjectTask extends Task {
 	}
 
 	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
-		if(source == null) {
+		if (source == null) {
 			// TODO deal with specific cases of branch conflict
-			logger.error(getSourceChangeLog(commit, change, source, "MODIFY SOURCE | missing source"));
+			error(getSourceChangeLog(commit, change, source, "MODIFY SOURCE | missing source"));
 			return;
 		}
-		
+
 		if (isNewerCommitForSource(commit, source)) {
 			updateSourceCommit(source, commit, metrics);
 		}
@@ -187,12 +201,18 @@ public class ProjectTask extends Task {
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 
 		if (renamedPath != null) {
+			debug(getSourceChangeLog(commit, change, source, "DELETE SOURCE | rename instead"));
+			
 			Source renamedSource = churn.getSource(project.getCode(), renamedPath);
 			renamedSource.setLastCommit(commit.getName());
 			renamedSource.addChurnCount(source.getChurnCount());
 			churn.put(renamedSource);
 			churn.deleteSource(project.getCode(), source);
 		} else {
+			if(source == null) {
+				System.out.println("stop");
+			}
+			
 			source.setDeleted(true);
 			source.setLastCommit(commit.getName());
 			source.setLastChange(commit.getDate());
@@ -203,13 +223,14 @@ public class ProjectTask extends Task {
 	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
 		if (source != null) {
 			// TODO deal with specific cases of branch conflict
-			logger.error(getSourceChangeLog(commit, change, source, "ADD SOURCE | already exists"));			
+			error(getSourceChangeLog(commit, change, source, "ADD SOURCE | already exists"));
 			return;
 		}
 
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
 
 		if (renamedPath != null) {
+			debug(getSourceChangeLog(commit, change, source, "ADD SOURCE | rename instead"));
 			source = churn.getSource(project.getCode(), renamedPath);
 			source.setDeleted(false);
 			source.setPath(change.getPathAfterChange());

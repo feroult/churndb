@@ -44,7 +44,7 @@ public abstract class Task {
 		time = System.currentTimeMillis();
 	}
 
-	protected final void clockLogSeconds(String... info) {
+	protected final void logSeconds(String... info) {
 		long elapsed = System.currentTimeMillis() - time;
 
 		StringBuilder msg = new StringBuilder();
@@ -54,7 +54,7 @@ public abstract class Task {
 			msg.append(" ");
 		}
 
-		msg.append("elapsed time " + (elapsed / 1000));
+		msg.append("elapsed time " + (elapsed / 1000) + " seconds");
 
 		logger.info(msg.toString());
 	}

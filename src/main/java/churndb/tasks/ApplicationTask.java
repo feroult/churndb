@@ -15,6 +15,7 @@ public class ApplicationTask extends Task {
 		DesignDocument sources = new DesignDocument("sources");
 		sources.addViewMap("all", ResourceUtils.asString("/churn/sources/map/all.js"));
 		sources.addViewMap("active", ResourceUtils.asString("/churn/sources/map/active.js"));
+		sources.addViewMap("churn", ResourceUtils.asString("/churn/sources/map/churn.js"));
 		churn.put(sources);
 	}
 	

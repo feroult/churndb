@@ -161,13 +161,12 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCloneRemote() {
 		// given
 		System.setProperty("user.home", "/home/fernando");
 		
 		Project project = new Project();		
-		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
+		project.setCode(TestConstants.PROJECT_CLONE_REMOTE_CODE);		
 		//project.setRepoUrl("git@github.com:feroult/churndb.git");
 		//project.setRepoUrl("git@github.com:dextra/bicbanco_sgc.git");
 		project.setRepoUrl("git@github.com:dextra/a4c.git");
@@ -176,7 +175,7 @@ public class ProjectTaskTest {
 		// when
 		ProjectTask projectTask = new ProjectTask();				
 		//projectTask.cloneRepository(TestConstants.PROJECT_CLONE_CODE);
-		projectTask.reload(TestConstants.PROJECT_CLONE_CODE);
+		projectTask.reload(TestConstants.PROJECT_CLONE_REMOTE_CODE);
 		
 		// then
 		System.out.println("reloaded =)");
