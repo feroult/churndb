@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Runner {
 
-	private static List<Class<? extends ChurnDBTask>> tasks;
+	private static List<Class<? extends Task>> tasks;
 
 	private static PrintWriter pw = new PrintWriter(System.out);
 
@@ -24,19 +24,19 @@ public class Runner {
 	}
 	
 	private static void setupTasks() {
-		tasks = new ArrayList<Class<? extends ChurnDBTask>>();
+		tasks = new ArrayList<Class<? extends Task>>();
 
 		tasks.add(ApplicationTask.class);
 		tasks.add(ProjectTask.class);
 	}
 
 	public static void listTasks() {
-		for (Class<? extends ChurnDBTask> task : tasks) {
+		for (Class<? extends Task> task : tasks) {
 			listTask(task);
 		}
 	}
 
-	private static void listTask(Class<? extends ChurnDBTask> task) {
+	private static void listTask(Class<? extends Task> task) {
 		for (Method method : task.getDeclaredMethods()) {
 			if(!Modifier.isPublic(method.getModifiers())) {
 				continue;
@@ -60,7 +60,7 @@ public class Runner {
 		return StringUtils.uncapitalize(method.getName());
 	}
 
-	private static String getTaskName(Class<? extends ChurnDBTask> task) {
+	private static String getTaskName(Class<? extends Task> task) {
 		return StringUtils.uncapitalize(task.getSimpleName().replaceAll("Task", ""));
 	}
 }

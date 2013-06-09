@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import churndb.git.Commit;
@@ -52,8 +53,7 @@ public class ProjectTaskTest {
 	}
 
 	private void deleteProjectFolders() {
-		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));
-		//FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
+		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));		
 	}
 
 	@After
@@ -142,6 +142,7 @@ public class ProjectTaskTest {
 	@Test
 	public void testClone() {		
 		// given
+		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
 		new TestRepository().doAllCommits();
 		
 		Project project = new Project();		
@@ -160,6 +161,7 @@ public class ProjectTaskTest {
 	}
 
 	@Test
+	@Ignore
 	public void testCloneRemote() {
 		// given
 		System.setProperty("user.home", "/home/fernando");
@@ -190,22 +192,5 @@ public class ProjectTaskTest {
 		project.setCode(TestConstants.PROJECT_CODE);
 		project.setRepoUrl("https://github.com/feroult/churndb.git");
 		return project;
-	}
-	
-	@Test
-	public void testNewDiff() {
-		System.setProperty("user.home", "/home/fernando");
-		
-		Project project = new Project();		
-		project.setCode(TestConstants.PROJECT_CLONE_CODE);		
-		project.setRepoUrl("git@github.com:dextra/a4c.git");
-		addProject(project);
-
-		ProjectTask projectTask = new ProjectTask();				
-		projectTask.diffCommit(TestConstants.PROJECT_CLONE_CODE, "dc7dd74");
-		
-		// then
-		System.out.println("test");
-		
 	}
 }

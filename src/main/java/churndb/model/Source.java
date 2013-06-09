@@ -94,4 +94,9 @@ public class Source extends CouchBean {
 		this.deleted = deleted;
 	}
 
+	@Override
+	public String toString() {
+		return path;
+	}
+	
 }

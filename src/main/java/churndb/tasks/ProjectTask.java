@@ -1,6 +1,11 @@
 package churndb.tasks;
 
 import java.io.PrintWriter;
+import java.text.MessageFormat;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import churndb.git.Change;
 import churndb.git.Commit;
@@ -10,8 +15,10 @@ import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
 
-public class ProjectTask extends ChurnDBTask {
+public class ProjectTask extends Task {
 
+	private static Logger logger = LoggerFactory.getLogger(ProjectTask.class);
+	
 	private static final String PROJECT_CODE_HELP = "projectCode";
 
 	private static final String REPO_URL_HELP = "repoUrl";
@@ -32,7 +39,7 @@ public class ProjectTask extends ChurnDBTask {
 		Project project = churn.getProject(projectCode);
 
 		if (project == null) {
-			println("project {0} does not exist in churndb, add it first", projectCode);
+			helpln("project {0} does not exist in churndb, add it first", projectCode);
 			return false;
 		}
 
@@ -45,7 +52,7 @@ public class ProjectTask extends ChurnDBTask {
 	public void add(String projectCode, String repoUrl) {
 		Project project = churn.getProject(projectCode);
 		if (project != null) {
-			println("project {0} already exists in churndb", projectCode);
+			helpln("project {0} already exists in churndb", projectCode);
 		}
 
 		project = new Project();
@@ -65,6 +72,8 @@ public class ProjectTask extends ChurnDBTask {
 
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void reload(String projectCode) {
+		clockStart();
+		
 		if (!init(projectCode)) {
 			return;
 		}
@@ -77,7 +86,11 @@ public class ProjectTask extends ChurnDBTask {
 	private void reloadProjectFromGIT() {
 		Metrics metrics = new Metrics();
 
-		for (Commit commit : git.log()) {
+		List<Commit> log = git.log();
+		
+		clockLogSeconds("git log");
+		
+		for (Commit commit : log) {
 
 			if (isNewerCommitForProject(commit, project)) {
 				project.setLastCommit(commit.getName());
@@ -113,7 +126,9 @@ public class ProjectTask extends ChurnDBTask {
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 
 		Source source = churn.getSource(project.getCode(), change.getPathBeforeChange());
-
+		
+		logger.debug(getSourceChangeLog(commit, change, source, "UPDATE SOURCE"));
+		
 		switch (change.getType()) {
 		case COPY:
 		case ADD:
@@ -131,10 +146,18 @@ public class ProjectTask extends ChurnDBTask {
 		}
 	}
 
+	private String getSourceChangeLog(Commit commit, Change change, Source source, String message) {
+		return MessageFormat.format("project {0} | {1} | {2} | {3} | {4} | {5} | {6}", message, project.getCode(),
+				commit.getName(), change.getType(), change.getPathBeforeChange(), change.getPathAfterChange(), source);
+	}
+
 	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
 		if(source == null) {
-			System.out.println("xxx");
+			// TODO deal with specific cases of branch conflict
+			logger.error(getSourceChangeLog(commit, change, source, "RENAME SOURCE | missing source"));
+			return;
 		}
+		
 		source.setPath(change.getNewPath());
 
 		if (isNewerCommitForSource(commit, source)) {
@@ -147,7 +170,8 @@ public class ProjectTask extends ChurnDBTask {
 
 	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
 		if(source == null) {
-			System.out.println("x");
+			// TODO deal with specific cases of branch conflict
+			logger.error(getSourceChangeLog(commit, change, source, "MODIFY SOURCE | missing source"));
 			return;
 		}
 		
@@ -178,8 +202,9 @@ public class ProjectTask extends ChurnDBTask {
 
 	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
 		if (source != null) {
+			// TODO deal with specific cases of branch conflict
+			logger.error(getSourceChangeLog(commit, change, source, "ADD SOURCE | already exists"));			
 			return;
-			//throw new RuntimeException("Added source already existed in churndb");
 		}
 
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
@@ -210,13 +235,5 @@ public class ProjectTask extends ChurnDBTask {
 		}
 
 		return commit.getDate().after(source.getLastChange());
-	}
-
-	
-	// test
-	
-	public void diffCommit(String projectCode, String commitName) {
-		init(projectCode);
-		git.diffCommit(commitName);
 	}
 }

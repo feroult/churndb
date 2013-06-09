@@ -3,7 +3,7 @@ package churndb.tasks;
 import churndb.couch.DesignDocument;
 import churndb.utils.ResourceUtils;
 
-public class ApplicationTask extends ChurnDBTask {
+public class ApplicationTask extends Task {
 			
 	public void deploy() {		
 		churn.create();

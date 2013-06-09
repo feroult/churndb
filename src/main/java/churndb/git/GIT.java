@@ -20,18 +20,12 @@ import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.errors.StopWalkException;
-import org.eclipse.jgit.lib.AbbreviatedObjectId;
-import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.filter.commit.CommitDiffFilter;
@@ -178,65 +172,7 @@ public class GIT {
 	}
 
 	private Collection<DiffEntry> getDiffEntriesForMergeCommit(RevCommit revCommit) {
-		return diffCommit(revCommit);
-		
-		/*
-		List<DiffEntry> branchDiffEntries = new ArrayList<DiffEntry>();
-		List<DiffEntry> parentsDiffEntries = new ArrayList<DiffEntry>();
-
-		for (RevCommit parentCommit : revCommit.getParents()) {
-			branchDiffEntries.addAll(getDiffEntries(revCommit, parentCommit));
-			parentsDiffEntries.addAll(getDiffEntries(parseRevCommit(parentCommit)));
-		}
-
-		// only entries not already included in parent diff must be returned
-		return diffDiffEntries(branchDiffEntries, parentsDiffEntries);*/
-	}
-
-	private List<DiffEntry> diffDiffEntries(List<DiffEntry> list1, List<DiffEntry> list2) {
-		List<DiffEntry> diffEntries = new ArrayList<DiffEntry>();
-		for (DiffEntry entry1 : list1) {
-			boolean found = false;
-			for (DiffEntry entry2 : list2) {
-				if (equalsDiffEntry(entry1, entry2)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				diffEntries.add(entry1);
-			}
-		}
-		return diffEntries;
-	}
-
-	private boolean equalsDiffEntry(DiffEntry entry1, DiffEntry entry2) {
-		if (!entry1.getChangeType().equals(entry2.getChangeType())) {
-			return false;
-		}
-
-		if (!equalsDiffEntryId(entry1.getOldId(), entry2.getOldId())) {
-			return false;
-		}
-
-		if (!equalsDiffEntryId(entry1.getNewId(), entry2.getNewId())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private boolean equalsDiffEntryId(AbbreviatedObjectId id1, AbbreviatedObjectId id2) {
-		if (id1 != null) {
-			if (id2 == null) {
-				return false;
-			}
-			if (!id1.equals(id2)) {
-				return false;
-			}
-		}
-
-		return true;
+		return diffCommitActiveGit(revCommit);
 	}
 
 	private List<DiffEntry> getDiffEntries(RevCommit revCommit, RevCommit parentCommit) {
@@ -287,11 +223,11 @@ public class GIT {
 		return false;
 	}
 
-	public File getPath() {
+	protected File getPath() {
 		return path;
 	}
 
-	public Git getGit() {
+	protected Git getGit() {
 		return git;
 	}
 
@@ -450,16 +386,8 @@ public class GIT {
 		}
 	}
 
-	// test
-
-	public Collection<DiffEntry> diffCommit(RevCommit commit) {
-		return diffCommit(commit.getName());
-	}
-	
-	public Collection<DiffEntry> diffCommit(String commitName) {
+	private Collection<DiffEntry> diffCommitActiveGit(RevCommit revCommit) {
 		try {
-			ObjectId commit = git.getRepository().resolve(commitName);
-
 			final AtomicReference<Collection<DiffEntry>> ref = new AtomicReference<Collection<DiffEntry>>();
 			CommitDiffFilter filter = new CommitDiffFilter() {
 
@@ -468,62 +396,10 @@ public class GIT {
 					throw StopWalkException.INSTANCE;
 				}
 			};
-			new CommitFinder(git.getRepository()).setFilter(filter).findFrom(commit);
+			new CommitFinder(git.getRepository()).setFilter(filter).findFrom(revCommit.getId());
 			return ref.get();						
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private static TreeWalk diffWithParents(final Repository repository, final AnyObjectId commitId) {
-		final TreeWalk walk = withParents(repository, commitId);
-		walk.setFilter(TreeFilter.ANY_DIFF);
-		try {
-			DiffEntry.scan(walk);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return walk;
-	}
-
-	private static TreeWalk withParents(final Repository repository, final AnyObjectId commitId) {
-
-		final ObjectReader reader = repository.newObjectReader();
-		final RevWalk walk = new RevWalk(reader);
-		try {
-			return withParents(reader, walk, walk.parseCommit(commitId));
-		} catch (IOException e) {
-			walk.release();
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static TreeWalk withParents(final ObjectReader reader, final RevWalk rWalk, final RevCommit commit)
-			throws IOException {
-		final TreeWalk walk = new TreeWalk(reader);
-		final int parentCount = commit.getParentCount();
-		switch (parentCount) {
-		case 0:
-			walk.addTree(new EmptyTreeIterator());
-			break;
-		case 1:
-			walk.addTree(getTree(rWalk, commit.getParent(0)));
-			break;
-		default:
-			final RevCommit[] parents = commit.getParents();
-			for (int i = 0; i < parentCount; i++)
-				walk.addTree(getTree(rWalk, parents[i]));
-		}
-		walk.addTree(getTree(rWalk, commit));
-		return walk;
-	}
-
-	private static RevTree getTree(final RevWalk walk, final RevCommit commit) throws IOException {
-		final RevTree tree = commit.getTree();
-		if (tree != null)
-			return tree;
-		walk.parseHeaders(commit);
-		return commit.getTree();
 	}
 }
