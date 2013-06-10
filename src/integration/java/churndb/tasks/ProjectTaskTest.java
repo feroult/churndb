@@ -161,7 +161,6 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	@Ignore
 	public void testCloneRemote() {
 		// given
 		System.setProperty("user.home", "/home/fernando");

@@ -9,6 +9,8 @@ public class DesignDocument {
 
 	private transient String id;
 
+	private String language = "javascript";
+	
 	private Map<String, View> views;
 	
 	public DesignDocument(String id) {
@@ -50,4 +52,12 @@ public class DesignDocument {
 		return new Gson().toJson(this);
 	}
 
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 }
