@@ -392,7 +392,7 @@ public class GIT {
 	private Collection<DiffEntry> diffCommitActiveGit(RevCommit revCommit) {
 		try {
 			final AtomicReference<Collection<DiffEntry>> ref = new AtomicReference<Collection<DiffEntry>>();
-			CommitDiffFilter filter = new CommitDiffFilter() {
+			CommitDiffFilter filter = new CommitDiffFilter(true) {
 
 				public boolean include(RevCommit commit, Collection<DiffEntry> diffs) throws IOException {
 					ref.set(diffs);
