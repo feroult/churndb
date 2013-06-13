@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import churndb.git.Commit;
@@ -159,6 +160,7 @@ public class ProjectTaskTest {
 	}
 
 	@Test
+	@Ignore
 	public void testCloneRemote() {
 		// given
 		System.setProperty("user.home", "/home/fernando");
