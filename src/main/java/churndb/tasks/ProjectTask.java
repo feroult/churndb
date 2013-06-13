@@ -1,6 +1,5 @@
 package churndb.tasks;
 
-import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -31,15 +30,11 @@ public class ProjectTask extends Task {
 		super();
 	}
 
-	public ProjectTask(PrintWriter pw) {
-		super(pw);
-	}
-
 	private boolean init(String projectCode) {
 		Project project = churn.getProject(projectCode);
 
 		if (project == null) {
-			helpln("project {0} does not exist in churndb, add it first", projectCode);
+			help.println("project {0} does not exist in churndb, add it first", projectCode);
 			return false;
 		}
 
@@ -52,7 +47,7 @@ public class ProjectTask extends Task {
 	public void add(String projectCode, String repoUrl) {
 		Project project = churn.getProject(projectCode);
 		if (project != null) {
-			helpln("project {0} already exists in churndb", projectCode);
+			help.println("project {0} already exists in churndb", projectCode);
 		}
 
 		project = new Project();

@@ -1,7 +1,5 @@
 package churndb.tasks;
 
-import java.io.PrintWriter;
-import java.text.MessageFormat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,29 +13,17 @@ public abstract class Task {
 
 	protected ChurnClient churn;
 
-	private PrintWriter helpPw;
+	protected Help help;
 
 	private long time;
 
 	public Task() {
 		this.churn = new ChurnClient(Setup.getHost(), Setup.getDatabase());
-	}
-
-	public Task(PrintWriter helpPw) {
-		this();
-		this.helpPw = helpPw;
+		this.help = new Help();
 	}
 
 	public void run() {
 		// default task behavior, do nothing or extend
-	}
-
-	protected void helpln(String pattern, Object... arguments) {
-		if (helpPw == null) {
-			return;
-		}
-		helpPw.println(MessageFormat.format(pattern, arguments));
-		helpPw.flush();
 	}
 
 	protected final void clockStart() {
