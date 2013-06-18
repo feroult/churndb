@@ -60,63 +60,84 @@ public class ProjectTaskTest {
 	}
 
 	@Test
-	public void testReload() {
+	public void testReloadCommitByCommit() {
+		ProjectTask task = new ProjectTask();
 		TestRepository git = new TestRepository();
 		
 		addProject(createTestProject());
 		
-		assertCommit0(git, new ProjectTaskReloadTest());
-		assertCommit1(git, new ProjectTaskReloadTest());
-		assertCommit2(git, new ProjectTaskReloadTest());
-		assertCommit3(git, new ProjectTaskReloadTest());
-		assertCommit4(git, new ProjectTaskReloadTest());		
+		String commit0 = git.commit0();		
+		task.reload(TestConstants.PROJECT_CODE);
+		assertProject(TestConstants.PROJECT_CODE, commit0);
+		assertCommit0(git, commit0);
+			
+		String commit1 = git.commit1();
+		task.reload(TestConstants.PROJECT_CODE);
+		assertProject(TestConstants.PROJECT_CODE, commit1);
+		assertCommit1(git, commit1);
+
+		String commit2 = git.commit2();
+		task.reload(TestConstants.PROJECT_CODE);		
+		assertProject(TestConstants.PROJECT_CODE, commit2);
+		assertCommit2(git, commit2);
+		
+		String commit3 = git.commit3();
+		task.reload(TestConstants.PROJECT_CODE);		
+		assertProject(TestConstants.PROJECT_CODE, commit3);
+		assertCommit3(git, commit3);
+		
+		String commit4 = git.commit4();
+		task.reload(TestConstants.PROJECT_CODE);				
+		assertProject(TestConstants.PROJECT_CODE, commit4);
+		assertCommit4(git, commit4);		
 	}
 	
-	private void assertCommit0(TestRepository git, ProjectTask task) {
-		String commit0 = git.commit0();
-		task.run();
+	@Test
+	public void testReloadAfterLastCommit() {
+		TestRepository git = new TestRepository();
 		
-		assertProject(TestConstants.PROJECT_CODE, commit0);
+		addProject(createTestProject());
+		
+		String commit0 = git.commit0();
+		String commit1 = git.commit1();
+		String commit2 = git.commit2();
+		String commit3 = git.commit3();
+		String commit4 = git.commit4();
+		
+		new ProjectTask().reload(TestConstants.PROJECT_CODE);
+				
+		assertProject(TestConstants.PROJECT_CODE, commit4);
+		
+		assertCommit0(git, commit0);
+		assertCommit1(git, commit1);
+		assertCommit2(git, commit2);
+		assertCommit3(git, commit3);
+		assertCommit4(git, commit4);
+	}
+
+	private void assertCommit0(TestRepository git, String commit0) {		
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);
 		assertSource(TestConstants.PROJECT_CODE, "Customer.java", commit0, 1, 0, 5);		
 		assertSource(TestConstants.PROJECT_CODE, "Product.java", commit0, 1, 25, 61);
 		assertSource(TestConstants.PROJECT_CODE, "Order.java", commit0, 1, 4, 25);
 	}
 
-	private void assertCommit1(TestRepository git, ProjectTask task) {
-		String commit1 = git.commit1();
-		task.run();
-		
-		assertProject(TestConstants.PROJECT_CODE, commit1);
+	private void assertCommit1(TestRepository git, String commit1) {
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit1, 2, 2, 14);		
-		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit1, 1, 4, 25);
-		
+		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit1, 1, 4, 25);		
 	}
 	
-	private void assertCommit2(TestRepository git, ProjectTask task) {
-		String commit2 = git.commit2();
-		task.run();
-		
-		assertProject(TestConstants.PROJECT_CODE, commit2);
+	private void assertCommit2(TestRepository git, String commit2) {
 		assertSource(TestConstants.PROJECT_CODE, "ProductRename.java", commit2, 2, 25, 61);		
 	}	
 	
-	private void assertCommit3(TestRepository git, ProjectTask task) {
-		String commit3 = git.commit3();
-		task.run();
-			
-		assertProject(TestConstants.PROJECT_CODE, commit3);
-		
+	private void assertCommit3(TestRepository git, String commit3) {		
 		Source source = churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java");
 		// TODO review this, probably this check doesn't make sense anymore
 		assertNull(source);		
 	}		
 	
-	private void assertCommit4(TestRepository git, ProjectTask task) {
-		String commit4 = git.commit4();
-		task.run();
-			
-		assertProject(TestConstants.PROJECT_CODE, commit4);
+	private void assertCommit4(TestRepository git, String commit4) {					
 		
 		assertSource(TestConstants.PROJECT_CODE, "AddressRename.java", commit4, 3, 2, 14);			
 		assertNull(churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java"));
