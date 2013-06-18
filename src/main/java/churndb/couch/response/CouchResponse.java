@@ -4,8 +4,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 
 import churndb.couch.CouchClient;
+import churndb.utils.JsonUtils;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -32,7 +32,7 @@ public class CouchResponse {
 	}
 
 	public <T> T as(Class<T> clazz) {
-		return new Gson().fromJson(json, clazz);
+		return JsonUtils.from(json, clazz);
 	}
 
 	public CouchClient couch() {

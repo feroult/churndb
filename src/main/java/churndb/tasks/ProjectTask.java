@@ -122,7 +122,7 @@ public class ProjectTask extends Task {
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 
-		Source source = churn.getSource(project.getCode(), change.getPathBeforeChange());
+		Source source = churn.getActiveSource(project.getCode(), change.getPathBeforeChange());
 
 		debug(getSourceChangeLog(commit, change, source, "UPDATE SOURCE"));
 
@@ -198,8 +198,8 @@ public class ProjectTask extends Task {
 		if (renamedPath != null) {
 			debug(getSourceChangeLog(commit, change, source, "DELETE SOURCE | rename instead"));
 			
-			Source renamedSource = churn.getSource(project.getCode(), renamedPath);
-			renamedSource.setLastCommit(commit.getName());
+			Source renamedSource = churn.getActiveSource(project.getCode(), renamedPath);
+			renamedSource.setCommit(commit.getName());
 			renamedSource.addChurnCount(source.getChurnCount());
 			churn.put(renamedSource);
 			churn.deleteSource(project.getCode(), source);
@@ -209,8 +209,8 @@ public class ProjectTask extends Task {
 			}
 			
 			source.setDeleted(true);
-			source.setLastCommit(commit.getName());
-			source.setLastChange(commit.getDate());
+			source.setCommit(commit.getName());
+			source.setDate(commit.getDate());
 			churn.put(source);
 		}
 	}
@@ -226,7 +226,7 @@ public class ProjectTask extends Task {
 
 		if (renamedPath != null) {
 			debug(getSourceChangeLog(commit, change, source, "ADD SOURCE | rename instead"));
-			source = churn.getSource(project.getCode(), renamedPath);
+			source = churn.getLastSource(project.getCode(), renamedPath);
 			source.setDeleted(false);
 			source.setPath(change.getPathAfterChange());
 		} else {
@@ -240,16 +240,16 @@ public class ProjectTask extends Task {
 	}
 
 	private void updateSourceCommit(Source source, Commit commit, Metrics metrics) {
-		source.setLastCommit(commit.getName());
-		source.setLastChange(commit.getDate());
+		source.setCommit(commit.getName());
+		source.setDate(commit.getDate());
 		metrics.apply(source);
 	}
 
 	private boolean isNewerCommitForSource(Commit commit, Source source) {
-		if (source.getLastChange() == null) {
+		if (source.getDate() == null) {
 			return true;
 		}
 
-		return commit.getDate().after(source.getLastChange());
+		return commit.getDate().after(source.getDate());
 	}
 }

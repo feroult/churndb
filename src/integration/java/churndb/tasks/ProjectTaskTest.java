@@ -19,7 +19,6 @@ import churndb.git.TestRepository;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
-import churndb.utils.ChurnClient;
 import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
@@ -108,8 +107,9 @@ public class ProjectTaskTest {
 			
 		assertProject(TestConstants.PROJECT_CODE, commit3);
 		
-		Source source = churn.getSource(TestConstants.PROJECT_CODE, "Address.java");
-		assertTrue(source.isDeleted());		
+		Source source = churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java");
+		// TODO review this, probably this check doesn't make sense anymore
+		assertNull(source);		
 	}		
 	
 	private void assertCommit4(TestRepository git, ProjectTask task) {
@@ -119,10 +119,10 @@ public class ProjectTaskTest {
 		assertProject(TestConstants.PROJECT_CODE, commit4);
 		
 		assertSource(TestConstants.PROJECT_CODE, "AddressRename.java", commit4, 3, 2, 14);			
-		assertNull(churn.getSource(TestConstants.PROJECT_CODE, "Address.java"));
+		assertNull(churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java"));
 				
 		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit4, 2, 4, 25);
-		assertNull(churn.getSource(TestConstants.PROJECT_CODE, "Order.java"));
+		assertNull(churn.getActiveSource(TestConstants.PROJECT_CODE, "Order.java"));
 	}		
 	
 	private void assertProject(String projectCode, String lastCommit) {
@@ -131,8 +131,8 @@ public class ProjectTaskTest {
 	}
 	
 	private void assertSource(String projectCode, String path, String commit, int churnCount, int ccn, int loc) {
-		Source source = churn.getSource(projectCode, path);	
-		assertEquals(commit, source.getLastCommit());
+		Source source = churn.getSourceInCommit(projectCode, commit, path);	
+		assertEquals(commit, source.getCommit());
 		assertEquals(churnCount, source.getChurnCount());
 		assertEquals((Integer)ccn, source.getMetric(Metrics.CCN));
 		assertEquals((Integer)loc, source.getMetric(Metrics.LOC));

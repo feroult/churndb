@@ -1,6 +1,6 @@
 package churndb.couch;
 
-import com.google.gson.Gson;
+import churndb.utils.JsonUtils;
 
 public class CouchBean {
 	
@@ -25,6 +25,6 @@ public class CouchBean {
 	}
 
 	public String json() {
-		return new Gson().toJson(this);
+		return JsonUtils.to(this);
 	}
 }

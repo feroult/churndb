@@ -31,5 +31,12 @@ public class CouchResponseView extends CouchResponse {
 	public boolean isEmpty() {
 		return size() == 0;
 	}
+
+	public <T> T firstAs(Class<T> clazz) {
+		if (isEmpty()) {
+			return null;
+		}
+		return get(0).as(clazz);
+	}
 		
 }

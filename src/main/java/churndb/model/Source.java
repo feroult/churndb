@@ -16,14 +16,16 @@ public class Source extends CouchBean {
 
 	private String projectCode;
 
-	private String lastCommit;
+	private String commit;
 
 	private int churnCount = 0;
 
-	private Date lastChange;
+	private Date date;
 
 	private boolean deleted = false;
-	
+
+	private boolean active = true;
+
 	public Source(String projectCode, String path) {
 		this.projectCode = projectCode;
 		this.path = path;
@@ -57,12 +59,12 @@ public class Source extends CouchBean {
 		return type;
 	}
 
-	public void setLastCommit(String lastCommit) {
-		this.lastCommit = lastCommit;
+	public void setCommit(String commit) {
+		this.commit = commit;
 	}
 
-	public String getLastCommit() {
-		return lastCommit;
+	public String getCommit() {
+		return commit;
 	}
 
 	public int getChurnCount() {
@@ -72,18 +74,17 @@ public class Source extends CouchBean {
 	public void addChurnCount() {
 		churnCount++;
 	}
-	
+
 	public void addChurnCount(int churnCount) {
 		this.churnCount += churnCount;
 	}
 
-	public Date getLastChange() {
-		return lastChange;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setLastChange(Date lastChange) {
-		this.lastChange = lastChange;
-
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public boolean isDeleted() {
@@ -92,6 +93,14 @@ public class Source extends CouchBean {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
