@@ -65,6 +65,10 @@ public class CouchClient {
 	public CouchResponse delete(String url) {
 		return executeRequest(new HttpDelete(fullRequestUrl(url)));
 	}
+	
+	public CouchResponse delete(CouchBean bean) {
+		return delete(bean.get_id());		
+	}
 
 	private CouchResponse executeRequest(HttpUriRequest request) {
 		return executeRequest(request, new CouchResponseHandler(this));
@@ -130,10 +134,13 @@ public class CouchClient {
 
 		StringBuilder normalizedKeys = new StringBuilder("?");
 		if (keys.length > 0) {
-			normalizedKeys.append(CouchUtils.keys(keys));
+			normalizedKeys.append(CouchUtils.keys(descending, keys));
 		}
+		
+		normalizedKeys.append("&descending=" + descending);
+		
 		normalizedKeys.append("&reduce=" + reduce);
-
+		
 		String viewRequestUrl = "_design/" + module + "/_view/" + view + normalizedKeys;
 		return viewRequestUrl;
 	}

@@ -121,26 +121,35 @@ public class ProjectTask extends Task {
 	}
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
+		Source activeSource = churn.getActiveSource(project.getCode(), change.getPathBeforeChange());
+		Source source = updateSource(commit, change, metrics, activeSource);
 
-		Source source = churn.getActiveSource(project.getCode(), change.getPathBeforeChange());
+		if (activeSource != null) {
+			activeSource.setActive(false);
+			churn.put(activeSource);
+		}
 
-		debug(getSourceChangeLog(commit, change, source, "UPDATE SOURCE"));
+		if (source != null) {
+			churn.put(source);
+		}
+	}
+
+	private Source updateSource(Commit commit, Change change, Metrics metrics, Source activeSource) {
+		debug(getSourceChangeLog(commit, change, activeSource, "UPDATE SOURCE"));
 
 		switch (change.getType()) {
 		case COPY:
 		case ADD:
-			addSource(source, commit, change, metrics);
-			break;
+			return addSource(activeSource, commit, change, metrics);
 		case DELETE:
-			deleteSource(source, commit, change, metrics);
-			break;
+			return deleteSource(activeSource, commit, change, metrics);
 		case MODIFY:
-			modifySource(source, commit, change, metrics);
-			break;
+			return modifySource(activeSource, commit, change, metrics);
 		case RENAME:
-			renameSource(source, commit, change, metrics);
-			break;
+			return renameSource(activeSource, commit, change, metrics);
 		}
+
+		return null;
 	}
 
 	private void info(String message) {
@@ -160,96 +169,79 @@ public class ProjectTask extends Task {
 				change.getPathBeforeChange(), change.getPathAfterChange(), source);
 	}
 
-	private void renameSource(Source source, Commit commit, Change change, Metrics metrics) {
-		if (source == null) {
+	private Source renameSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
+		if (activeSource == null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, source, "RENAME SOURCE | missing source"));
-			return;
+			error(getSourceChangeLog(commit, change, activeSource, "RENAME SOURCE | missing source"));
+			return null;
 		}
 
-		source.setPath(change.getNewPath());
+		Source source = new Source(project.getCode(), change.getNewPath());
+		updateSourceCommit(source, commit, metrics);
 
-		if (isNewerCommitForSource(commit, source)) {
-			updateSourceCommit(source, commit, metrics);
-		}
-
-		source.addChurnCount();
-		churn.put(source);
+		source.addChurnCount(activeSource.getChurnCount() + 1);
+		return source;
 	}
 
-	private void modifySource(Source source, Commit commit, Change change, Metrics metrics) {
-		if (source == null) {
+	private Source modifySource(Source activeSource, Commit commit, Change change, Metrics metrics) {
+		if (activeSource == null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, source, "MODIFY SOURCE | missing source"));
-			return;
+			error(getSourceChangeLog(commit, change, activeSource, "MODIFY SOURCE | missing source"));
+			return null;
 		}
 
-		if (isNewerCommitForSource(commit, source)) {
-			updateSourceCommit(source, commit, metrics);
-		}
+		Source source = new Source(project.getCode(), change.getPathAfterChange());
+		updateSourceCommit(source, commit, metrics);
 
-		source.addChurnCount();
-		churn.put(source);
+		source.addChurnCount(activeSource.getChurnCount() + 1);
+		return source;
 	}
 
-	private void deleteSource(Source source, Commit commit, Change change, Metrics metrics) {
+	private Source deleteSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 
 		if (renamedPath != null) {
-			debug(getSourceChangeLog(commit, change, source, "DELETE SOURCE | rename instead"));
-			
-			Source renamedSource = churn.getActiveSource(project.getCode(), renamedPath);
-			renamedSource.setCommit(commit.getName());
-			renamedSource.addChurnCount(source.getChurnCount());
+			debug(getSourceChangeLog(commit, change, activeSource, "DELETE SOURCE | rename instead"));
+
+			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);
+			renamedSource.setActive(false);
 			churn.put(renamedSource);
-			churn.deleteSource(project.getCode(), source);
-		} else {
-			if(source == null) {
-				System.out.println("stop");
-			}
+
+			Source source = new Source(project.getCode(), renamedPath);
+			updateSourceCommit(source, commit, metrics);
+			source.addChurnCount(activeSource.getChurnCount() + 1);
 			
-			source.setDeleted(true);
-			source.setCommit(commit.getName());
-			source.setDate(commit.getDate());
-			churn.put(source);
+			return source;
 		}
+
+		return null;
 	}
 
-	private void addSource(Source source, Commit commit, Change change, Metrics metrics) {
-		if (source != null) {
+	private Source addSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
+		if (activeSource != null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, source, "ADD SOURCE | already exists"));
-			return;
+			error(getSourceChangeLog(commit, change, activeSource, "ADD SOURCE | already exists"));
+			return null;
 		}
+
+		Source source = new Source(project.getCode(), change.getPathAfterChange());
 
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
 
 		if (renamedPath != null) {
-			debug(getSourceChangeLog(commit, change, source, "ADD SOURCE | rename instead"));
-			source = churn.getLastSource(project.getCode(), renamedPath);
-			source.setDeleted(false);
-			source.setPath(change.getPathAfterChange());
-		} else {
-			source = new Source(project.getCode(), change.getPathAfterChange());
-		}
+			debug(getSourceChangeLog(commit, change, activeSource, "ADD SOURCE | rename instead"));
+			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);					
+			source.addChurnCount(renamedSource.getChurnCount());
+		} 
 
 		updateSourceCommit(source, commit, metrics);
-
 		source.addChurnCount();
-		churn.put(source);
+		return source;
 	}
 
 	private void updateSourceCommit(Source source, Commit commit, Metrics metrics) {
 		source.setCommit(commit.getName());
 		source.setDate(commit.getDate());
 		metrics.apply(source);
-	}
-
-	private boolean isNewerCommitForSource(Commit commit, Source source) {
-		if (source.getDate() == null) {
-			return true;
-		}
-
-		return commit.getDate().after(source.getDate());
 	}
 }

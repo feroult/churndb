@@ -184,6 +184,17 @@ public class ViewTest extends CouchTestBase {
 		assertEquals(new Integer(60), total);
 	}
 	
+	@Test
+	public void testDescending() {
+		putDocument("simple", "1", "A", 10);
+		putDocument("simple", "2", "B", 20);
+		putDocument("simple", "3", "C", 30);
+
+		Document doc = couch.viewDescending("core/simple").firstAs(Document.class);
+		
+		assertEquals("C", doc.getCode());
+	}
+	
 	private void putDocument(String type, String id, String name) {
 		putDocument(type, id, name, 0);
 	}
