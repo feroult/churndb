@@ -22,8 +22,6 @@ public class Source extends CouchBean {
 
 	private Date date;
 
-	private boolean deleted = false;
-
 	private boolean active = true;
 
 	public Source(String projectCode, String path) {
@@ -85,14 +83,6 @@ public class Source extends CouchBean {
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
 	}
 
 	public boolean isActive() {
