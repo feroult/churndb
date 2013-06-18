@@ -23,17 +23,6 @@ import churndb.utils.TestResourceUtils;
 
 public class ProjectTaskTest {
 
-	public class ProjectTaskReloadTest extends ProjectTask {
-		public ProjectTaskReloadTest() {
-			super();
-		}
-
-		@Override
-		public void run() {
-			reload(TestConstants.PROJECT_CODE);
-		}		
-	}
-
 	private ChurnClient churn = new ChurnClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
 	
 	private ApplicationTask applicationTask;

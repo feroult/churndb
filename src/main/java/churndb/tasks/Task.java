@@ -21,10 +21,6 @@ public abstract class Task {
 		this.help = new Help();
 	}
 
-	public void run() {
-		// default task behavior, do nothing or extend
-	}
-
 	protected final void clockStart() {
 		time = System.currentTimeMillis();
 	}
