@@ -122,16 +122,26 @@ public class ProjectTask extends Task {
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 		Source activeSource = churn.getActiveSource(project.getCode(), change.getPathBeforeChange());
-		Source source = updateSource(commit, change, metrics, activeSource);
+		Source updatedSource = updateSource(commit, change, metrics, activeSource);
 
-		if (activeSource != null) {
+		if (isNewVersion(change, activeSource, updatedSource)) {
 			activeSource.setActive(false);
 			churn.put(activeSource);
 		}
 
-		if (source != null) {
-			churn.put(source);
+		if (updatedSource != null) {
+			if (activeSource != null) {
+				updatedSource.setSourceId(activeSource.getSourceId());
+			} else {
+				updatedSource.setSourceId(churn.id());
+			}
+
+			churn.put(updatedSource);
 		}
+	}
+
+	private boolean isNewVersion(Change change, Source activeSource, Source updatedSource) {
+		return activeSource != null && (updatedSource != null || change.getType() == Type.DELETE);
 	}
 
 	private Source updateSource(Commit commit, Change change, Metrics metrics, Source activeSource) {
@@ -210,7 +220,7 @@ public class ProjectTask extends Task {
 			Source source = new Source(project.getCode(), renamedPath);
 			updateSourceCommit(source, commit, metrics);
 			source.addChurnCount(activeSource.getChurnCount() + 1);
-			
+
 			return source;
 		}
 
@@ -230,9 +240,9 @@ public class ProjectTask extends Task {
 
 		if (renamedPath != null) {
 			debug(getSourceChangeLog(commit, change, activeSource, "ADD SOURCE | rename instead"));
-			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);					
+			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);
 			source.addChurnCount(renamedSource.getChurnCount());
-		} 
+		}
 
 		updateSourceCommit(source, commit, metrics);
 		source.addChurnCount();

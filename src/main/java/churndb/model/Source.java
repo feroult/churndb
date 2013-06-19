@@ -8,6 +8,8 @@ import churndb.couch.CouchBean;
 
 public class Source extends CouchBean {
 
+	private String sourceId;
+	
 	private String path;
 
 	private String type = "source";
@@ -28,6 +30,20 @@ public class Source extends CouchBean {
 		this.projectCode = projectCode;
 		this.path = path;
 	}
+
+	
+	
+	public String getSourceId() {
+		return sourceId;
+	}
+
+
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+
 
 	public void setPath(String path) {
 		this.path = path;
@@ -97,5 +113,6 @@ public class Source extends CouchBean {
 	public String toString() {
 		return path;
 	}
+
 	
 }
