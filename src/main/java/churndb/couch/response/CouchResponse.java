@@ -11,7 +11,7 @@ import com.google.gson.JsonParser;
 
 public class CouchResponse {
 
-	private CouchClient couch;
+	protected CouchClient couch;
 	
 	protected JsonObject json;
 	
@@ -35,7 +35,4 @@ public class CouchResponse {
 		return JsonUtils.from(json, clazz);
 	}
 
-	public CouchClient couch() {
-		return couch;
-	}
 }

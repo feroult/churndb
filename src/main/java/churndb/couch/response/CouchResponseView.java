@@ -1,8 +1,12 @@
 package churndb.couch.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.StatusLine;
 
 import churndb.couch.CouchClient;
+import churndb.utils.JsonUtils;
 
 import com.google.gson.JsonObject;
 
@@ -16,6 +20,10 @@ public class CouchResponseView extends CouchResponse {
 		return json.get("rows").getAsJsonArray().get(i).getAsJsonObject();
 	}
 	
+	private JsonObject value(int i) {
+		return json(i).get("value").getAsJsonObject();
+	}
+	
 	public JsonObject first() {
 		return json(0);
 	}
@@ -25,18 +33,29 @@ public class CouchResponseView extends CouchResponse {
 	}
 
 	public CouchResponse get(int i) {
-		return couch().get(json(i).get("id"));
+		return couch.get(json(i).get("id"));
 	}
 
 	public boolean isEmpty() {
 		return size() == 0;
 	}
 
-	public <T> T firstAs(Class<T> clazz) {
+	public <T> T getFirstAs(Class<T> clazz) {
 		if (isEmpty()) {
 			return null;
 		}
 		return get(0).as(clazz);
 	}
+
+	public <T> List<T> valuesAs(Class<T> clazz) {
+		List<T> result = new ArrayList<T>();
 		
+		for(int i = 0; i < size(); i++) {
+			result.add(JsonUtils.from(value(i), clazz)); 
+		}
+		
+		return result;
+	}
+
+			
 }

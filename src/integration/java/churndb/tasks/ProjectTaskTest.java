@@ -126,6 +126,21 @@ public class ProjectTaskTest {
 		assertEquals(sourceInCommit0.getSourceId(), sourceInCommit1.getSourceId());
 	}
 
+	@Test
+	public void testCommitTree() {
+		TestRepository git = new TestRepository();
+
+		addProject(createTestProject());
+
+		String commit0 = git.commit0();
+		String commit1 = git.commit1();
+		String commit2 = git.commit2();
+		String commit3 = git.commit3();
+		String commit4 = git.commit4();
+
+		
+	}
+	
 	private void assertCommit0(TestRepository git, String commit0) {
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);
 		assertSource(TestConstants.PROJECT_CODE, "Customer.java", commit0, 1, 0, 5);

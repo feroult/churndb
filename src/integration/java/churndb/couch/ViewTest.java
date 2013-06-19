@@ -3,6 +3,8 @@ package churndb.couch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -190,18 +192,31 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "2", "B", 20);
 		putDocument("simple", "3", "C", 30);
 
-		Document doc = couch.viewDescending("core/simple").firstAs(Document.class);
+		Document doc = couch.viewDescending("core/simple").getFirstAs(Document.class);
 		
 		assertEquals("C", doc.getCode());
 	}
 	
-	private void putDocument(String type, String id, String name) {
-		putDocument(type, id, name, 0);
+	@Test
+	public void testViewListAs() {
+		putDocument("simple", "1", "A", 10);
+		putDocument("simple", "2", "B", 20);
+		putDocument("simple", "3", "C", 30);
+			
+		List<Document> documents = couch.view("core/simple").valuesAs(Document.class);
+		
+		assertEquals("A", documents.get(0).getCode());
+		assertEquals("B", documents.get(1).getCode());
+		assertEquals("C", documents.get(2).getCode());		
 	}
 	
-	private void putDocument(String type, String id, String name, int value) {
+	private void putDocument(String type, String id, String code) {
+		putDocument(type, id, code, 0);
+	}
+	
+	private void putDocument(String type, String id, String code, int value) {
 		Document doc = new Document();		
-		doc.setCode(name);
+		doc.setCode(code);
 		doc.setType(type);
 		doc.setValue(value);
 		couch.put(id, doc.json());

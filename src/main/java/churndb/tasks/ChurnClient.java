@@ -19,7 +19,7 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Project getProject(String projectCode) {
-		return view(PROJECTS_ALL, projectCode).firstAs(Project.class);
+		return view(PROJECTS_ALL, projectCode).getFirstAs(Project.class);
 	}
 	
 	public void deleteProjectSources(String projectCode) {
@@ -27,7 +27,7 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Source getActiveSource(String projectCode, String path) {
-		return view(SOURCES_ACTIVE, projectCode, path).firstAs(Source.class);
+		return view(SOURCES_ACTIVE, projectCode, path).getFirstAs(Source.class);
 	}
 
 	public void deleteSource(String projectCode, Source source) {
@@ -37,11 +37,11 @@ public class ChurnClient extends CouchClient {
 
 	public Source getSourceInCommit(String projectCode, String commit, String path) {
 		// TODO different view for commit snapshots
-		return view(SOURCES_COMMIT, projectCode, commit, path).firstAs(Source.class);
+		return view(SOURCES_COMMIT, projectCode, commit, path).getFirstAs(Source.class);
 	}
 
 	public Source getLastSource(String projectCode, String path) {
-		return viewDescending(SOURCES_ALL, projectCode, path).firstAs(Source.class);
+		return viewDescending(SOURCES_ALL, projectCode, path).getFirstAs(Source.class);
 	}
 
 }
