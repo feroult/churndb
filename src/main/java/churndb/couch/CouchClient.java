@@ -118,28 +118,28 @@ public class CouchClient {
 	}
 	
 	public CouchResponseView view(String viewUri, String... keys) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, false, keys)));
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, 0, keys)));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 	
 	public CouchResponseView viewDescending(String viewUri, String... keys) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, false, true, keys)));
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.DESCENDING, keys)));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 
-	private String viewRequestUrl(String viewUri, boolean reduce, boolean descending, String... keys) {
+	private String viewRequestUrl(String viewUri, int options, String... keys) {
 		String[] split = viewUri.split("/");
 		String module = split[0];
 		String view = split[1];
 
 		StringBuilder normalizedKeys = new StringBuilder("?");
 		if (keys.length > 0) {
-			normalizedKeys.append(CouchUtils.keys(descending, keys));
+			normalizedKeys.append(CouchUtils.keys(ViewOptions.descending(options), keys));
 		}
+						
+		normalizedKeys.append("&descending=" + ViewOptions.descending(options));
 		
-		normalizedKeys.append("&descending=" + descending);
-		
-		normalizedKeys.append("&reduce=" + reduce);
+		normalizedKeys.append("&reduce=" + ViewOptions.reduce(options));
 		
 		String viewRequestUrl = "_design/" + module + "/_view/" + view + normalizedKeys;
 		return viewRequestUrl;
@@ -190,7 +190,7 @@ public class CouchClient {
 	}
 
 	public CouchResponseReduce reduce(String viewUri, String... keys) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, true, false, keys)));
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.REDUCE, keys)));
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 
