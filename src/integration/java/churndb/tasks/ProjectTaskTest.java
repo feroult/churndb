@@ -144,7 +144,6 @@ public class ProjectTaskTest {
 
 	private void assertCommit3(TestRepository git, String commit3) {
 		Source source = churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java");
-		// TODO review this, probably this check doesn't make sense anymore
 		assertNull(source);
 	}
 
