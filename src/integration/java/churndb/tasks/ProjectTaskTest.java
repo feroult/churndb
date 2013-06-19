@@ -141,17 +141,26 @@ public class ProjectTaskTest {
 		String commit4 = git.commit4();
 
 		new ProjectTask().reload(TestConstants.PROJECT_CODE);
-				
-		assertCommitTree(TestConstants.PROJECT_CODE, commit0, "Address.java", "Customer.java", "Product.java", "Order.java");				
-		assertCommitTree(TestConstants.PROJECT_CODE, commit1, "Address.java", "Customer.java", "Product.java", "Order.java", "OrderRename.java");
+
+		assertCommitTree(TestConstants.PROJECT_CODE, commit0, "Address.java", "Customer.java", "Product.java",
+				"Order.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit1, "Address.java", "Customer.java", "Product.java",
+				"Order.java", "OrderRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit2, "Address.java", "Customer.java", "ProductRename.java",
+				"Order.java", "OrderRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit3, "Customer.java", "ProductRename.java", "Order.java",
+				"OrderRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit4, "Customer.java", "ProductRename.java",
+				"OrderRename.java", "AddressRename.java");
+
 	}
-	
-	private void assertCommitTree(String projectCode, String commit, String ... paths) {
-		List<String> pathsList = Arrays.asList(paths); 
+
+	private void assertCommitTree(String projectCode, String commit, String... paths) {
+		List<String> pathsList = Arrays.asList(paths);
 		List<Source> sources = churn.getSourcesInCommit(projectCode, commit);
-		
+
 		assertEquals(paths.length, sources.size());
-		for(Source source : sources) {			
+		for (Source source : sources) {
 			assertTrue(pathsList.contains(source.getPath()));
 		}
 	}

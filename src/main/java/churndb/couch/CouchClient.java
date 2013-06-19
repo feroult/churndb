@@ -198,7 +198,7 @@ public class CouchClient {
 
 	public CouchResponseReduce reduce(String viewUri, String... keys) {
 		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.REDUCE, keys)));
-		// TODO remove specific handler for reduce?
+		// TODO remove specific handler for reduce
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 
