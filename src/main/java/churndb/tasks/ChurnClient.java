@@ -3,6 +3,7 @@ package churndb.tasks;
 import java.util.List;
 
 import churndb.couch.CouchClient;
+import churndb.couch.ViewOptions;
 import churndb.model.Project;
 import churndb.model.Source;
 
@@ -15,6 +16,8 @@ public class ChurnClient extends CouchClient {
 	private static final String SOURCES_ACTIVE = "sources/active";
 
 	private static final String SOURCES_COMMIT = "sources/commit";
+	
+	private static final String TREES_SOURCES = "trees/sources";
 
 	public ChurnClient(String host, String database) {
 		super(host, database);
@@ -46,7 +49,6 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public List<Source> getSourcesInCommit(String projectCode, String commit) {
-		// TODO different view for commit snapshots
-		return view(SOURCES_COMMIT, projectCode, commit).valuesAs(Source.class);
+		return view(TREES_SOURCES, ViewOptions.INCLUDE_DOCS, projectCode, commit).docsAs(Source.class);
 	}
 }

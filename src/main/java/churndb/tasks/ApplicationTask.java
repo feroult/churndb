@@ -21,6 +21,7 @@ public class ApplicationTask extends Task {
 		
 		DesignDocument trees = new DesignDocument("trees");
 		trees.addViewMap("all", ResourceUtils.asString("/churn/trees/map/all.js"));
+		trees.addViewMap("sources", ResourceUtils.asString("/churn/trees/map/sources.js"));
 		churn.put(trees);		
 	}
 	
