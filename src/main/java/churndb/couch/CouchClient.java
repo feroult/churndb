@@ -122,6 +122,11 @@ public class CouchClient {
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}
 	
+	public CouchResponseView view(String viewUri, int options, String... keys) {
+		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, options, keys)));
+		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
+	}	
+	
 	public CouchResponseView viewDescending(String viewUri, String... keys) {
 		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.DESCENDING, keys)));
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
@@ -136,7 +141,9 @@ public class CouchClient {
 		if (keys.length > 0) {
 			normalizedKeys.append(CouchUtils.keys(ViewOptions.descending(options), keys));
 		}
-						
+		
+		normalizedKeys.append("&include_docs=" + ViewOptions.includeDocs(options));
+		
 		normalizedKeys.append("&descending=" + ViewOptions.descending(options));
 		
 		normalizedKeys.append("&reduce=" + ViewOptions.reduce(options));
@@ -191,6 +198,7 @@ public class CouchClient {
 
 	public CouchResponseReduce reduce(String viewUri, String... keys) {
 		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.REDUCE, keys)));
+		// TODO remove specific handler for reduce?
 		return (CouchResponseReduce) executeRequest(request, new CouchResponseHandler(this, CouchResponseReduce.class));
 	}
 

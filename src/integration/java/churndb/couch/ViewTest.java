@@ -198,7 +198,7 @@ public class ViewTest extends CouchTestBase {
 	}
 	
 	@Test
-	public void testViewListAs() {
+	public void testViewValuesAs() {
 		putDocument("simple", "1", "A", 10);
 		putDocument("simple", "2", "B", 20);
 		putDocument("simple", "3", "C", 30);
@@ -209,6 +209,20 @@ public class ViewTest extends CouchTestBase {
 		assertEquals("B", documents.get(1).getCode());
 		assertEquals("C", documents.get(2).getCode());		
 	}
+
+	@Test
+	public void testViewDocsAs() {
+		putDocument("simple", "1", "A", 10);
+		putDocument("simple", "2", "B", 20);
+		putDocument("simple", "3", "C", 30);
+			
+		List<Document> documents = couch.view("core/simple", ViewOptions.INCLUDE_DOCS).docsAs(Document.class);
+		
+		assertEquals("A", documents.get(0).getCode());
+		assertEquals("B", documents.get(1).getCode());
+		assertEquals("C", documents.get(2).getCode());		
+	}
+	
 	
 	private void putDocument(String type, String id, String code) {
 		putDocument(type, id, code, 0);

@@ -23,6 +23,10 @@ public class CouchResponseView extends CouchResponse {
 	private JsonObject value(int i) {
 		return json(i).get("value").getAsJsonObject();
 	}
+
+	private JsonObject doc(int i) {
+		return json(i).get("doc").getAsJsonObject();
+	}	
 	
 	public JsonObject first() {
 		return json(0);
@@ -52,6 +56,16 @@ public class CouchResponseView extends CouchResponse {
 		
 		for(int i = 0; i < size(); i++) {
 			result.add(JsonUtils.from(value(i), clazz)); 
+		}
+		
+		return result;
+	}
+
+	public <T> List<T> docsAs(Class<T> clazz) {
+		List<T> result = new ArrayList<T>();
+		
+		for(int i = 0; i < size(); i++) {
+			result.add(JsonUtils.from(doc(i), clazz)); 
 		}
 		
 		return result;
