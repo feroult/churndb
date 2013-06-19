@@ -18,6 +18,10 @@ public class ApplicationTask extends Task {
 		sources.addViewMap("commit", ResourceUtils.asString("/churn/sources/map/commit.js"));		
 		sources.addViewMap("churn", ResourceUtils.asString("/churn/sources/map/churn.js"));
 		churn.put(sources);
+		
+		DesignDocument trees = new DesignDocument("trees");
+		trees.addViewMap("all", ResourceUtils.asString("/churn/trees/map/all.js"));
+		churn.put(trees);		
 	}
 	
 	public void undeploy() {

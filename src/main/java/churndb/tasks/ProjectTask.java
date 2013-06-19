@@ -13,6 +13,7 @@ import churndb.git.Type;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
+import churndb.model.Tree;
 
 public class ProjectTask extends Task {
 
@@ -86,26 +87,40 @@ public class ProjectTask extends Task {
 		info("reloading " + log.size() + " commits");
 
 		for (Commit commit : log) {
-
-			if (isNewerCommitForProject(commit, project)) {
-				project.setLastCommit(commit.getName());
-				project.setLastChange(commit.getDate());
-				churn.put(project);
-			}
-
-			git.checkout(commit.getName());
-
-			for (Change change : commit.getChanges()) {
-
-				if (!isSupportedSourceType(change.getPathBeforeChange())) {
-					continue;
-				}
-
-				updateSource(commit, change, metrics);
-			}
+			updateProject(commit);
+			updateSources(metrics, commit);
+			updateTree(commit);
 		}
 
 		logSeconds("reload project");
+	}
+
+	private void updateTree(Commit commit) {
+		List<Source> activeSources = churn.getActiveSources(project.getCode());
+		Tree tree = new Tree(project.getCode(), commit.getName());		
+		tree.add(activeSources);
+		churn.put(tree);
+	}
+
+	private void updateSources(Metrics metrics, Commit commit) {
+		git.checkout(commit.getName());
+
+		for (Change change : commit.getChanges()) {
+
+			if (!isSupportedSourceType(change.getPathBeforeChange())) {
+				continue;
+			}
+
+			updateSource(commit, change, metrics);
+		}
+	}
+
+	private void updateProject(Commit commit) {
+		if (isNewerCommitForProject(commit, project)) {
+			project.setLastCommit(commit.getName());
+			project.setLastChange(commit.getDate());
+			churn.put(project);
+		}
 	}
 
 	private boolean isNewerCommitForProject(Commit commit, Project project2) {

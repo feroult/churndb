@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -138,9 +140,22 @@ public class ProjectTaskTest {
 		String commit3 = git.commit3();
 		String commit4 = git.commit4();
 
-		
+		new ProjectTask().reload(TestConstants.PROJECT_CODE);
+				
+		assertCommitTree(TestConstants.PROJECT_CODE, commit0, "Address.java", "Customer.java", "Product.java", "Order.java");				
+		assertCommitTree(TestConstants.PROJECT_CODE, commit1, "Address.java", "Customer.java", "Product.java", "Order.java", "OrderRename.java");
 	}
 	
+	private void assertCommitTree(String projectCode, String commit, String ... paths) {
+		List<String> pathsList = Arrays.asList(paths); 
+		List<Source> sources = churn.getSourcesInCommit(projectCode, commit);
+		
+		assertEquals(paths.length, sources.size());
+		for(Source source : sources) {			
+			assertTrue(pathsList.contains(source.getPath()));
+		}
+	}
+
 	private void assertCommit0(TestRepository git, String commit0) {
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);
 		assertSource(TestConstants.PROJECT_CODE, "Customer.java", commit0, 1, 0, 5);
