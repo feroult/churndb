@@ -23,6 +23,8 @@ public class ProjectTask extends Task {
 
 	private static final String REPO_URL_HELP = "repoUrl";
 
+	private static final String MASTER = "master";
+
 	private Project project;
 
 	private GIT git;
@@ -68,31 +70,62 @@ public class ProjectTask extends Task {
 
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void reload(String projectCode) {
-		clockStart();
-
 		if (!init(projectCode)) {
 			return;
 		}
 
-		churn.deleteProjectSources(project.getCode());
-		reloadProjectFromGIT();
+		try {			
+			clockStart();
+			
+			churn.deleteProjectSources(project.getCode());
+			git.checkout(MASTER);
+			
+			List<Commit> log = git.log();
+			logSeconds("git log");
+			
+			loadCommits(log);
+			
+			logSeconds("reload project");
+		} finally {
+			git.checkout(MASTER);
+		}
 	}
 
-	private void reloadProjectFromGIT() {
-		Metrics metrics = new Metrics();
+	@RunnerHelp(PROJECT_CODE_HELP)
+	public void pull(String projectCode) {
+		if (!init(projectCode)) {
+			return;
+		}		
+				
+		try {
+			clockStart();
+	
+			git.checkout(MASTER);
+			git.pull();
+					
+			List<Commit> log = project.getLastCommit() == null ? git.log() : git.log(project.getLastCommit());	
+			logSeconds("git log");
+	
+			loadCommits(log);
+			
+			logSeconds("pull project");
+			
+		} finally {
+			git.checkout(MASTER);
+		}
+		
+	}
 
-		List<Commit> log = git.log();
-
-		logSeconds("git log");
+	private void loadCommits(List<Commit> log) {
 		info("reloading " + log.size() + " commits");
+
+		Metrics metrics = new Metrics();
 
 		for (Commit commit : log) {
 			updateProject(commit);
 			updateSources(metrics, commit);
 			updateTree(commit);
 		}
-
-		logSeconds("reload project");
 	}
 
 	private void updateTree(Commit commit) {
@@ -268,5 +301,5 @@ public class ProjectTask extends Task {
 		source.setCommit(commit.getName());
 		source.setDate(commit.getDate());
 		metrics.apply(source);
-	}
+	}	
 }

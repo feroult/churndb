@@ -44,6 +44,7 @@ public class ProjectTaskTest {
 
 	private void deleteProjectFolders() {
 		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));
+		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH)));
 	}
 
 	@After
@@ -56,39 +57,39 @@ public class ProjectTaskTest {
 		ProjectTask task = new ProjectTask();
 		TestRepository git = new TestRepository();
 
-		addProject(createTestProject());
+		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
 
 		String commit0 = git.commit0();
 		task.reload(TestConstants.PROJECT_CODE);
 		assertProject(TestConstants.PROJECT_CODE, commit0);
-		assertCommit0(git, commit0);
+		assertCommit0(commit0);
 
 		String commit1 = git.commit1();
 		task.reload(TestConstants.PROJECT_CODE);
 		assertProject(TestConstants.PROJECT_CODE, commit1);
-		assertCommit1(git, commit1);
+		assertCommit1(commit1);
 
 		String commit2 = git.commit2();
 		task.reload(TestConstants.PROJECT_CODE);
 		assertProject(TestConstants.PROJECT_CODE, commit2);
-		assertCommit2(git, commit2);
+		assertCommit2(commit2);
 
 		String commit3 = git.commit3();
 		task.reload(TestConstants.PROJECT_CODE);
 		assertProject(TestConstants.PROJECT_CODE, commit3);
-		assertCommit3(git, commit3);
+		assertCommit3(commit3);
 
 		String commit4 = git.commit4();
 		task.reload(TestConstants.PROJECT_CODE);
 		assertProject(TestConstants.PROJECT_CODE, commit4);
-		assertCommit4(git, commit4);
+		assertCommit4(commit4);
 	}
 
 	@Test
 	public void testReloadAfterLastCommit() {
 		TestRepository git = new TestRepository();
 
-		addProject(createTestProject());
+		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
@@ -100,18 +101,47 @@ public class ProjectTaskTest {
 
 		assertProject(TestConstants.PROJECT_CODE, commit4);
 
-		assertCommit0(git, commit0);
-		assertCommit1(git, commit1);
-		assertCommit2(git, commit2);
-		assertCommit3(git, commit3);
-		assertCommit4(git, commit4);
+		assertCommit0(commit0);
+		assertCommit1(commit1);
+		assertCommit2(commit2);
+		assertCommit3(commit3);
+		assertCommit4(commit4);
 	}
 
+	@Test
+	public void testPull() {
+		// given		
+		TestRepository gitServer = new TestRepository(TestConstants.PROJECT_TO_CLONE_PATH);
+		String commit0 = gitServer.commit0();
+		
+		addProject(TestConstants.PROJECT_CODE, "file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH));
+		ProjectTask task = new ProjectTask();
+		task.cloneRepository(TestConstants.PROJECT_CODE);
+		
+		// when / then
+		String commit1 = gitServer.commit1();
+		task.pull(TestConstants.PROJECT_CODE);
+		assertCommit0(commit0);			
+		assertCommit1(commit1);
+		
+		String commit2 = gitServer.commit2();
+		task.pull(TestConstants.PROJECT_CODE);
+		assertCommit2(commit2);
+		
+		String commit3 = gitServer.commit3();
+		task.pull(TestConstants.PROJECT_CODE);
+		assertCommit3(commit3);
+		
+		String commit4 = gitServer.commit4();
+		task.pull(TestConstants.PROJECT_CODE);
+		assertCommit4(commit4);					
+	}
+	
 	@Test
 	public void testSameSourceId() {
 		TestRepository git = new TestRepository();
 
-		addProject(createTestProject());
+		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
@@ -132,7 +162,7 @@ public class ProjectTaskTest {
 	public void testCommitTree() {
 		TestRepository git = new TestRepository();
 
-		addProject(createTestProject());
+		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
@@ -165,28 +195,28 @@ public class ProjectTaskTest {
 		}
 	}
 
-	private void assertCommit0(TestRepository git, String commit0) {
+	private void assertCommit0(String commit0) {
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit0, 1, 0, 5);
 		assertSource(TestConstants.PROJECT_CODE, "Customer.java", commit0, 1, 0, 5);
 		assertSource(TestConstants.PROJECT_CODE, "Product.java", commit0, 1, 25, 61);
 		assertSource(TestConstants.PROJECT_CODE, "Order.java", commit0, 1, 4, 25);
 	}
 
-	private void assertCommit1(TestRepository git, String commit1) {
+	private void assertCommit1(String commit1) {
 		assertSource(TestConstants.PROJECT_CODE, "Address.java", commit1, 2, 2, 14);
 		assertSource(TestConstants.PROJECT_CODE, "OrderRename.java", commit1, 1, 4, 25);
 	}
 
-	private void assertCommit2(TestRepository git, String commit2) {
+	private void assertCommit2(String commit2) {
 		assertSource(TestConstants.PROJECT_CODE, "ProductRename.java", commit2, 2, 25, 61);
 	}
 
-	private void assertCommit3(TestRepository git, String commit3) {
+	private void assertCommit3(String commit3) {
 		Source source = churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java");
 		assertNull(source);
 	}
 
-	private void assertCommit4(TestRepository git, String commit4) {
+	private void assertCommit4(String commit4) {
 
 		assertSource(TestConstants.PROJECT_CODE, "AddressRename.java", commit4, 3, 2, 14);
 		assertNull(churn.getActiveSource(TestConstants.PROJECT_CODE, "Address.java"));
@@ -211,20 +241,16 @@ public class ProjectTaskTest {
 	@Test
 	public void testClone() {
 		// given
-		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH)));
-		new TestRepository().doAllCommits();
+		new TestRepository(TestConstants.PROJECT_TO_CLONE_PATH).doAllCommits();
 
-		Project project = new Project();
-		project.setCode(TestConstants.PROJECT_CLONE_CODE);
-		project.setRepoUrl("file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
-		addProject(project);
+		addProject(TestConstants.PROJECT_CODE, "file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH));
 
 		// when
 		ProjectTask projectTask = new ProjectTask();
-		projectTask.cloneRepository(TestConstants.PROJECT_CLONE_CODE);
+		projectTask.cloneRepository(TestConstants.PROJECT_CODE);
 
 		// then
-		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_CLONE_PATH));
+		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
 		List<Commit> log = git.log();
 		assertEquals(5, log.size());
 	}
@@ -235,31 +261,20 @@ public class ProjectTaskTest {
 		// given
 		System.setProperty("user.home", "/home/fernando");
 
-		Project project = new Project();
-		project.setCode(TestConstants.PROJECT_CLONE_REMOTE_CODE);
-		// project.setRepoUrl("git@github.com:feroult/churndb.git");
-		// project.setRepoUrl("git@github.com:dextra/bicbanco_sgc.git");
-		project.setRepoUrl("git@github.com:dextra/a4c.git");
-		addProject(project);
+		addProject(TestConstants.PROJECT_CLONE_REMOTE_CODE, "git@github.com:dextra/a4c.git");
 
 		// when
-		ProjectTask projectTask = new ProjectTask();
-		// projectTask.cloneRepository(TestConstants.PROJECT_CLONE_CODE);
-		projectTask.reload(TestConstants.PROJECT_CLONE_REMOTE_CODE);
+		new ProjectTask().reload(TestConstants.PROJECT_CLONE_REMOTE_CODE);
 
 		// then
 		System.out.println("reloaded =)");
 	}
 
-	private void addProject(Project project) {
-		ProjectTask task = new ProjectTask();
-		task.add(project.getCode(), project.getRepoUrl());
-	}
-
-	private Project createTestProject() {
+	private Project addProject(String projectCode, String repoUrl) {
 		Project project = new Project();
-		project.setCode(TestConstants.PROJECT_CODE);
-		project.setRepoUrl("https://github.com/feroult/churndb.git");
+		project.setCode(projectCode);
+		project.setRepoUrl(repoUrl);
+		new ProjectTask().add(project.getCode(), project.getRepoUrl());
 		return project;
-	}
+	}	
 }

@@ -39,6 +39,23 @@ public class GITTest {
 		assertEquals("OrderRename.java", git.findSimilarInOldCommits(commit, "Order.java", Type.ADD));
 	}
 
+	@Test
+	public void testLogSince() {
+		TestRepository git = new TestRepository();
+
+		git.commit0();
+		git.commit1();
+		String commit2 = git.commit2();
+		String commit3 = git.commit3();
+		String commit4 = git.commit4();
+
+		List<Commit> commits = git.log(commit2);
+		
+		assertEquals(2, commits.size());
+		assertEquals(commit3, commits.get(0).getName());
+		assertEquals(commit4, commits.get(1).getName());
+	}
+	
 	private Change mockChange(Type type, String path) {
 		return new Change(type, null, path);
 	}

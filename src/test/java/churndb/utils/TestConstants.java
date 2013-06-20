@@ -10,7 +10,7 @@ public class TestConstants {
 	
 	public static final String PROJECT_CODE = "fake_project";
 	
-	public static final String PROJECT_CLONE_CODE = "clone_project";
+	public static final String PROJECT_TO_CLONE_CODE = "project_to_clone";
 	
 	public static final String PROJECT_CLONE_REMOTE_CODE = "clone_remote_project";
 	
@@ -18,7 +18,7 @@ public class TestConstants {
 	
 	public static final String PROJECT_PATH = CHURNDB_ROOT + PROJECT_CODE + "/";
 	
-	public static final String PROJECT_CLONE_PATH = CHURNDB_ROOT + PROJECT_CLONE_CODE + "/";
+	public static final String PROJECT_TO_CLONE_PATH = CHURNDB_ROOT + PROJECT_TO_CLONE_CODE + "/";
 	
 	public static final String PROJECT_COMMIT_0_PATH = "/churndb/project/commit0";
 	

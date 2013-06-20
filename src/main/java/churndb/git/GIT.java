@@ -13,20 +13,18 @@ import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.errors.StopWalkException;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.filter.commit.CommitDiffFilter;
 
@@ -106,19 +104,34 @@ public class GIT {
 
 	public List<Commit> log() {
 		try {
-			List<Commit> commits = new ArrayList<Commit>();
-			Iterable<RevCommit> call = git.log().call();
 
-			for (RevCommit revCommit : call) {
-				commits.add(parseCommit(revCommit));
-			}
-
-			Collections.reverse(commits);
-			return commits;
+			Iterable<RevCommit> log = git.log().call();
+			return parseCommits(log);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public List<Commit> log(String commitSince) {
+		try {
+			Iterable<RevCommit> log = git.log().addRange(getObjectId(commitSince), getObjectId(Constants.HEAD)).call();
+			return parseCommits(log);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private List<Commit> parseCommits(Iterable<RevCommit> call) {
+		List<Commit> commits = new ArrayList<Commit>();
+
+		for (RevCommit revCommit : call) {
+			commits.add(parseCommit(revCommit));
+		}
+
+		Collections.reverse(commits);
+		return commits;
 	}
 
 	public Commit parseCommit(RevCommit revCommit) {
@@ -152,54 +165,9 @@ public class GIT {
 	private void parseOtherCommits(RevCommit revCommit, Commit commit) throws MissingObjectException,
 			IncorrectObjectTypeException, IOException {
 
-		//Collection<DiffEntry> diffs = getDiffEntries(revCommit);
 		Collection<DiffEntry> diffs = diffCommitActiveGit(revCommit);
 		for (DiffEntry diff : diffs) {
 			commit.add(Type.getType(diff.getChangeType()), diff.getOldPath(), diff.getNewPath());
-		}
-	}
-
-	private Collection<DiffEntry> getDiffEntries(RevCommit revCommit) {
-		if (revCommit.getParentCount() == 0) {
-			return new ArrayList<DiffEntry>();
-		}
-
-		if (revCommit.getParentCount() == 1) {
-			return getDiffEntries(revCommit, revCommit.getParent(0));
-		}
-
-		return getDiffEntriesForMergeCommit(revCommit);
-	}
-
-	private Collection<DiffEntry> getDiffEntriesForMergeCommit(RevCommit revCommit) {
-		return diffCommitActiveGit(revCommit);
-	}
-
-	private List<DiffEntry> getDiffEntries(RevCommit revCommit, RevCommit parentCommit) {
-		RevWalk rw = new RevWalk(git.getRepository());
-		try {
-			RevCommit parent = parseRevCommit(parentCommit);
-			DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
-			df.setRepository(git.getRepository());
-			df.setDiffComparator(RawTextComparator.DEFAULT);
-			df.setDetectRenames(true);
-			List<DiffEntry> diffs = df.scan(parent.getTree(), revCommit.getTree());
-			return diffs;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			rw.dispose();
-		}
-	}
-
-	private RevCommit parseRevCommit(RevCommit revCommit) {
-		RevWalk rw = new RevWalk(git.getRepository());
-		try {
-			return rw.parseCommit(revCommit.getId());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			rw.dispose();
 		}
 	}
 
@@ -250,7 +218,7 @@ public class GIT {
 				return null;
 			}
 
-			Iterable<RevCommit> log = git.log().add(git.getRepository().resolve(commitName)).call();
+			Iterable<RevCommit> log = git.log().add(getObjectId(commitName)).call();
 
 			List<DiffEntry> renameEntries = new ArrayList<DiffEntry>();
 
@@ -296,18 +264,18 @@ public class GIT {
 			try {
 				List<DiffEntry> possibleRenameEntries = detector.compute();
 				for (DiffEntry possibleRenameEntry : possibleRenameEntries) {
-	
+
 					if (possibleRenameEntry.getChangeType() != ChangeType.RENAME) {
 						continue;
 					}
-	
+
 					if (type == Type.DELETE) {
 						if (possibleRenameEntry.getNewId().equals(entry.getNewId())) {
 							return possibleRenameEntry.getOldPath();
 						}
 						continue;
 					}
-	
+
 					if (type == Type.ADD) {
 						if (possibleRenameEntry.getOldId().equals(entry.getOldId())
 								&& isValidAddedFile(entry, possibleRenameEntry, renameEntries)) {
@@ -315,7 +283,7 @@ public class GIT {
 						}
 					}
 				}
-			} catch(NullPointerException e) {
+			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
 
@@ -347,9 +315,9 @@ public class GIT {
 	private List<DiffEntry> getDiffEntries(RevCommit revCommit, Type type) {
 		List<DiffEntry> filteredDiffEntries = new ArrayList<DiffEntry>();
 
-		//Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
+		// Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
 		Collection<DiffEntry> diffEntries = diffCommitActiveGit(revCommit);
-		
+
 		for (DiffEntry entry : diffEntries) {
 			if (type.isSameChangeType(entry.getChangeType())) {
 				filteredDiffEntries.add(entry);
@@ -362,11 +330,11 @@ public class GIT {
 	private DiffEntry findDiffEntryForCommmit(String commitName, String path) {
 		RevWalk walk = new RevWalk(git.getRepository());
 		try {
-			ObjectId commitId = git.getRepository().resolve(commitName);
+			ObjectId commitId = getObjectId(commitName);
 			RevCommit revCommit = walk.parseCommit(commitId);
-			//Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
+			// Collection<DiffEntry> diffEntries = getDiffEntries(revCommit);
 			Collection<DiffEntry> diffEntries = diffCommitActiveGit(revCommit);
-			
+
 			for (DiffEntry entry : diffEntries) {
 
 				String entryPath = entry.getNewPath();
@@ -400,9 +368,26 @@ public class GIT {
 				}
 			};
 			new CommitFinder(git.getRepository()).setFilter(filter).findFrom(revCommit.getId());
-			return ref.get();						
+			return ref.get();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private ObjectId getObjectId(String commitName) {
+		try {
+			return git.getRepository().resolve(commitName);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void pull() {
+		try {
+			git.pull().call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 }

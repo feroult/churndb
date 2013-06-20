@@ -14,16 +14,23 @@ import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
 public class TestRepository extends GIT {
+	
+	private String projectPath;
 
-	public TestRepository() {		
-		super(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
+	public TestRepository(String projectPath) {
+		super(TestResourceUtils.tempPath(projectPath));
+		this.projectPath = projectPath;
 		FileUtils.deleteQuietly(getPath());
 		getPath().mkdirs();
 		init();
 	}
 	
+	public TestRepository() {
+		this(TestConstants.PROJECT_PATH);
+	}
+	
 	public String commit0() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH);
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, projectPath);
 		
 		add("Address.java");
 		add("Customer.java");
@@ -35,12 +42,12 @@ public class TestRepository extends GIT {
 	}
 
 	public String commit1() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_1_PATH, TestConstants.PROJECT_PATH);
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_1_PATH, projectPath);
 					
 		add("Address.java");
 		
 		// rename but delete only on file system
-		FileUtils.deleteQuietly(new File(TestConstants.PROJECT_PATH + "Order.java"));
+		FileUtils.deleteQuietly(new File(projectPath + "Order.java"));
 		add("OrderRename.java");
 		
 		Calendar calendar = new GregorianCalendar(2013, Calendar.MAY, 15, 8, 25);
@@ -48,7 +55,7 @@ public class TestRepository extends GIT {
 	}
 	
 	public String commit2() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_2_PATH, TestConstants.PROJECT_PATH);
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_2_PATH, projectPath);
 		
 		rm("Product.java");
 		add("ProductRename.java");
@@ -66,7 +73,7 @@ public class TestRepository extends GIT {
 	}
 		
 	public String commit4() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_4_PATH, TestConstants.PROJECT_PATH);
+		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_4_PATH, projectPath);
 		
 		add("AddressRename.java"); // added the new file rename -- rename across commits
 		rm("Order.java"); // delete the old file renamed -- rename across commits
@@ -93,6 +100,5 @@ public class TestRepository extends GIT {
 		commit3();
 		commit4();
 	}
-
 	
 }
