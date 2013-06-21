@@ -255,7 +255,12 @@ public class ProjectTask extends Task {
 		return source;
 	}
 
-	private Source deleteSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
+	private Source deleteSource(Source activeSource, Commit commit, Change change, Metrics metrics) {		
+		if(activeSource == null) {
+			// TODO check why this is happening
+			return null;
+		}
+		
 		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 
 		if (renamedPath != null) {
