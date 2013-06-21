@@ -49,6 +49,7 @@ public class Setup {
 	private static Setup getMe() {
 		if(me == null) {
 			 me = homeFolderSetup();
+			 mkdirs();
 		}
 		return me;
 	}
