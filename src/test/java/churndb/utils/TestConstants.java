@@ -2,7 +2,7 @@ package churndb.utils;
 
 public class TestConstants {
 	
-	public static final String HOME_FOLDER = "/churndb/home";
+	public static final String HOME_FOLDER = "/tmp/churndb";
 
 	public static final String COUCHDB_HOST = "http://127.0.0.1:5984";
 
@@ -12,13 +12,9 @@ public class TestConstants {
 	
 	public static final String PROJECT_TO_CLONE_CODE = "project_to_clone";
 	
-	public static final String PROJECT_CLONE_REMOTE_CODE = "clone_remote_project";
+	public static final String PROJECT_TO_CLONE_REMOTE_CODE = "project_to_clone_remote";
 	
-	public static final String CHURNDB_ROOT = "/churndb/";
-	
-	public static final String PROJECT_PATH = CHURNDB_ROOT + PROJECT_CODE + "/";
-	
-	public static final String PROJECT_TO_CLONE_PATH = CHURNDB_ROOT + PROJECT_TO_CLONE_CODE + "/";
+	public static final String CHURNDB_ROOT_REPOS = "/churndb/repos/";
 	
 	public static final String PROJECT_COMMIT_0_PATH = "/churndb/project/commit0";
 	

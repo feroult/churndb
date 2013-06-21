@@ -33,7 +33,7 @@ public class ProjectTaskTest {
 
 	@Before
 	public void before() {
-		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));
+		TestResourceUtils.setupTempHomeFolder();
 
 		deleteProjectFolders();
 
@@ -43,8 +43,8 @@ public class ProjectTaskTest {
 	}
 
 	private void deleteProjectFolders() {
-		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH)));
-		FileUtils.deleteQuietly(new File(TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH)));
+		FileUtils.deleteQuietly(new File(Setup.repository(TestConstants.PROJECT_CODE)));
+		FileUtils.deleteQuietly(new File(Setup.repository(TestConstants.PROJECT_TO_CLONE_CODE)));
 	}
 
 	@After
@@ -111,10 +111,10 @@ public class ProjectTaskTest {
 	@Test
 	public void testPull() {
 		// given		
-		TestRepository gitServer = new TestRepository(TestConstants.PROJECT_TO_CLONE_PATH);
+		TestRepository gitServer = new TestRepository(Setup.repository(TestConstants.PROJECT_TO_CLONE_CODE));
 		String commit0 = gitServer.commit0();
 		
-		addProject(TestConstants.PROJECT_CODE, "file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH));
+		addProject(TestConstants.PROJECT_CODE, "file://" + Setup.repository(TestConstants.PROJECT_TO_CLONE_CODE));
 		ProjectTask task = new ProjectTask();
 		task.cloneRepository(TestConstants.PROJECT_CODE);
 		
@@ -241,16 +241,16 @@ public class ProjectTaskTest {
 	@Test
 	public void testClone() {
 		// given
-		new TestRepository(TestConstants.PROJECT_TO_CLONE_PATH).doAllCommits();
+		new TestRepository(Setup.repository(TestConstants.PROJECT_TO_CLONE_CODE)).doAllCommits();
 
-		addProject(TestConstants.PROJECT_CODE, "file:///" + TestResourceUtils.tempPath(TestConstants.PROJECT_TO_CLONE_PATH));
+		addProject(TestConstants.PROJECT_CODE, "file://" + Setup.repository(TestConstants.PROJECT_TO_CLONE_CODE));
 
 		// when
 		ProjectTask projectTask = new ProjectTask();
 		projectTask.cloneRepository(TestConstants.PROJECT_CODE);
 
 		// then
-		GIT git = new GIT(TestResourceUtils.tempPath(TestConstants.PROJECT_PATH));
+		GIT git = new GIT(Setup.repository(TestConstants.PROJECT_CODE));
 		List<Commit> log = git.log();
 		assertEquals(5, log.size());
 	}
@@ -259,12 +259,12 @@ public class ProjectTaskTest {
 	@Ignore
 	public void testCloneRemote() {
 		// given
-		System.setProperty("user.home", "/home/fernando");
+		System.setProperty(Setup.HOME, "/home/fernando/churndb_home");
 
-		addProject(TestConstants.PROJECT_CLONE_REMOTE_CODE, "git@github.com:dextra/a4c.git");
+		addProject(TestConstants.PROJECT_TO_CLONE_REMOTE_CODE, "git@github.com:dextra/a4c.git");
 
 		// when
-		new ProjectTask().reload(TestConstants.PROJECT_CLONE_REMOTE_CODE);
+		new ProjectTask().reload(TestConstants.PROJECT_TO_CLONE_REMOTE_CODE);
 
 		// then
 		System.out.println("reloaded =)");

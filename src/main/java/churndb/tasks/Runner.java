@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Runner {
 
-	private static String prefix = "mvn exec:java ";
+	private static String prefix = "churndb ";
 
 	private Map<String, Class<? extends Task>> tasks;
 

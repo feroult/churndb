@@ -42,7 +42,7 @@ public class ProjectTask extends Task {
 		}
 
 		this.project = project;
-		this.git = new GIT(Setup.getRoot(project.getCode()));
+		this.git = new GIT(Setup.repository(project.getCode()));
 		return true;
 	}
 

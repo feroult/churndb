@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
+import churndb.tasks.Setup;
+
 public class TestResourceUtils {
 
 
@@ -21,18 +23,29 @@ public class TestResourceUtils {
 		return realPath("/churndb") + "/../../../src/test/resources" + path;
 	}
 
-	public static void copyToTemp(String srcUri, String destUri) {
+	public static void copy(String resourceUri, String destPath) {
 		try {
-			FileUtils.copyDirectory(new File(resourcesPath(srcUri)), new File(tempPath(destUri)));
+			FileUtils.copyDirectory(new File(resourcesPath(resourceUri)), new File(destPath));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void copyToTemp(String srcUri, String destUri, boolean deleteBeforeCopy) {
+	public static void copy(String resourceUri, String destPath, boolean deleteBeforeCopy) {
 		if (deleteBeforeCopy) {
-			FileUtils.deleteQuietly(new File(tempPath(destUri)));
+			FileUtils.deleteQuietly(new File(destPath));
 		}
-		copyToTemp(srcUri, destUri);
+		copy(resourceUri, destPath);
+	}
+
+
+	public static void setupTempHomeFolder() {				
+		System.setProperty(Setup.HOME, TestConstants.HOME_FOLDER);
+		try {
+			FileUtils.copyFileToDirectory(new File(resourcesPath("/churndb/home/churndb.ini")), new File(TestConstants.HOME_FOLDER));
+			Setup.mkdirs();			
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

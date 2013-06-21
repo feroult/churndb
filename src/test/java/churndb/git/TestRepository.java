@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.lib.PersonIdent;
 
+import churndb.tasks.Setup;
 import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
@@ -18,7 +19,7 @@ public class TestRepository extends GIT {
 	private String projectPath;
 
 	public TestRepository(String projectPath) {
-		super(TestResourceUtils.tempPath(projectPath));
+		super(projectPath);
 		this.projectPath = projectPath;
 		FileUtils.deleteQuietly(getPath());
 		getPath().mkdirs();
@@ -26,11 +27,11 @@ public class TestRepository extends GIT {
 	}
 	
 	public TestRepository() {
-		this(TestConstants.PROJECT_PATH);
+		this(Setup.repository(TestConstants.PROJECT_CODE));
 	}
 	
 	public String commit0() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, projectPath);
+		TestResourceUtils.copy(TestConstants.PROJECT_COMMIT_0_PATH, projectPath);
 		
 		add("Address.java");
 		add("Customer.java");
@@ -42,7 +43,7 @@ public class TestRepository extends GIT {
 	}
 
 	public String commit1() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_1_PATH, projectPath);
+		TestResourceUtils.copy(TestConstants.PROJECT_COMMIT_1_PATH, projectPath);
 					
 		add("Address.java");
 		
@@ -55,7 +56,7 @@ public class TestRepository extends GIT {
 	}
 	
 	public String commit2() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_2_PATH, projectPath);
+		TestResourceUtils.copy(TestConstants.PROJECT_COMMIT_2_PATH, projectPath);
 		
 		rm("Product.java");
 		add("ProductRename.java");
@@ -73,7 +74,7 @@ public class TestRepository extends GIT {
 	}
 		
 	public String commit4() {
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_4_PATH, projectPath);
+		TestResourceUtils.copy(TestConstants.PROJECT_COMMIT_4_PATH, projectPath);
 		
 		add("AddressRename.java"); // added the new file rename -- rename across commits
 		rm("Order.java"); // delete the old file renamed -- rename across commits

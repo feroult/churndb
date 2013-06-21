@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import churndb.tasks.Setup;
 import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
@@ -12,9 +13,9 @@ public class SourceTest {
 	
 	@Before
 	public void before() {	
-		System.setProperty("user.home", TestResourceUtils.realPath(TestConstants.HOME_FOLDER));		
+		TestResourceUtils.setupTempHomeFolder();
 		
-		TestResourceUtils.copyToTemp(TestConstants.PROJECT_COMMIT_0_PATH, TestConstants.PROJECT_PATH, true);				
+		TestResourceUtils.copy(TestConstants.PROJECT_COMMIT_0_PATH, Setup.repository(TestConstants.PROJECT_CODE), true);				
 	}
 		
 	@Test
