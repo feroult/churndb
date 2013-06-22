@@ -9,19 +9,19 @@ public class ApplicationTask extends Task {
 		churn.create();
 		
 		DesignDocument projects = new DesignDocument("projects");
-		projects.addViewMap("all", ResourceUtils.asString("/churn/projects/map/all.js"));
+		projects.addViewMap("all", ResourceUtils.asString("/churndb/couch/projects/map/all.js"));
 		churn.put(projects);
 		
 		DesignDocument sources = new DesignDocument("sources");
-		sources.addViewMap("all", ResourceUtils.asString("/churn/sources/map/all.js"));
-		sources.addViewMap("active", ResourceUtils.asString("/churn/sources/map/active.js"));
-		sources.addViewMap("commit", ResourceUtils.asString("/churn/sources/map/commit.js"));		
-		sources.addViewMap("churn", ResourceUtils.asString("/churn/sources/map/churn.js"));
+		sources.addViewMap("all", ResourceUtils.asString("/churndb/couch/sources/map/all.js"));
+		sources.addViewMap("active", ResourceUtils.asString("/churndb/couch/sources/map/active.js"));
+		sources.addViewMap("commit", ResourceUtils.asString("/churndb/couch/sources/map/commit.js"));		
+		sources.addViewMap("churn", ResourceUtils.asString("/churndb/couch/sources/map/churn.js"));
 		churn.put(sources);
 		
 		DesignDocument trees = new DesignDocument("trees");
-		trees.addViewMap("all", ResourceUtils.asString("/churn/trees/map/all.js"));
-		trees.addViewMap("sources", ResourceUtils.asString("/churn/trees/map/sources.js"));
+		trees.addViewMap("all", ResourceUtils.asString("/churndb/couch/trees/map/all.js"));
+		trees.addViewMap("sources", ResourceUtils.asString("/churndb/couch/trees/map/sources.js"));
 		churn.put(trees);		
 	}
 	
