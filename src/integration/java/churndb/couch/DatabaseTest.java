@@ -8,8 +8,10 @@ import churndb.utils.TestConstants;
 
 import com.google.gson.JsonObject;
 
-public class DatabaseTest extends CouchTestBase {
+public class DatabaseTest {
 
+	protected CouchClient couch = new CouchClient(TestConstants.COUCHDB_HOST, TestConstants.CHURNDB);
+	
 	@Test
 	public void testWelcome() {
 		JsonObject welcome = couch.welcome().json();

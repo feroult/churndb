@@ -1,8 +1,6 @@
 package churndb.couch;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import churndb.utils.ResourceUtils;
@@ -12,17 +10,6 @@ import com.google.gson.JsonObject;
 
 public class DesignDocumentTest extends CouchTestBase {
 
-	@Before
-	public void before() {
-		couch.dropIfExists();		
-		couch.create();		
-	}
-	
-	@After
-	public void after() {
-		couch.drop();
-	}
-	
 	@Test
 	public void testCreateDesignDocumentWithView() {		
 		DesignDocument core = new DesignDocument("core");		

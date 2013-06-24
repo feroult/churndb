@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,8 +55,6 @@ public class ViewTest extends CouchTestBase {
 
 	@Before
 	public void before() {
-		couch.dropIfExists();		
-		couch.create();		
 		createSimpleView();				
 	}
 
@@ -67,12 +64,7 @@ public class ViewTest extends CouchTestBase {
 		core.addViewReduce("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
 		couch.put(core);
 	}
-	
-	@After
-	public void after() {
-		couch.drop();
-	}
-	
+		
 	@Test
 	public void testGetFirstFromView() {						
 		putDocument("simple", "123", "Product.java");

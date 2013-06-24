@@ -1,8 +1,6 @@
 package churndb.couch;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
@@ -22,17 +20,6 @@ public class DocumentTest extends CouchTestBase {
 	}
 
 	private static final String DOC = "doc";
-	
-	@Before
-	public void before() {
-		couch.dropIfExists();		
-		couch.create();		
-	}
-	
-	@After
-	public void after() {
-		couch.drop();
-	}	
 	
 	@Test
 	public void testCreateDeleteDocument() {
