@@ -8,12 +8,11 @@
 
 <script language="javascript">
 
+var trees = [];
+
 function loadJson() {
 	
-    d3.json("http://127.0.0.1:5984/churndb/_design/trees/_view/all?limit=1", function(dados) {
-
-    	alert('dados' + dados);
-    	
+    d3.json("/churndb/_design/trees/_view/all?include_docs=true&limit=10", function(dados) {
     });
 	
 }

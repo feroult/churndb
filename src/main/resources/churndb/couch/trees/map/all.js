@@ -3,6 +3,6 @@ function(doc) {
     emit([doc.projectCode,
           doc.date,
           doc.commit], 
-    	  doc._rev);
+    	  {commit: doc.commit, _rev: doc._rev});
   }
 }
