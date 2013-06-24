@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import churndb.utils.TestConstants;
 
-public class ResourceDocumentTest extends CouchTestBase {
+public class ResourcesDocumentTest extends CouchTestBase {
 
 	@Test
 	public void testSimpleResource() {				
-		ResourceDocument document = new ResourceDocument("web");		
+		ResourcesDocument document = new ResourcesDocument("web");		
 		document.addAttachment("abc/xpto/simple.html", "text/html", "/churndb/couch/resources/simple.html");
 		
 		couch.put(document);		

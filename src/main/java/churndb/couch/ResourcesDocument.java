@@ -5,11 +5,11 @@ import java.util.Map;
 
 import churndb.utils.ResourceUtils;
 
-public class ResourceDocument extends CouchBean {
+public class ResourcesDocument extends CouchBean {
 	
 	private Map<String, Attachment> _attachments = new HashMap<String, Attachment>();
 	
-	public ResourceDocument(String root) {
+	public ResourcesDocument(String root) {
 		set_id(root);
 	}
 
