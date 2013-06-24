@@ -1,7 +1,8 @@
 function(doc) {
   if(doc.type && doc.type == 'tree') {
-    emit([doc.projectCode, 
+    emit([doc.projectCode,
+          doc.date,
           doc.commit], 
-    	  doc);
+    	  null);
   }
 }

@@ -5,16 +5,14 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-public class DesignDocument {
-
-	private transient String id;
+public class DesignDocument extends CouchBean {
 
 	private String language = "javascript";
 	
 	private Map<String, View> views;
 	
 	public DesignDocument(String id) {
-		this.id = "_design/" + id;
+		set_id("_design/" + id);
 	}
 
 	public void addViewMap(String key, String source) {
@@ -38,10 +36,6 @@ public class DesignDocument {
 		if(!views.containsKey(key)) {
 			views.put(key, new View());
 		}
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public Map<String, View> getViews() {

@@ -6,8 +6,11 @@ import churndb.utils.ResourceUtils;
 public class ApplicationTask extends Task {
 			
 	public void deploy() {		
-		churn.create();
-		
+		churn.create();		
+		deployViews();		
+	}
+
+	public void deployViews() {
 		DesignDocument projects = new DesignDocument("projects");
 		projects.addViewMap("all", ResourceUtils.asString("/churndb/couch/projects/map/all.js"));
 		churn.put(projects);
@@ -22,7 +25,7 @@ public class ApplicationTask extends Task {
 		DesignDocument trees = new DesignDocument("trees");
 		trees.addViewMap("all", ResourceUtils.asString("/churndb/couch/trees/map/all.js"));
 		trees.addViewMap("sources", ResourceUtils.asString("/churndb/couch/trees/map/sources.js"));
-		churn.put(trees);		
+		churn.put(trees);
 	}
 	
 	public void undeploy() {
