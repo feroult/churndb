@@ -156,6 +156,15 @@ public class CouchClient {
 		put(designDocument.get_id(), designDocument.json());
 	}
 
+	public void put(ResourcesDocument resourcesDocument) {
+		ResourcesDocument previous = get(resourcesDocument.get_id()).as(ResourcesDocument.class);
+		if(previous != null) {
+			resourcesDocument.set_rev(previous.get_rev());
+		}
+		
+		put(resourcesDocument.get_id(), resourcesDocument.json());
+	}	
+	
 	public CouchResponse get(JsonElement jsonElement) {
 		return get(jsonElement.getAsString());
 	}

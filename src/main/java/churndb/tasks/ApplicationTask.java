@@ -1,6 +1,7 @@
 package churndb.tasks;
 
 import churndb.couch.DesignDocument;
+import churndb.couch.ResourcesDocument;
 import churndb.utils.ResourceUtils;
 
 public class ApplicationTask extends Task {
@@ -8,6 +9,13 @@ public class ApplicationTask extends Task {
 	public void deploy() {		
 		churn.create();		
 		deployViews();		
+		deployResources();
+	}
+
+	public void deployResources() {
+		ResourcesDocument web = new ResourcesDocument("web");
+		web.addAttachmentsByExtension("", "/churndb/web");		
+		churn.put(web);
 	}
 
 	public void deployViews() {
