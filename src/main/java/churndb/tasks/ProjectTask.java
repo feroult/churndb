@@ -60,6 +60,15 @@ public class ProjectTask extends Task {
 	}
 
 	@RunnerHelp(PROJECT_CODE_HELP)
+	public void del(String projectCode) {
+		if (!init(projectCode)) {
+			return;
+		}		
+		
+		churn.deleteProject(projectCode);
+	}
+	
+	@RunnerHelp(PROJECT_CODE_HELP)
 	public void cloneRepository(String projectCode) {
 		if (!init(projectCode)) {
 			return;

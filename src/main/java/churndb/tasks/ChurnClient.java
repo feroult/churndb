@@ -17,6 +17,8 @@ public class ChurnClient extends CouchClient {
 
 	private static final String SOURCES_COMMIT = "sources/commit";
 	
+	private static final String TREES_ALL = "trees/all";
+	
 	private static final String TREES_SOURCES = "trees/sources";
 
 	public ChurnClient(String host, String database) {
@@ -26,9 +28,19 @@ public class ChurnClient extends CouchClient {
 	public Project getProject(String projectCode) {
 		return view(PROJECTS_ALL, projectCode).getFirstAs(Project.class);
 	}
+	
+	public void deleteProject(String projectCode) {
+		viewDelete(PROJECTS_ALL, projectCode);
+		deleteProjectSources(projectCode);
+	}
 
 	public void deleteProjectSources(String projectCode) {
 		viewDelete(SOURCES_ALL, projectCode);
+		deleteProjectTrees(projectCode);
+	}
+
+	private void deleteProjectTrees(String projectCode) {
+		viewDelete(TREES_ALL, projectCode);
 	}
 
 	public Source getActiveSource(String projectCode, String path) {
