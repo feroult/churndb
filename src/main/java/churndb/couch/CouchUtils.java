@@ -36,7 +36,7 @@ public class CouchUtils {
 		return sb.toString();
 	}
 	
-	private static String urlEncode(String key) {
+	public static String urlEncode(String key) {
 		try {
 			return URLEncoder.encode(key, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
