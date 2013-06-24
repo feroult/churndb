@@ -130,7 +130,7 @@ public class ProjectTask extends Task {
 
 	private void updateTree(Commit commit) {
 		List<Source> activeSources = churn.getActiveSources(project.getCode());
-		Tree tree = new Tree(project.getCode(), commit.getName());		
+		Tree tree = new Tree(project.getCode(), commit.getName(), commit.getDate());		
 		tree.add(activeSources);
 		churn.put(tree);
 	}
@@ -181,7 +181,9 @@ public class ProjectTask extends Task {
 			if (activeSource != null) {
 				updatedSource.setSourceId(activeSource.getSourceId());
 			} else {
-				updatedSource.setSourceId(churn.id());
+				String id = churn.id();
+				updatedSource.set_id(id);
+				updatedSource.setSourceId(id);
 			}
 
 			churn.put(updatedSource);

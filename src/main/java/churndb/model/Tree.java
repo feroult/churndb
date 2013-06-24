@@ -1,6 +1,7 @@
 package churndb.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import churndb.couch.CouchBean;
@@ -15,9 +16,12 @@ public class Tree extends CouchBean {
 
 	private String type = "tree";
 
-	public Tree(String projectCode, String commit) {
+	private Date date;
+
+	public Tree(String projectCode, String commit, Date date) {
 		this.projectCode = projectCode;
 		this.commit = commit;
+		this.date = date;
 		this.sources = new ArrayList<String>();
 	}
 
@@ -37,6 +41,10 @@ public class Tree extends CouchBean {
 
 	public List<String> getSources() {
 		return sources;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 	public String getType() {
