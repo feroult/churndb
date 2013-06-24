@@ -45,7 +45,7 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Source getLastSource(String projectCode, String path) {
-		return viewDescending(SOURCES_ALL, projectCode, path).getFirstAs(Source.class);
+		return view(SOURCES_ALL, ViewOptions.DESCENDING, projectCode, path).getFirstAs(Source.class);
 	}
 
 	public List<Source> getSourcesInCommit(String projectCode, String commit) {

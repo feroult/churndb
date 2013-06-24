@@ -127,11 +127,6 @@ public class CouchClient {
 		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
 	}	
 	
-	public CouchResponseView viewDescending(String viewUri, String... keys) {
-		HttpGet request = new HttpGet(fullRequestUrl(viewRequestUrl(viewUri, ViewOptions.DESCENDING, keys)));
-		return (CouchResponseView) executeRequest(request, new CouchResponseHandler(this, CouchResponseView.class));
-	}
-
 	private String viewRequestUrl(String viewUri, int options, String... keys) {
 		String[] split = viewUri.split("/");
 		String module = split[0];

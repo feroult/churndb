@@ -192,7 +192,7 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "2", "B", 20);
 		putDocument("simple", "3", "C", 30);
 
-		Document doc = couch.viewDescending("core/simple").getFirstAs(Document.class);
+		Document doc = couch.view("core/simple", ViewOptions.DESCENDING).getFirstAs(Document.class);
 		
 		assertEquals("C", doc.getCode());
 	}
@@ -223,6 +223,14 @@ public class ViewTest extends CouchTestBase {
 		assertEquals("C", documents.get(2).getCode());		
 	}
 	
+	@Test
+	public void testViewOffsets() {		
+		for(int i = 1; i <= 20; i++) {
+			putDocument("simple", String.valueOf(i), "Doc-" + i, i);
+		}
+		
+		//couch.view("core/simple").offset(10).limit(10).docsAs(Document.class);
+	}
 	
 	private void putDocument(String type, String id, String code) {
 		putDocument(type, id, code, 0);
