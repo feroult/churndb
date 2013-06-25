@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class ResourceUtils {
 
@@ -32,7 +31,7 @@ public class ResourceUtils {
 
 	public static String asBase64(File file) {
 		try {
-			return Base64.encode(FileUtils.readFileToByteArray(file));
+			return Base64.encodeBase64String(FileUtils.readFileToByteArray(file));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
