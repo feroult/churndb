@@ -1,0 +1,3 @@
+#!/bin/sh
+
+MAVEN_OPTS="" mvn -Dchurndb.home=$CHURNDB_HOME -q -o exec:java -Dexec.mainClass="churndb.tasks.Runner" -Dexec.args="$*"

@@ -5,7 +5,6 @@ tmp
 .classpath
 .settings
 target
-bin
 test-output
 
 # Package Files #
