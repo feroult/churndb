@@ -8,54 +8,42 @@
 <script src="/_utils/script/jquery.couch.js"></script>
 <script src="http://d3js.org/d3.v2.js?2.8.1"></script>
 
+<script src="../js/churn_client.js"></script>
+
 <script language="javascript">
 
-var trees = [];
+var sourcesInCommits = {};
+var loading = 0;
 
-function load() {
-	
-	$.couch.db("churndb").view("trees/all", {
-	   success: function(data) {
-	        loadTrees(data);
-	    },
-	    error: function(status) {
-	        console.log(status);
-	    },
-	    reduce: false,
-	    limit: 1000
-	});		
+CHURN.getCommits("dextra_dextranet", loadSourcesInCommits);		
 	
     /*d3.json("/churndb/_design/trees/_view/all?include_docs=true&limit=10", function(dados) {
     });*/
 	
-}
 
-function loadTrees(data) {
-	
-	for(var i = 0; i < data.rows.length; i++) {
-		var commit = data.rows[i].value.commit;
-	
-		$.couch.db("churndb").view("trees/sources", {
-	       success: function(data2) {
-	            console.log(data2);
-	        },
-	        error: function(status) {
-	            console.log(status);
-	        },
-	        reduce: false,
-	        include_docs: true,
-	        key: commit
-	    });	
+function loadSourcesInCommit(commit, sources) {
+    sourcesInCommits[commit] = sources;
+    loading--;
+    if(loading == 0) {
+        alert('loaded');
+    }
+}
+        
+function loadSourcesInCommits(commits) {	
+	for(var i = 0; i < commits.length; i++) {
+		var commit = commits[i];			
+		loading++;
+		CHURN.getSourcesInCommit("dextra_dextranet", commit, loadSourcesInCommit);
 	}
-		
-
 }
+        
 
+    
 </script>
 
 
 </head>
-<body onload="load()">
+<body>
 
 </body>
 </html>
