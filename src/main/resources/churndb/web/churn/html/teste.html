@@ -4,25 +4,58 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 
+<script src="/_utils/script/jquery.js"></script>
+<script src="/_utils/script/jquery.couch.js"></script>
 <script src="http://d3js.org/d3.v2.js?2.8.1"></script>
 
 <script language="javascript">
 
 var trees = [];
 
-function loadJson() {
+function load() {
 	
-    d3.json("/churndb/_design/trees/_view/all?include_docs=true&limit=10", function(dados) {
-    });
+	$.couch.db("churndb").view("trees/all", {
+	   success: function(data) {
+	        loadTrees(data);
+	    },
+	    error: function(status) {
+	        console.log(status);
+	    },
+	    reduce: false,
+	    limit: 1000
+	});		
+	
+    /*d3.json("/churndb/_design/trees/_view/all?include_docs=true&limit=10", function(dados) {
+    });*/
 	
 }
 
+function loadTrees(data) {
+	
+	for(var i = 0; i < data.rows.length; i++) {
+		var commit = data.rows[i].value.commit;
+	
+		$.couch.db("churndb").view("trees/sources", {
+	       success: function(data2) {
+	            console.log(data2);
+	        },
+	        error: function(status) {
+	            console.log(status);
+	        },
+	        reduce: false,
+	        include_docs: true,
+	        key: commit
+	    });	
+	}
+		
+
+}
 
 </script>
 
 
 </head>
-<body onload="loadJson()">
+<body onload="load()">
 
 </body>
 </html>
