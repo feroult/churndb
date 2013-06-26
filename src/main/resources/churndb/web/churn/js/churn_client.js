@@ -13,7 +13,8 @@ var CHURN = {
 		    error: function(status) {
 		        console.log(status);
 		    },
-		    reduce: false
+		    reduce: false,
+		    limit:200
 		});		    	    	
     },
     

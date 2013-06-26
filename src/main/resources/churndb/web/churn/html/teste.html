@@ -12,20 +12,22 @@
 
 <script language="javascript">
 
-var sourcesInCommits = {};
+var sourcesInTrees = {};
 var loading = 0;
 
-CHURN.getCommits("dextra_dextranet", loadSourcesInCommits);		
+function onLoad() {
+    CHURN.getCommits("dextra_dextranet", loadSourcesInTrees);
+}
 	
 function loadSourcesInTree(commit, sources) {
-    sourcesInCommits[commit] = sources;
+    sourcesInTrees[commit] = sources;
     loading--;
     if(loading == 0) {
-        alert('loaded');
+        loadGraph();
     }
 }
         
-function loadSourcesInCommits(commits) {	
+function loadSourcesInTrees(commits) {	
 	for(var i = 0; i < commits.length; i++) {
 		var commit = commits[i];			
 		loading++;
@@ -33,12 +35,15 @@ function loadSourcesInCommits(commits) {
 	}
 }
        
+function loadGraph() {
+    	
+}
     
 </script>
 
-
 </head>
-<body>
+
+<body onload="onLoad();">
 
 </body>
 </html>
