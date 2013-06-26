@@ -17,7 +17,7 @@ var CHURN = {
 		});		    	    	
     },
     
-    getSourcesInCommit: function(projectCode, commit, callback) {
+    getSourcesInTree: function(projectCode, commit, callback) {
     	$.couch.db(CHURN.couchdb_database).view("trees/sources", {
 			success: function(view) {
 				var sources = $.map(view.rows, function(row) {
@@ -33,5 +33,23 @@ var CHURN = {
 			startkey: [projectCode, commit], 
 			endkey: [projectCode, commit, {}]
 	    });	    	
-    }    
+    },   
+        
+    getSourcesInCommit: function(projectCode, commit, callback) {
+    	$.couch.db(CHURN.couchdb_database).view("sources/commit", {
+			success: function(view) {
+				var sources = $.map(view.rows, function(row) {
+					return row.value;
+				});
+				callback(commit, sources);
+			},
+			error: function(status) {
+				console.log(status);
+			},
+			reduce: false,
+			startkey: [projectCode, commit], 
+			endkey: [projectCode, commit, {}]
+	    });	    	
+    }      
+    
 }; 

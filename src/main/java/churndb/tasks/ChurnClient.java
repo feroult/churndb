@@ -52,7 +52,6 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Source getSourceInCommit(String projectCode, String commit, String path) {
-		// TODO different view for commit snapshots
 		return view(SOURCES_COMMIT, projectCode, commit, path).getFirstAs(Source.class);
 	}
 
@@ -60,7 +59,7 @@ public class ChurnClient extends CouchClient {
 		return view(SOURCES_ALL, ViewOptions.DESCENDING, projectCode, path).getFirstAs(Source.class);
 	}
 
-	public List<Source> getSourcesInCommit(String projectCode, String commit) {
+	public List<Source> getSourcesInTree(String projectCode, String commit) {
 		return view(TREES_SOURCES, ViewOptions.INCLUDE_DOCS, projectCode, commit).docsAs(Source.class);
 	}
 }

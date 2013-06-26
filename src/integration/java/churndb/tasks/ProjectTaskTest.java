@@ -187,7 +187,7 @@ public class ProjectTaskTest {
 
 	private void assertCommitTree(String projectCode, String commit, String... paths) {
 		List<String> pathsList = Arrays.asList(paths);
-		List<Source> sources = churn.getSourcesInCommit(projectCode, commit);
+		List<Source> sources = churn.getSourcesInTree(projectCode, commit);
 
 		assertEquals(paths.length, sources.size());
 		for (Source source : sources) {

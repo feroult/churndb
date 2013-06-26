@@ -17,11 +17,7 @@ var loading = 0;
 
 CHURN.getCommits("dextra_dextranet", loadSourcesInCommits);		
 	
-    /*d3.json("/churndb/_design/trees/_view/all?include_docs=true&limit=10", function(dados) {
-    });*/
-	
-
-function loadSourcesInCommit(commit, sources) {
+function loadSourcesInTree(commit, sources) {
     sourcesInCommits[commit] = sources;
     loading--;
     if(loading == 0) {
@@ -33,11 +29,10 @@ function loadSourcesInCommits(commits) {
 	for(var i = 0; i < commits.length; i++) {
 		var commit = commits[i];			
 		loading++;
-		CHURN.getSourcesInCommit("dextra_dextranet", commit, loadSourcesInCommit);
+		CHURN.getSourcesInCommit("dextra_dextranet", commit, loadSourcesInTree);
 	}
 }
-        
-
+       
     
 </script>
 
