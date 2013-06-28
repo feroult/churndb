@@ -14,7 +14,7 @@ var CHURN = {
 		        console.log(status);
 		    },
 		    reduce: false,
-		    limit:200
+		    limit:1500
 		});		    	    	
     },
     

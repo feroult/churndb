@@ -116,8 +116,8 @@ var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
     height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scale.linear().domain([0, 20]).range([0, width]),
-    yScale = d3.scale.linear().domain([0, 40]).range([height, 0]),
+var xScale = d3.scale.linear().domain([0, 50]).range([0, width]),
+    yScale = d3.scale.linear().domain([0, 200]).range([height, 0]),
     radiusScale = d3.scale.sqrt().domain([0, 5]).range([0, 40]),
     colorScale = d3.scale.category10();
 
@@ -197,22 +197,25 @@ function loadGraph() {
 
   // Add an overlay for the year label.
   var box = label.node().getBBox();
-  
+
+  /*
   var overlay = svg.append("rect")
         .attr("class", "overlay")
         .attr("x", box.x)
         .attr("y", box.y)
         .attr("width", box.width)
         .attr("height", box.height)
-        .on("mouseover", enableInteraction);
+        .on("mouseover", enableInteraction);*/
 
   // Start a transition that interpolates the data based on year.
+  /*
   svg.transition()
       .duration(30000)
       .ease("linear")
       //.tween("year", tweenCommit)
-      .each("end", enableInteraction);
+      .each("end", enableInteraction);*/
 
+      /*
   // After the transition finishes, you can mouseover to change the year.  
   function enableInteraction() {
     var commitScale = d3.scale.linear()
@@ -222,7 +225,7 @@ function loadGraph() {
 
     // Cancel the current transition, if any.
     svg.transition().duration(0);
-
+    
     overlay
         .on("mouseover", mouseover)
         .on("mouseout", mouseout)
@@ -247,7 +250,7 @@ function loadGraph() {
   function tweenCommit() {
     var commitIndex = d3.interpolateNumber(0, commits.length);
     return function(t) { displayCommit(t); };
-  }
+  }*/
 
 }
 
@@ -269,7 +272,7 @@ function displayCommit(i) {
     dots = chart.selectAll(".dot")
     .data(getSourcesInTree(i), key);
     
-     dots.transition().call(position).sort(order);
+     dots.call(position).sort(order);
     
      dots.enter().append("circle")
         .attr("class", "dot")
@@ -280,10 +283,22 @@ function displayCommit(i) {
      dots.exit().remove();
 
      dots.append("title")
-         .text(function(d) { return d.path; });
+         .text(function(d) { return d.path + ' - ' + d.commit; });
     
   //dot.selectAll('.dot').data(getSourcesInTree(i), key).call(position).sort(order);
   label.text(i);
+}
+
+var iCommit = 0;
+
+function rotateAll() {	
+    if(iCommit != 1500) {
+		iCommit++;
+		displayCommit(iCommit);
+		setTimeout(rotateAll, 200);
+	} else {
+		iCommit = 0;
+	}
 }
 
 
