@@ -26,5 +26,18 @@ public enum Type {
 	public boolean isSameChangeType(ChangeType changeType) {		
 		return (this.equals(getType(changeType)));
 	}
+
+	public Type getPossibleRenameType() {
+		if(this == ADD) {
+			return DELETE;
+		} else if(this == DELETE) {
+			return ADD;
+		}
+		return null;
+	}
+
+	public boolean isRenamePossible() {
+		return this == ADD || this == DELETE;
+	}
 	
 }

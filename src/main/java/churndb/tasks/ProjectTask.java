@@ -63,11 +63,11 @@ public class ProjectTask extends Task {
 	public void del(String projectCode) {
 		if (!init(projectCode)) {
 			return;
-		}		
-		
+		}
+
 		churn.deleteProject(projectCode);
 	}
-	
+
 	@RunnerHelp(PROJECT_CODE_HELP)
 	public void cloneRepository(String projectCode) {
 		if (!init(projectCode)) {
@@ -83,17 +83,17 @@ public class ProjectTask extends Task {
 			return;
 		}
 
-		try {			
+		try {
 			clockStart();
-			
+
 			churn.deleteProjectSources(project.getCode());
 			git.checkout(MASTER);
-			
+
 			List<Commit> log = git.log();
 			logSeconds("git log");
-			
+
 			loadCommits(log);
-			
+
 			logSeconds("reload project");
 		} finally {
 			git.checkout(MASTER);
@@ -104,25 +104,25 @@ public class ProjectTask extends Task {
 	public void pull(String projectCode) {
 		if (!init(projectCode)) {
 			return;
-		}		
-				
+		}
+
 		try {
 			clockStart();
-	
+
 			git.checkout(MASTER);
 			git.pull();
-					
-			List<Commit> log = project.getLastCommit() == null ? git.log() : git.log(project.getLastCommit());	
+
+			List<Commit> log = project.getLastCommit() == null ? git.log() : git.log(project.getLastCommit());
 			logSeconds("git log");
-	
+
 			loadCommits(log);
-			
+
 			logSeconds("pull project");
-			
+
 		} finally {
 			git.checkout(MASTER);
 		}
-		
+
 	}
 
 	private void loadCommits(List<Commit> log) {
@@ -139,7 +139,7 @@ public class ProjectTask extends Task {
 
 	private void updateTree(Commit commit) {
 		List<Source> activeSources = churn.getActiveSources(project.getCode());
-		Tree tree = new Tree(project.getCode(), commit.getName(), commit.getDate());		
+		Tree tree = new Tree(project.getCode(), commit.getName(), commit.getDate());
 		tree.add(activeSources);
 		churn.put(tree);
 	}
@@ -179,16 +179,42 @@ public class ProjectTask extends Task {
 
 	private void updateSource(Commit commit, Change change, Metrics metrics) {
 		Source activeSource = churn.getActiveSource(project.getCode(), change.getPathBeforeChange());
-		Source updatedSource = updateSource(commit, change, metrics, activeSource);
+		Source renamedSource = getRenamedSourceAcrossCommits(commit, change);
 
-		if (isNewVersion(change, activeSource, updatedSource)) {
-			activeSource.setActive(false);
-			churn.put(activeSource);
+		debug(getSourceChangeLog(commit, change, activeSource, renamedSource));
+
+		Source previousSource = null;
+		Source updatedSource = null;
+
+		if (renamedSource != null) {
+			previousSource = renamedSource;
+			updatedSource = applySourceChange(commit, createRenameChange(change, renamedSource), metrics, renamedSource);
+		} else {
+			previousSource = activeSource;
+			updatedSource = applySourceChange(commit, change, metrics, activeSource);
 		}
 
+		saveInactiveSources(activeSource, renamedSource);
+		saveUpdatedSource(updatedSource, previousSource);
+	}
+
+
+	private Change createRenameChange(Change change, Source renamedSource) {		
+		if(!change.getType().isRenamePossible()) {
+			throw new IllegalArgumentException("wrong rename situation");
+		}
+		
+		if(change.getType() == Type.ADD) {
+			return new Change(Type.RENAME, null, change.getPathAfterChange());
+		} 
+		
+		return new Change(Type.RENAME, null, renamedSource.getPath());	
+	}
+
+	private void saveUpdatedSource(Source updatedSource, Source previousSource) {
 		if (updatedSource != null) {
-			if (activeSource != null) {
-				updatedSource.setSourceId(activeSource.getSourceId());
+			if (previousSource != null) {
+				updatedSource.setSourceId(previousSource.getSourceId());
 			} else {
 				String id = churn.id();
 				updatedSource.set_id(id);
@@ -199,23 +225,41 @@ public class ProjectTask extends Task {
 		}
 	}
 
-	private boolean isNewVersion(Change change, Source activeSource, Source updatedSource) {
-		return activeSource != null && (updatedSource != null || change.getType() == Type.DELETE);
+	private void saveInactiveSources(Source... sources) {
+		for (Source source : sources) {
+			if (source != null) {
+				source.setActive(false);
+				churn.put(source);
+			}
+		}
 	}
 
-	private Source updateSource(Commit commit, Change change, Metrics metrics, Source activeSource) {
-		debug(getSourceChangeLog(commit, change, activeSource, "UPDATE SOURCE"));
+	private Source getRenamedSourceAcrossCommits(Commit commit, Change change) {
+		if (!change.getType().isRenamePossible()) {
+			return null;
+		}
 
+		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), change.getType()
+				.getPossibleRenameType());
+
+		if (renamedPath == null) {
+			return null;
+		}
+
+		return churn.getLastSource(project.getCode(), renamedPath);
+	}
+
+	private Source applySourceChange(Commit commit, Change change, Metrics metrics, Source previousSource) {
 		switch (change.getType()) {
 		case COPY:
 		case ADD:
-			return addSource(activeSource, commit, change, metrics);
+			return addSource(previousSource, commit, metrics, change);
 		case DELETE:
-			return deleteSource(activeSource, commit, change, metrics);
+			return deleteSource(previousSource, commit, metrics, change);
 		case MODIFY:
-			return modifySource(activeSource, commit, change, metrics);
+			return modifySource(previousSource, commit, metrics, change);
 		case RENAME:
-			return renameSource(activeSource, commit, change, metrics);
+			return renameSource(previousSource, commit, metrics, change);
 		}
 
 		return null;
@@ -233,89 +277,62 @@ public class ProjectTask extends Task {
 		logger.error(MessageFormat.format("project {0} | " + message, project.getCode()));
 	}
 
-	private String getSourceChangeLog(Commit commit, Change change, Source source, String message) {
-		return MessageFormat.format("{0} | {1} | {2} | {3} | {4} | {5}", message, commit.getName(), change.getType(),
-				change.getPathBeforeChange(), change.getPathAfterChange(), source);
+	private String getSourceChangeLog(Commit commit, Change change, Source activeSource, Source renamedSource) {
+		return MessageFormat.format("{0} | {1} | {2} | {3} | active = {4} | rename detected = {5}", commit.getName(), change.getType(),
+				change.getPathBeforeChange(), change.getPathAfterChange(), activeSource, renamedSource);
 	}
 
-	private Source renameSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
-		if (activeSource == null) {
+	private Source renameSource(Source previousSource, Commit commit, Metrics metrics, Change change) {
+		if (previousSource == null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, activeSource, "RENAME SOURCE | missing source"));
+			error("RENAME SOURCE | missing source");
 			return null;
 		}
 
-		Source source = new Source(project.getCode(), change.getNewPath());
-		updateSourceCommit(source, commit, metrics);
-
-		source.addChurnCount(activeSource.getChurnCount() + 1);
-		return source;
+		return newSourceChurn(commit, metrics, change, previousSource.getChurnCount() + 1);
 	}
 
-	private Source modifySource(Source activeSource, Commit commit, Change change, Metrics metrics) {
-		if (activeSource == null) {
+	private Source modifySource(Source previousSource, Commit commit, Metrics metrics, Change change) {
+		if (previousSource == null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, activeSource, "MODIFY SOURCE | missing source"));
+			error("MODIFY SOURCE | missing source");
 			return null;
 		}
 
-		Source source = new Source(project.getCode(), change.getPathAfterChange());
-		updateSourceCommit(source, commit, metrics);
-
-		source.addChurnCount(activeSource.getChurnCount() + 1);
-		return source;
+		return newSourceChurn(commit, metrics, change, previousSource.getChurnCount() + 1);
 	}
 
-	private Source deleteSource(Source activeSource, Commit commit, Change change, Metrics metrics) {		
-		if(activeSource == null) {
+	private Source deleteSource(Source previousSource, Commit commit, Metrics metrics, Change change) {
+		if (previousSource == null) {
 			// TODO check why this is happening
+			error("DELETE SOURCE | missing source");
 			return null;
 		}
-		
-		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathBeforeChange(), Type.ADD);
 
-		if (renamedPath != null) {
-			debug(getSourceChangeLog(commit, change, activeSource, "DELETE SOURCE | rename instead"));
-
-			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);
-			renamedSource.setActive(false);
-			churn.put(renamedSource);
-
-			Source source = new Source(project.getCode(), renamedPath);
-			updateSourceCommit(source, commit, metrics);
-			source.addChurnCount(activeSource.getChurnCount() + 1);
-
-			return source;
-		}
-
+		// don't need to do anything, previous source will be inactivated
 		return null;
 	}
 
-	private Source addSource(Source activeSource, Commit commit, Change change, Metrics metrics) {
-		if (activeSource != null) {
+	private Source addSource(Source previousSource, Commit commit, Metrics metrics, Change change) {
+		if (previousSource != null) {
 			// TODO deal with specific cases of branch conflict
-			error(getSourceChangeLog(commit, change, activeSource, "ADD SOURCE | already exists"));
+			error("ADD SOURCE | already exists");
 			return null;
 		}
 
+		return newSourceChurn(commit, metrics, change, 1);
+	}
+
+	private Source newSourceChurn(Commit commit, Metrics metrics, Change change, int churnCount) {
 		Source source = new Source(project.getCode(), change.getPathAfterChange());
-
-		String renamedPath = git.findSimilarInOldCommits(commit.getName(), change.getPathAfterChange(), Type.DELETE);
-
-		if (renamedPath != null) {
-			debug(getSourceChangeLog(commit, change, activeSource, "ADD SOURCE | rename instead"));
-			Source renamedSource = churn.getLastSource(project.getCode(), renamedPath);
-			source.addChurnCount(renamedSource.getChurnCount());
-		}
-
-		updateSourceCommit(source, commit, metrics);
-		source.addChurnCount();
+		updateSourceCommitAndMetrics(source, commit, metrics);
+		source.setChurnCount(churnCount);
 		return source;
 	}
 
-	private void updateSourceCommit(Source source, Commit commit, Metrics metrics) {
+	private void updateSourceCommitAndMetrics(Source source, Commit commit, Metrics metrics) {
 		source.setCommit(commit.getName());
 		source.setDate(commit.getDate());
 		metrics.apply(source);
-	}	
+	}
 }

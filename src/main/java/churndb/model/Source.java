@@ -9,7 +9,7 @@ import churndb.couch.CouchBean;
 public class Source extends CouchBean {
 
 	private String sourceId;
-	
+
 	private String path;
 
 	private String type = "source";
@@ -31,19 +31,13 @@ public class Source extends CouchBean {
 		this.path = path;
 	}
 
-	
-	
 	public String getSourceId() {
 		return sourceId;
 	}
 
-
-
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
-
-
 
 	public void setPath(String path) {
 		this.path = path;
@@ -89,8 +83,8 @@ public class Source extends CouchBean {
 		churnCount++;
 	}
 
-	public void addChurnCount(int churnCount) {
-		this.churnCount += churnCount;
+	public void setChurnCount(int churnCount) {
+		this.churnCount = churnCount;
 	}
 
 	public Date getDate() {
@@ -111,8 +105,7 @@ public class Source extends CouchBean {
 
 	@Override
 	public String toString() {
-		return path;
+		return sourceId;
 	}
 
-	
 }
