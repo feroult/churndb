@@ -8,8 +8,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import churndb.tasks.Setup;
-import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
 
