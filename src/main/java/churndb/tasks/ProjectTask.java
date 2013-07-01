@@ -190,24 +190,23 @@ public class ProjectTask extends Task {
 		saveUpdatedSource(updatedSource, previousSource);
 	}
 
-
 	private Source normalizePreviousSource(Change change, Source activeSource, Source renamedSource) {
-		if(renamedSource == null || change.getType() == Type.DELETE) {
+		if (renamedSource == null || change.getType() == Type.DELETE) {
 			return activeSource;
-		}		
+		}
 		return renamedSource;
 	}
 
-	private Change normalizeChangeType(Change change, Source renamedSource) {		
-		if(!change.getType().isRenamePossible() || renamedSource == null) {
+	private Change normalizeChangeType(Change change, Source renamedSource) {
+		if (!change.getType().isRenamePossible() || renamedSource == null) {
 			return change;
 		}
-						
-		if(change.getType() == Type.ADD) {
+
+		if (change.getType() == Type.ADD) {
 			return new Change(Type.RENAME, null, change.getPathAfterChange());
-		} 
-		
-		return new Change(Type.RENAME, null, renamedSource.getPath());	
+		}
+
+		return new Change(Type.RENAME, null, renamedSource.getPath());
 	}
 
 	private void saveUpdatedSource(Source updatedSource, Source previousSource) {
