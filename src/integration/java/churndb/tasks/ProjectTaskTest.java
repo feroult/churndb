@@ -57,7 +57,7 @@ public class ProjectTaskTest {
 		ProjectTask task = new ProjectTask();
 		TestRepository git = new TestRepository();
 
-		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
+		addProject(TestConstants.PROJECT_CODE, "fake");
 
 		String commit0 = git.commit0();
 		task.reload(TestConstants.PROJECT_CODE);
@@ -89,7 +89,7 @@ public class ProjectTaskTest {
 	public void testReloadAfterLastCommit() {
 		TestRepository git = new TestRepository();
 
-		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
+		addProject(TestConstants.PROJECT_CODE, "fake");
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
@@ -141,21 +141,43 @@ public class ProjectTaskTest {
 	public void testSameSourceId() {
 		TestRepository git = new TestRepository();
 
-		addProject(TestConstants.PROJECT_CODE, "https://github.com/feroult/churndb.git");
+		addProject(TestConstants.PROJECT_CODE, "fake");
 
 		String commit0 = git.commit0();
 		String commit1 = git.commit1();
+		git.commit2();
+		git.commit3();
+		String commit4 = git.commit4();
 
 		new ProjectTask().reload(TestConstants.PROJECT_CODE);
 
-		Source sourceInCommit0 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit0, "Address.java");
-		Source sourceInCommit1 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit1, "Address.java");
+		assertSameSourceIdForOrder(commit0, commit1, commit4);
+		assertSameSourceIdForAddress(commit0, commit1, commit4);
+	}
 
-		assertNotEquals(sourceInCommit0.get_id(), sourceInCommit1.get_id());
-
+	private void assertSameSourceIdForOrder(String commit0, String commit1, String commit4) {		
+		Source sourceInCommit0 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit0, "Order.java");
+		Source sourceInCommit1 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit1, "OrderRename.java");
+		Source sourceInCommit4 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit4, "OrderRename.java");
+		
 		assertNotNull(sourceInCommit0.getSourceId());
 		assertNotNull(sourceInCommit1.getSourceId());
+		assertNotNull(sourceInCommit4.getSourceId());
+		assertNotEquals(sourceInCommit0.getSourceId(), sourceInCommit1.getSourceId());
+		assertEquals(sourceInCommit0.getSourceId(), sourceInCommit4.getSourceId());
+		
+	}
+
+	private void assertSameSourceIdForAddress(String commit0, String commit1, String commit4) {
+		Source sourceInCommit0 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit0, "Address.java");
+		Source sourceInCommit1 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit1, "Address.java");
+		Source sourceInCommit4 = churn.getSourceInCommit(TestConstants.PROJECT_CODE, commit4, "AddressRename.java");
+		
+		assertNotNull(sourceInCommit0.getSourceId());
+		assertNotNull(sourceInCommit1.getSourceId());
+		assertNotNull(sourceInCommit4.getSourceId());
 		assertEquals(sourceInCommit0.getSourceId(), sourceInCommit1.getSourceId());
+		assertEquals(sourceInCommit1.getSourceId(), sourceInCommit4.getSourceId());
 	}
 
 	@Test

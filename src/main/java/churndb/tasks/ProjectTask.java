@@ -148,7 +148,6 @@ public class ProjectTask extends Task {
 		git.checkout(commit.getName());
 
 		for (Change change : commit.getChanges()) {
-
 			if (!isSupportedSourceType(change.getPathBeforeChange())) {
 				continue;
 			}
