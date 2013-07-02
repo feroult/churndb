@@ -2,6 +2,6 @@ function(doc) {
   if(doc.type && doc.type == 'tree') {
     emit([doc.projectCode,
           doc.commit], 
-    	  {commit: doc.commit, _rev: doc._rev});
+    	  doc._rev);
   }
 }
