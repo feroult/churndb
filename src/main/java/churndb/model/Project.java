@@ -11,7 +11,9 @@ public class Project extends CouchBean {
 
 	private String type = "project";
 
-	private String lastCommit;
+	private String commit;
+
+	private int treeNumber = 0;
 
 	private Date lastChange;
 
@@ -35,20 +37,35 @@ public class Project extends CouchBean {
 		return type;
 	}
 
-	public String getLastCommit() {
-		return lastCommit;
+	public String getCommit() {
+		return commit;
 	}
 
-	public void setLastCommit(String lastCommit) {
-		this.lastCommit = lastCommit;
+	public void setCommit(String commit) {
+		this.commit = commit;
 
 	}
 
 	public void setLastChange(Date lastChange) {
 		this.lastChange = lastChange;
 	}
-	
+
 	public Date getLastChange() {
 		return lastChange;
-	}	
+	}
+
+	public int getTreeNumber() {
+		return treeNumber;
+	}
+
+	public void addTreeNumber() {
+		this.treeNumber++;
+	}
+
+	public void reset() {
+		this.lastChange = null;
+		this.commit = null;
+		this.treeNumber = 0;		
+	}
+
 }

@@ -6,6 +6,7 @@ import churndb.couch.CouchClient;
 import churndb.couch.ViewOptions;
 import churndb.model.Project;
 import churndb.model.Source;
+import churndb.model.Tree;
 
 public class ChurnClient extends CouchClient {
 
@@ -43,6 +44,10 @@ public class ChurnClient extends CouchClient {
 		viewDelete(TREES_ALL, projectCode);
 	}
 
+	public Tree getTree(String projectCode, String commit) {
+		return view(TREES_ALL, projectCode, commit).getFirstAs(Tree.class);
+	}
+	
 	public Source getActiveSource(String projectCode, String path) {
 		return view(SOURCES_ACTIVE, projectCode, path).getFirstAs(Source.class);
 	}
@@ -62,4 +67,5 @@ public class ChurnClient extends CouchClient {
 	public List<Source> getSourcesInTree(String projectCode, String commit) {
 		return view(TREES_SOURCES, ViewOptions.INCLUDE_DOCS, projectCode, commit).docsAs(Source.class);
 	}
+
 }

@@ -22,6 +22,7 @@ import churndb.git.TestRepository;
 import churndb.model.Metrics;
 import churndb.model.Project;
 import churndb.model.Source;
+import churndb.model.Tree;
 import churndb.utils.TestConstants;
 import churndb.utils.TestResourceUtils;
 
@@ -61,27 +62,27 @@ public class ProjectTaskTest {
 
 		String commit0 = git.commit0();
 		task.reload(TestConstants.PROJECT_CODE);
-		assertProject(TestConstants.PROJECT_CODE, commit0);
+		assertProject(TestConstants.PROJECT_CODE, commit0, 1);
 		assertCommit0(commit0);
 
 		String commit1 = git.commit1();
 		task.reload(TestConstants.PROJECT_CODE);
-		assertProject(TestConstants.PROJECT_CODE, commit1);
+		assertProject(TestConstants.PROJECT_CODE, commit1, 2);
 		assertCommit1(commit1);
 
 		String commit2 = git.commit2();
 		task.reload(TestConstants.PROJECT_CODE);
-		assertProject(TestConstants.PROJECT_CODE, commit2);
+		assertProject(TestConstants.PROJECT_CODE, commit2, 3);
 		assertCommit2(commit2);
 
 		String commit3 = git.commit3();
 		task.reload(TestConstants.PROJECT_CODE);
-		assertProject(TestConstants.PROJECT_CODE, commit3);
+		assertProject(TestConstants.PROJECT_CODE, commit3, 4);
 		assertCommit3(commit3);
 
 		String commit4 = git.commit4();
 		task.reload(TestConstants.PROJECT_CODE);
-		assertProject(TestConstants.PROJECT_CODE, commit4);
+		assertProject(TestConstants.PROJECT_CODE, commit4, 5);
 		assertCommit4(commit4);
 	}
 
@@ -99,7 +100,7 @@ public class ProjectTaskTest {
 
 		new ProjectTask().reload(TestConstants.PROJECT_CODE);
 
-		assertProject(TestConstants.PROJECT_CODE, commit4);
+		assertProject(TestConstants.PROJECT_CODE, commit4, 5);
 
 		assertCommit0(commit0);
 		assertCommit1(commit1);
@@ -194,20 +195,28 @@ public class ProjectTaskTest {
 
 		new ProjectTask().reload(TestConstants.PROJECT_CODE);
 
-		assertCommitTree(TestConstants.PROJECT_CODE, commit0, "Address.java", "Customer.java", "Product.java",
-				"Order.java");
-		assertCommitTree(TestConstants.PROJECT_CODE, commit1, "Address.java", "Customer.java", "Product.java",
+		assertCommitTree(TestConstants.PROJECT_CODE, commit0, 1, "Address.java", "Customer.java",
+				"Product.java", "Order.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit1, 2, "Address.java", "Customer.java",
+				"Product.java", "Order.java", "OrderRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit2, 3, "Address.java", "Customer.java",
+				"ProductRename.java", "Order.java", "OrderRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit3, 4, "Customer.java", "ProductRename.java",
 				"Order.java", "OrderRename.java");
-		assertCommitTree(TestConstants.PROJECT_CODE, commit2, "Address.java", "Customer.java", "ProductRename.java",
-				"Order.java", "OrderRename.java");
-		assertCommitTree(TestConstants.PROJECT_CODE, commit3, "Customer.java", "ProductRename.java", "Order.java",
-				"OrderRename.java");
-		assertCommitTree(TestConstants.PROJECT_CODE, commit4, "Customer.java", "ProductRename.java",
-				"OrderRename.java", "AddressRename.java");
+		assertCommitTree(TestConstants.PROJECT_CODE, commit4, 5, "Customer.java",
+				"ProductRename.java", "OrderRename.java", "AddressRename.java");
 
 	}
 
-	private void assertCommitTree(String projectCode, String commit, String... paths) {
+	private void assertCommitTree(String projectCode, String commit, int treeNumber, String... paths) {
+		Tree tree = churn.getTree(projectCode, commit);
+		assertEquals(commit, tree.getCommit());
+		assertEquals(treeNumber, tree.getNumber());
+				
+		assertSourcesInTree(projectCode, commit, paths);
+	}
+
+	private void assertSourcesInTree(String projectCode, String commit, String... paths) {
 		List<String> pathsList = Arrays.asList(paths);
 		List<Source> sources = churn.getSourcesInTree(projectCode, commit);
 
@@ -247,9 +256,10 @@ public class ProjectTaskTest {
 		assertNull(churn.getActiveSource(TestConstants.PROJECT_CODE, "Order.java"));
 	}
 
-	private void assertProject(String projectCode, String lastCommit) {
+	private void assertProject(String projectCode, String commit, int treeNumber) {
 		Project project = churn.getProject(TestConstants.PROJECT_CODE);
-		assertEquals(lastCommit, project.getLastCommit());
+		assertEquals(commit, project.getCommit());
+		assertEquals(treeNumber, project.getTreeNumber());
 	}
 
 	private void assertSource(String projectCode, String path, String commit, int churnCount, int ccn, int loc) {

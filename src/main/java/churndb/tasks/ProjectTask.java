@@ -87,6 +87,8 @@ public class ProjectTask extends Task {
 			clockStart();
 
 			churn.deleteProjectSources(project.getCode());
+			project.reset();
+			
 			git.checkout(MASTER);
 
 			List<Commit> log = git.log();
@@ -112,7 +114,7 @@ public class ProjectTask extends Task {
 			git.checkout(MASTER);
 			git.pull();
 
-			List<Commit> log = project.getLastCommit() == null ? git.log() : git.log(project.getLastCommit());
+			List<Commit> log = project.getCommit() == null ? git.log() : git.log(project.getCommit());
 			logSeconds("git log");
 
 			loadCommits(log);
@@ -131,15 +133,15 @@ public class ProjectTask extends Task {
 		Metrics metrics = new Metrics();
 
 		for (Commit commit : log) {
-			updateProject(commit);
 			updateSources(metrics, commit);
+			updateProject(commit);
 			updateTree(commit);
 		}
 	}
 
 	private void updateTree(Commit commit) {
 		List<Source> activeSources = churn.getActiveSources(project.getCode());
-		Tree tree = new Tree(project.getCode(), commit.getName(), commit.getDate());
+		Tree tree = new Tree(project.getCode(), commit.getName(), commit.getDate(), project.getTreeNumber());
 		tree.add(activeSources);
 		churn.put(tree);
 	}
@@ -157,19 +159,10 @@ public class ProjectTask extends Task {
 	}
 
 	private void updateProject(Commit commit) {
-		if (isNewerCommitForProject(commit, project)) {
-			project.setLastCommit(commit.getName());
-			project.setLastChange(commit.getDate());
-			churn.put(project);
-		}
-	}
-
-	private boolean isNewerCommitForProject(Commit commit, Project project2) {
-		if (project.getLastChange() == null) {
-			return true;
-		}
-
-		return commit.getDate().after(project.getLastChange());
+		project.setCommit(commit.getName());
+		project.setLastChange(commit.getDate());
+		project.addTreeNumber();
+		churn.put(project);		
 	}
 
 	private boolean isSupportedSourceType(String path) {

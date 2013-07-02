@@ -12,16 +12,19 @@ public class Tree extends CouchBean {
 
 	private String commit;
 
+	private int number;
+
 	private List<String> sources;
 
 	private String type = "tree";
 
 	private Date date;
 
-	public Tree(String projectCode, String commit, Date date) {
+	public Tree(String projectCode, String commit, Date date, int number) {
 		this.projectCode = projectCode;
 		this.commit = commit;
 		this.date = date;
+		this.number = number;
 		this.sources = new ArrayList<String>();
 	}
 
@@ -45,6 +48,14 @@ public class Tree extends CouchBean {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
 	}
 
 	public String getType() {
