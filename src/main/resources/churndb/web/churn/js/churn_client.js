@@ -3,7 +3,7 @@ var CHURN = {
 	couchdb_database: "churndb",	
 	
     getCommits: function(projectCode, callback) {
-    	$.couch.db(CHURN.couchdb_database).view("trees/all", {
+    	$.couch.db(CHURN.couchdb_database).view("trees/all_by_number", {
 		   success: function(view) {
 			   	var commits = $.map(view.rows, function(row) {
 			   		return row.value.commit;
@@ -14,8 +14,10 @@ var CHURN = {
 		        console.log(status);
 		    },
 		    reduce: false,
-		    skip: 4000,
-		    limit:200
+			startkey: [projectCode], 
+			endkey: [projectCode, {}],	    
+		    skip: 1400,
+		    limit:10
 		});		    	    	
     },
     

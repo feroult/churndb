@@ -87,7 +87,7 @@ function loadSourcesInTrees(_commits) {
     for(var i = 0; i < commits.length; i++) {
         var commit = commits[i];            
         loading++;
-        CHURN.getSourcesInTree("dextra_a4c", commit, loadSourcesInTree);
+        CHURN.getSourcesInTree("dextra_dextranet", commit, loadSourcesInTree);
     }
 }
     
@@ -170,7 +170,7 @@ var label = svg.append("text")
 
 
 // Load the data.
-CHURN.getCommits("dextra_a4c", loadSourcesInTrees);   
+CHURN.getCommits("dextra_dextranet", loadSourcesInTrees);   
 
 var chart = null;
 
