@@ -2,6 +2,7 @@ package churndb.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.Tree;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -403,4 +405,11 @@ public class GIT {
 		}
 		
 	}
+	
+	public Reader getBlobReader(String commit, String path) {
+
+		TreeWalk t;
+		
+		return null;
+	}	
 }

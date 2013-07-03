@@ -2,11 +2,18 @@ package churndb.git;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
+import javancss.Javancss;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.io.LineReader;
 
 import churndb.utils.TestResourceUtils;
 
@@ -46,7 +53,7 @@ public class GITTest {
 		assertEquals("Address.java", git.findSimilarInOldCommits(commit, "AddressRename.java", Type.DELETE));		
 		assertEquals("OrderRename.java", git.findSimilarInOldCommits(commit, "Order.java", Type.ADD));
 	}
-
+	
 	@Test
 	public void testLogSince() {
 		TestRepository git = new TestRepository();
@@ -77,4 +84,18 @@ public class GITTest {
 		}		
 	}
 
+
+	@Test
+	public void testBlobReader() throws IOException {
+		TestRepository git = new TestRepository();		
+		String commit0 = git.commit0();		
+		
+		Reader blobReader = git.getBlobReader(commit0, "Address.java");
+		
+		LineReader lineReader = new LineReader(blobReader);		
+		String firstLine = lineReader.readLine();
+		
+		assertEquals(firstLine, "package churndb.project;");
+	}
+	
 }
