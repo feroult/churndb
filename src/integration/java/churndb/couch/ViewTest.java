@@ -184,7 +184,7 @@ public class ViewTest extends CouchTestBase {
 		putDocument("simple", "2", "B", 20);
 		putDocument("simple", "3", "C", 30);
 
-		Document doc = couch.view("core/simple", ViewOptions.DESCENDING).getFirstAs(Document.class);
+		Document doc = couch.view("core/simple", ViewOptions.DESCENDING).firstAs(Document.class);
 		
 		assertEquals("C", doc.getCode());
 	}

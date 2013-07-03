@@ -27,7 +27,7 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Project getProject(String projectCode) {
-		return view(PROJECTS_ALL, projectCode).getFirstAs(Project.class);
+		return view(PROJECTS_ALL, projectCode).firstAs(Project.class);
 	}
 	
 	public void deleteProject(String projectCode) {
@@ -45,11 +45,11 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Tree getTree(String projectCode, String commit) {
-		return view(TREES_ALL, projectCode, commit).getFirstAs(Tree.class);
+		return view(TREES_ALL, projectCode, commit).firstAs(Tree.class);
 	}
 	
 	public Source getActiveSource(String projectCode, String path) {
-		return view(SOURCES_ACTIVE, projectCode, path).getFirstAs(Source.class);
+		return view(SOURCES_ACTIVE, projectCode, path).firstAs(Source.class);
 	}
 
 	public List<Source> getActiveSources(String projectCode) {
@@ -57,11 +57,11 @@ public class ChurnClient extends CouchClient {
 	}
 
 	public Source getSourceInCommit(String projectCode, String commit, String path) {
-		return view(SOURCES_COMMIT, projectCode, commit, path).getFirstAs(Source.class);
+		return view(SOURCES_COMMIT, projectCode, commit, path).firstAs(Source.class);
 	}
 
 	public Source getLastSource(String projectCode, String path) {
-		return view(SOURCES_ALL, ViewOptions.DESCENDING, projectCode, path).getFirstAs(Source.class);
+		return view(SOURCES_ALL, ViewOptions.DESCENDING, projectCode, path).firstAs(Source.class);
 	}
 
 	public List<Source> getSourcesInTree(String projectCode, String commit) {

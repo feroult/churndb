@@ -44,7 +44,7 @@ public class CouchResponseView extends CouchResponse {
 		return size() == 0;
 	}
 
-	public <T> T getFirstAs(Class<T> clazz) {
+	public <T> T firstAs(Class<T> clazz) {
 		if (isEmpty()) {
 			return null;
 		}

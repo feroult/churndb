@@ -272,7 +272,9 @@ function displayCommit(i) {
     dots = chart.selectAll(".dot")
     .data(getSourcesInTree(i), key);
         
-     dots.transition(300).call(position).sort(order);
+     dots.transition().duration(300)
+       .ease("linear")
+       .call(position).sort(order);
     
      dots.enter().append("circle")
         .attr("class", "dot")

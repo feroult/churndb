@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
@@ -27,9 +28,13 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.filter.commit.CommitDiffFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GIT {
 
+	private static Logger logger = LoggerFactory.getLogger(GIT.class);
+	
 	private static final int MAX_COMMITS_FOR_RENAME = 10;
 
 	private Git git;
@@ -156,9 +161,12 @@ public class GIT {
 
 	public void checkout(String name) {
 		try {
+			git.reset().setMode(ResetType.HARD).call();
 			git.checkout().setName(name).call();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			// FIXME checkout problems with some special characters in trees
+			logger.error("can't checkout head " + name + " - " + e.getMessage());
+			//throw new RuntimeException(e);			
 		}
 	}
 
@@ -367,8 +375,13 @@ public class GIT {
 					throw StopWalkException.INSTANCE;
 				}
 			};
-			new CommitFinder(git.getRepository()).setFilter(filter).findFrom(revCommit.getId());
-			return ref.get();
+			try {			
+				new CommitFinder(git.getRepository()).setFilter(filter).findFrom(revCommit.getId());
+				return ref.get();
+			} catch(NullPointerException e) {
+				// TODO understand this internal bug in jgit/ActiveGit
+				return new ArrayList<DiffEntry>();
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
