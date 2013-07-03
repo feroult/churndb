@@ -33,6 +33,7 @@ public class ApplicationTask extends Task {
 		DesignDocument trees = new DesignDocument("trees");
 		trees.addViewMap("all", ResourceUtils.asString("/churndb/couch/trees/map/all.js"));
 		trees.addViewMap("all_by_number", ResourceUtils.asString("/churndb/couch/trees/map/all_by_number.js"));
+		trees.addViewMap("10in10_by_number", ResourceUtils.asString("/churndb/couch/trees/map/10in10_by_number.js"));
 		trees.addViewMap("sources", ResourceUtils.asString("/churndb/couch/trees/map/sources.js"));
 		churn.put(trees);
 	}

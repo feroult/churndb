@@ -107,7 +107,7 @@ function getSourcesInTree(i) {
 function x(d) { return d == null? 0 : d.metrics.CCN; }
 function y(d) { return d == null? 0 : d.churnCount; }
 function radius(d) { return d == null || d.metrics.METHODS == 0? 0 : Math.ceil(d.metrics.CCN/d.metrics.METHODS); }
-function color(d) { return d == null ? "a" : d.path; }
+function color(d) { return d == null ? "a" : d.sourceId; }
 function key(d) { return d == null? 0 : d.sourceId; }
 
 // Chart dimensions.
@@ -117,7 +117,7 @@ var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
 
 // Various scales. These domains make assumptions of data, naturally.
 var xScale = d3.scale.linear().domain([0, 50]).range([0, width]),
-    yScale = d3.scale.linear().domain([0, 200]).range([height, 0]),
+    yScale = d3.scale.linear().domain([-30, 200]).range([height, 0]),
     radiusScale = d3.scale.sqrt().domain([0, 5]).range([0, 40]),
     colorScale = d3.scale.category10();
 
@@ -271,8 +271,8 @@ function order(a, b) {
 function displayCommit(i) {
     dots = chart.selectAll(".dot")
     .data(getSourcesInTree(i), key);
-    
-     dots.call(position).sort(order);
+        
+     dots.transition(300).call(position).sort(order);
     
      dots.enter().append("circle")
         .attr("class", "dot")
@@ -280,10 +280,10 @@ function displayCommit(i) {
         .call(position)
         .sort(order);
          
-     dots.exit().remove();
-
+     dots.exit().remove();     
+     
      dots.append("title")
-         .text(function(d) { return d.path + ' - ' + d.commit; });
+         .text(function(d) { return d.path + ' - ' + d.sourceId; });
     
   //dot.selectAll('.dot').data(getSourcesInTree(i), key).call(position).sort(order);
   label.text(i);
@@ -292,10 +292,10 @@ function displayCommit(i) {
 var iCommit = 0;
 
 function rotateAll() {	
-    if(iCommit != 1500) {
+    if(iCommit != Object.keys(sourcesInTrees).length) {
 		iCommit++;
 		displayCommit(iCommit);
-		setTimeout(rotateAll, 200);
+		setTimeout(rotateAll, 500);
 	} else {
 		iCommit = 0;
 	}
