@@ -1,5 +1,7 @@
 package churndb.tasks;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -147,8 +149,6 @@ public class ProjectTask extends Task {
 	}
 
 	private void updateSources(Metrics metrics, Commit commit) {
-		git.checkout(commit.getName());
-
 		for (Change change : commit.getChanges()) {
 			if (!isSupportedSourceType(change.getPathBeforeChange())) {
 				continue;
@@ -322,7 +322,21 @@ public class ProjectTask extends Task {
 
 	private void updateSourceCommitAndMetrics(Commit commit, Metrics metrics, Source source) {
 		source.setCommit(commit.getName());
-		source.setDate(commit.getDate());
-		metrics.apply(source);
+		source.setDate(commit.getDate());				
+		applyMetrics(commit, metrics, source);			
+	}
+
+	private void applyMetrics(Commit commit, Metrics metrics, Source source) {
+		Reader blobReader = git.getBlobReader(commit.getName(), source.getPath());
+		
+		try {
+			metrics.apply(source, blobReader);
+		} finally {
+			try {
+				blobReader.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

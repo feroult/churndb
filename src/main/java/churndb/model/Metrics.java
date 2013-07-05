@@ -1,10 +1,10 @@
 package churndb.model;
 
+import java.io.Reader;
 import java.util.List;
 
 import javancss.FunctionMetric;
 import javancss.Javancss;
-import churndb.tasks.Setup;
 
 public class Metrics {
 
@@ -14,8 +14,8 @@ public class Metrics {
 	
 	public static final String METHODS = "METHODS";
 
-	public void apply(Source source) {
-		Javancss javancss = new Javancss(Setup.getSourceFile(source));
+	public void apply(Source source, Reader reader) {
+		Javancss javancss = new Javancss(reader);
 
 		applyCCN(source, javancss);
 		applyLOC(source, javancss);
