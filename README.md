@@ -1,8 +1,5 @@
 ## ChurnDB
-Source code database for churn/other metrics visualization
- 
-## Database initialization
+Churn/other metrics visualization
 
-```
-mvn exec:java -Ddb-create
-```
+[![Build Status](https://travis-ci.org/feroult/churndb.png?branch=master)](https://travis-ci.org/feroult/churndb)
+ 
