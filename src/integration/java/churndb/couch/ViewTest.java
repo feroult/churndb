@@ -55,13 +55,14 @@ public class ViewTest extends CouchTestBase {
 
 	@Before
 	public void before() {
-		createSimpleView();				
+		createSimpleDesignDocument();				
 	}
 
-	private void createSimpleView() {
+	private void createSimpleDesignDocument() {
 		DesignDocument core = new DesignDocument("core");		
 		core.addViewMap("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_MAP));		
-		core.addViewReduce("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));
+		core.addViewReduce("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_VIEW_REDUCE));		
+		core.addList("simple", ResourceUtils.asString(TestConstants.COUCH_SIMPLE_LIST));		
 		couch.put(core);
 	}
 		
@@ -215,6 +216,18 @@ public class ViewTest extends CouchTestBase {
 		assertEquals("C", documents.get(2).getCode());		
 	}
 	
+	@Test
+	public void listView() {		
+		putDocument("simple", "1", "A", 10);
+		putDocument("simple", "2", "B", 20);
+		putDocument("simple", "3", "C", 30);
+		
+		System.out.println();
+		//couch.list("core/simple", ViewOptions.INCLUDE_DOCS).docsAs(Document.class);
+		
+	}
+	
+
 	private void putDocument(String type, String id, String code) {
 		putDocument(type, id, code, 0);
 	}

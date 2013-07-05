@@ -28,6 +28,8 @@ public class TestConstants {
 	
 	public static final String COUCH_SIMPLE_VIEW_REDUCE = "/churndb/couch/views/simple/reduce.js";
 	
+	public static final String COUCH_SIMPLE_LIST = "/churndb/couch/views/simple/list.js";
+	
 	public static final String COUCH_DELETION_VIEW_MAP1 = "/churndb/couch/views/deletion/map1.js";
 
 	public static final String COUCH_DELETION_VIEW_MAP2 = "/churndb/couch/views/deletion/map2.js";
@@ -35,5 +37,6 @@ public class TestConstants {
 	public static final String COUCH_DELETION_VIEW_MAP3 = "/churndb/couch/views/deletion/map3.js";
 
 	public static final String COUCH_DELETION_VIEW_MAP4 = "/churndb/couch/views/deletion/map4.js";
+
 
 }

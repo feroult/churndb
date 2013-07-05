@@ -11,6 +11,8 @@ public class DesignDocument extends CouchBean {
 	
 	private Map<String, View> views;
 	
+	private Map<String, String> lists;
+	
 	public DesignDocument(String id) {
 		set_id("_design/" + id);
 	}
@@ -42,6 +44,14 @@ public class DesignDocument extends CouchBean {
 		return views;
 	}
 
+	public void addList(String key, String source) {
+		if(lists == null) {
+			lists = new HashMap<String, String>();
+		}
+		
+		lists.put(key, source);
+	}
+	
 	public String json() {
 		return new Gson().toJson(this);
 	}
@@ -53,5 +63,5 @@ public class DesignDocument extends CouchBean {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
+
 }

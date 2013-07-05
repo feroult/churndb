@@ -87,7 +87,7 @@ function loadSourcesInTrees(_commits) {
     for(var i = 0; i < commits.length; i++) {
         var commit = commits[i];            
         loading++;
-        CHURN.getSourcesInTree("dextra_dextranet", commit, loadSourcesInTree);
+        CHURN.getSourcesInTree("dextra_bicbanco_sgc", commit, loadSourcesInTree);
     }
 }
     
@@ -116,8 +116,8 @@ var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
     height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scale.linear().domain([0, 50]).range([0, width]),
-    yScale = d3.scale.linear().domain([-30, 200]).range([height, 0]),
+var xScale = d3.scale.linear().domain([0, 150]).range([0, width]),
+    yScale = d3.scale.linear().domain([-30, 120]).range([height, 0]),
     radiusScale = d3.scale.sqrt().domain([0, 5]).range([0, 40]),
     colorScale = d3.scale.category10();
 
@@ -170,7 +170,7 @@ var label = svg.append("text")
 
 
 // Load the data.
-CHURN.getCommits("dextra_dextranet", loadSourcesInTrees);   
+CHURN.getCommits("dextra_bicbanco_sgc", loadSourcesInTrees);   
 
 var chart = null;
 
