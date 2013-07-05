@@ -2,6 +2,7 @@ package churndb.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +24,11 @@ import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.Tree;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.gitective.core.BlobUtils;
 import org.gitective.core.CommitFinder;
 import org.gitective.core.filter.commit.CommitDiffFilter;
 import org.slf4j.Logger;
@@ -407,9 +408,6 @@ public class GIT {
 	}
 	
 	public Reader getBlobReader(String commit, String path) {
-
-		TreeWalk t;
-		
-		return null;
+		return new InputStreamReader(BlobUtils.getStream(git.getRepository(), commit, path));
 	}	
 }

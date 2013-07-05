@@ -8,12 +8,8 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
-import javancss.Javancss;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.io.LineReader;
 
 import churndb.utils.TestResourceUtils;
 
@@ -92,8 +88,8 @@ public class GITTest {
 		
 		Reader blobReader = git.getBlobReader(commit0, "Address.java");
 		
-		LineReader lineReader = new LineReader(blobReader);		
-		String firstLine = lineReader.readLine();
+		BufferedReader reader = new BufferedReader(blobReader);
+		String firstLine = reader.readLine();
 		
 		assertEquals(firstLine, "package churndb.project;");
 	}
