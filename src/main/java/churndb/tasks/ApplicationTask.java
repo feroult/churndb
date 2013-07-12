@@ -35,6 +35,7 @@ public class ApplicationTask extends Task {
 		trees.addViewMap("all_by_number", ResourceUtils.asString("/churndb/couch/trees/map/all_by_number.js"));
 		trees.addViewMap("10in10_by_number", ResourceUtils.asString("/churndb/couch/trees/map/10in10_by_number.js"));
 		trees.addViewMap("sources", ResourceUtils.asString("/churndb/couch/trees/map/sources.js"));
+		trees.addList("metrics", ResourceUtils.asString("/churndb/couch/sources/list/metrics.js"));	
 		churn.put(trees);
 	}
 	
