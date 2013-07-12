@@ -1,5 +1,23 @@
 function (head, req) {
+	start({
+		"headers": {
+			"Content-Type": "application/json"
+		 }
+	});	
+	
+	send("[");
+	
+	var first = true;
+	
     while (row = getRow()) {
-    	send(JSON.stringify({doc_value: row.value.value}));     	     
+    	if(!first) {
+    		send(",");
+    	} else {
+    		first = false;
+    	}
+    	
+    	send(JSON.stringify(row.value))        
     }
+    
+    send("]");
 }
