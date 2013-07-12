@@ -21,7 +21,8 @@ function (head, req) {
     	var result = doc.metrics;
     	
     	result['id'] = doc._id;
-    	result['sourceId'] = doc.sourceId;    	
+    	result['sourceId'] = doc.sourceId;    
+    	result['churnCount'] = doc.churnCount;
     	
     	send(JSON.stringify(result));
     }

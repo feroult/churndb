@@ -104,9 +104,9 @@ function getSourcesInTree(i) {
 }
 
 // Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d == null? 0 : d.metrics.CCN; }
+function x(d) { return d == null? 0 : d.CCN; }
 function y(d) { return d == null? 0 : d.churnCount; }
-function radius(d) { return d == null || d.metrics.METHODS == 0? 0 : Math.ceil(d.metrics.CCN/d.metrics.METHODS); }
+function radius(d) { return d == null || d.METHODS == 0? 0 : Math.ceil(d.CCN/d.METHODS); }
 function color(d) { return d == null ? "a" : d.sourceId; }
 function key(d) { return d == null? 0 : d.sourceId; }
 
@@ -193,7 +193,7 @@ function loadGraph() {
    
   // Add a title.
   dots.append("title")
-      .text(function(d) { return d.path; });
+      .text(function(d) { return d.sourceId; });
 
   // Add an overlay for the year label.
   var box = label.node().getBBox();
