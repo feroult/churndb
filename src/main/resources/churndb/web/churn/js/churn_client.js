@@ -21,13 +21,13 @@ var CHURN = {
 		});		    	    	
     },
     
-    getSourcesInTree: function(projectCode, commit, callback) {
+    getSourcesInTree: function(projectCode, commit, setCallback, returnCallback) {
     	$.couch.db(CHURN.couchdb_database).list("trees/metrics", "sources", {
-			success: function(view) {
-				var sources = $.map(view.rows, function(row) {
-					return row.doc;
-				});
-				callback(commit, sources);
+			success: function(sources) {
+				setCallback(commit, sources);
+				if(returnCallback) {
+					returnCallback(sources);
+				}
 			},
 			error: function(status) {
 				console.log(status);

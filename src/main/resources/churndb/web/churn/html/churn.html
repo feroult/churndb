@@ -72,43 +72,63 @@ text {
 
 
 <script src="/_utils/script/jquery.js"></script>
-<script src="/_utils/script/jquery.couch.js"></script>
 <script src="http://d3js.org/d3.v2.js?2.8.1"></script>
 <script src="../js/churn_client.js"></script>
+<script src="../../couch/js/jquery.couch.js"></script>
 
 <script>
 
 var commits;
 var sourcesInTrees = {};
-var loading = 0;
+var loadingDelta = 10;
             
-function loadSourcesInTrees(_commits) {
-    commits = _commits;
-    for(var i = 0; i < commits.length; i++) {
-        var commit = commits[i];            
-        loading++;
-        CHURN.getSourcesInTree("dextra_bicbanco_sgc", commit, loadSourcesInTree);
+function setCommits(_commits) {
+	commits = _commits;
+}            
+            
+function loadSourcesInTrees(commitIndex, callback) {
+	for(var i = 0; i < loadingDelta; i++) {
+		if(commitIndex + i > commits.length) {
+			break;
+		}
+				
+        var commit = commits[commitIndex + i];        
+        if(sourcesInTrees[commit]) {
+        	continue;
+        }        
+        
+        if(i == 0) {
+            CHURN.getSourcesInTree("dextra_bicbanco_sgc", commit, setSourcesInTree, callback);
+        } else {
+        	CHURN.getSourcesInTree("dextra_bicbanco_sgc", commit, setSourcesInTree);
+        } 
+        	
     }
 }
     
-function loadSourcesInTree(commit, sources) {
+function setSourcesInTree(commit, sources) {
     sourcesInTrees[commit] = sources;
-    loading--;
-    if(loading == 0) {
-        loadGraph();
-    }
 }
 
-function getSourcesInTree(i) {
-    return sourcesInTrees[commits[i]];
+function getSourcesInTree(i, callback) {	
+	var commit = commits[i];
+	
+	if(!sourcesInTrees[commit]) {
+		loadSourcesInTrees(i, callback);
+	} else {
+		callback(sourcesInTrees[commit]);
+	}
 }
+
+CHURN.getCommits("dextra_bicbanco_sgc", setCommits);   
+
 
 // Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d == null? 0 : d.CCN; }
-function y(d) { return d == null? 0 : d.churnCount; }
-function radius(d) { return d == null || d.METHODS == 0? 0 : Math.ceil(d.CCN/d.METHODS); }
-function color(d) { return d == null ? "a" : d.sourceId; }
-function key(d) { return d == null? 0 : d.sourceId; }
+function x(d) { return d == null ? 0 : d.CCN; }
+function y(d) { return d == null ? 0 : d.churnCount; }
+function radius(d) { return d == null || d.METHODS == 0 ? 0 : Math.ceil(d.CCN/d.METHODS); }
+function color(d) { return d == null ? " " : d.sourceId; }
+function key(d) { return d == null ? 0 : d.sourceId; }
 
 // Chart dimensions.
 var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
@@ -168,95 +188,11 @@ var label = svg.append("text")
     .attr("x", width)
     .text('INIT');
 
-
-// Load the data.
-CHURN.getCommits("dextra_bicbanco_sgc", loadSourcesInTrees);   
-
-var chart = null;
-
-function loadGraph() {
-    
-  // Add a dot per nation. Initialize the data at 1800, and set the colors.
-  chart = svg.append("g")
-      .attr("class", "dots");
-  
-  var dots = chart.selectAll(".dot")
-      .data(getSourcesInTree(1));
-           
-   dots.enter().append("circle")
-      .attr("class", "dot")
-      .style("fill", function(d) { return colorScale(color(d)); })
-      .call(position)
-      .sort(order);
-  
-   dots.exit().remove();
-   
-  // Add a title.
-  dots.append("title")
-      .text(function(d) { return d.sourceId; });
-
-  // Add an overlay for the year label.
-  var box = label.node().getBBox();
-
-  /*
-  var overlay = svg.append("rect")
-        .attr("class", "overlay")
-        .attr("x", box.x)
-        .attr("y", box.y)
-        .attr("width", box.width)
-        .attr("height", box.height)
-        .on("mouseover", enableInteraction);*/
-
-  // Start a transition that interpolates the data based on year.
-  /*
-  svg.transition()
-      .duration(30000)
-      .ease("linear")
-      //.tween("year", tweenCommit)
-      .each("end", enableInteraction);*/
-
-      /*
-  // After the transition finishes, you can mouseover to change the year.  
-  function enableInteraction() {
-    var commitScale = d3.scale.linear()
-        .domain([0, commits.length])
-        .range([box.x + 10, box.x + box.width - 10])
-        .clamp(true);
-
-    // Cancel the current transition, if any.
-    svg.transition().duration(0);
-    
-    overlay
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout)
-        .on("mousemove", mousemove)
-        .on("touchmove", mousemove);
-
-    function mouseover() {
-      label.classed("active", true);
-    }
-
-    function mouseout() {
-      label.classed("active", false);
-    }
-
-    function mousemove() {
-      displayCommit(Math.floor(commitScale.invert(d3.mouse(this)[0])));
-    }
-  }
-
-  // Tweens the entire chart by first tweening the year, and then the data.
-  // For the interpolated data, the dots and label are redrawn.
-  function tweenCommit() {
-    var commitIndex = d3.interpolateNumber(0, commits.length);
-    return function(t) { displayCommit(t); };
-  }*/
-
-}
+var chart = svg.append("g").attr("class", "dots");
 
 // Positions the dots based on data.
 function position(dot) {
-  dot .attr("cx", function(d) { return xScale(x(d)); })
+   dot.attr("cx", function(d) { return xScale(x(d)); })
       .attr("cy", function(d) { return yScale(y(d)); })
       .attr("r", function(d) { return radiusScale(radius(d)); });
 }
@@ -266,29 +202,30 @@ function order(a, b) {
   return radius(b) - radius(a);
 }
 
-
-// Updates the display to show the specified year.
+// Updates the display to show the specified commit.
 function displayCommit(i) {
-    dots = chart.selectAll(".dot")
-    .data(getSourcesInTree(i), key);
-        
-     dots.transition().duration(300)
-       .ease("linear")
-       .call(position).sort(order);
-    
-     dots.enter().append("circle")
-        .attr("class", "dot")
-        .style("fill", function(d) { return colorScale(color(d)); })
-        .call(position)
-        .sort(order);
-         
-     dots.exit().remove();     
-     
-     dots.append("title")
-         .text(function(d) { return d.path + ' - ' + d.sourceId; });
-    
-  //dot.selectAll('.dot').data(getSourcesInTree(i), key).call(position).sort(order);
-  label.text(i);
+	getSourcesInTree(i, function(sources) {	
+	    dots = chart.selectAll(".dot")
+	        .data(sources, key);
+	        
+	    dots.transition().duration(300)
+	        .ease("linear")
+	        .call(position).sort(order);
+	    
+	    dots.enter().append("circle")
+	        .attr("class", "dot")
+	        .style("fill", function(d) { return colorScale(color(d)); })
+	        .call(position)
+	        .sort(order);
+	         
+	    dots.exit().remove();     
+	     
+	    dots.append("title")
+	        .text(function(d) { return d.path + ' - ' + d.sourceId; });
+	    
+	    //dot.selectAll('.dot').data(getSourcesInTree(i), key).call(position).sort(order);
+	    label.text(i);
+	});
 }
 
 var iCommit = 0;
